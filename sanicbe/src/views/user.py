@@ -68,7 +68,7 @@ class UserController():
         except:
             exceptionRaise('getUsers')
 
-    @u.get("/user/<pk_:int>")
+    @u.get("/user/<pk_:uuid>")
     @protected
     async def getUser(request, pk_):
         try:
@@ -151,7 +151,7 @@ class UserController():
         except:
             exceptionRaise('createUsers')
 
-    @u.put("/user/<pk_:int>")
+    @u.put("/user/<pk_:uuid>")
     @protected
     async def updateUser(request, pk_):
         try:
@@ -219,7 +219,7 @@ class UserController():
         except:
             exceptionRaise('updateUser')
 
-    @u.delete("/user/<pk_:int>")
+    @u.delete("/user/<pk_:uuid>")
     @protected
     async def destroyUser(request, pk_):
         try:
@@ -238,7 +238,7 @@ class UserController():
         except:
             exceptionRaise('destroyUser')
 
-    @u.post("/user/avatar/<pk_:int>")
+    @u.post("/user/avatar/<pk_:uuid>")
     @protected
     async def uploadAvatar(request, pk_):
         try:

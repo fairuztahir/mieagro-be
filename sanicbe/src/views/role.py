@@ -68,7 +68,7 @@ class RoleController():
         except:
             exceptionRaise('getRoles')
 
-    @r.get("/role/<pk_:int>")
+    @r.get("/role/<pk_:uuid>")
     @protected
     async def getRole(request, pk_):
         try:
@@ -147,7 +147,7 @@ class RoleController():
         except:
             exceptionRaise('createRoles')
 
-    @r.delete("/role/<pk_:int>")
+    @r.delete("/role/<pk_:uuid>")
     @protected
     async def destroyRole(request, pk_):
         try:
@@ -196,45 +196,46 @@ class RoleController():
         except:
             exceptionRaise('destroyRoles')
 
-    @r.put("/role/<pk_:int>")
+    @r.put("/role/<pk_:uuid>")
     @protected
     async def updateRole(request, pk_):
-        # try:
-        session = request.ctx.session
-        body = request.json
-        # Input validation
-        [valid, error] = postRoleValidator(body)
-        if not valid:
-            return resJson(resType.INVALID_PARAMS, error, len(error))
+        try:
+            session = request.ctx.session
+            body = request.json
+            # Input validation
+            [valid, error] = postRoleValidator(body)
+            if not valid:
+                return resJson(resType.INVALID_PARAMS, error, len(error))
 
-        resMsg = resType.SUCCESS_UPD
-        async with session.begin():
-            role = await findRecordById(session, Role, pk_)
-            if not role:
-                return resJson(resType.NO_RECORD)
+            resMsg = resType.SUCCESS_UPD
+            async with session.begin():
+                role_ = await findRecordById(session, Role, pk_)
+                if not role_:
+                    return resJson(resType.NO_RECORD)
 
-            # MARK: Need to convert to dict() to get value
-            role_ = role.to_dict()
-            getName = str(body.get('name', None))
-            getDesc = body.get('desc', None)
+                getName = body.get('name', None)
+                getDesc = body.get('desc', None)
 
-            # TODO: implement schema validation for mandatory field
-            convert_name = capitalName(getName)
-
-            if getDesc:
+                convert_name = capitalName(getName)
                 convert_desc = capitalSentence(getDesc)
-            else:
-                convert_desc = role_['description']
 
-            values_ = {"name": convert_name, "description": convert_desc}
+                values_ = {}
+                if (getName) and (role_.name != convert_name):
+                    values_['name'] = convert_name
 
-            setRole_ = await updateById(session, Role, pk_, values_)
-            if not setRole_:
-                resMsg = resType.FAIL_UPD
+                if (getDesc) and (role_.description != convert_desc):
+                    values_['description'] = convert_desc
 
-        return resJson(resMsg, setRole_)
-        # except:
-        #     exceptionRaise('updateRole')
+                if len(values_) < 1:
+                    return resJson(resType.NO_UPD, {})
+
+                setRole_ = await updateById(session, Role, pk_, values_)
+                if not setRole_:
+                    resMsg = resType.FAIL_UPD
+
+            return resJson(resMsg, setRole_)
+        except:
+            exceptionRaise('updateRole')
 
 
 # -----------------

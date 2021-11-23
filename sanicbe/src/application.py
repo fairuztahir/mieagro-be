@@ -79,7 +79,7 @@ async def db_migrate(app):
         await conn.run_sync(Base.metadata.create_all)
 
     async with app.db.connect() as conn:
-        stmt = select(Role).where(Role.id == 1)
+        stmt = select(Role).where(Role.name == 'Admin')
         data = await conn.execute(stmt)
         if not data.scalar():
             await conn.execute(insert(Role), [
@@ -88,11 +88,13 @@ async def db_migrate(app):
             ])
             await conn.commit()
 
+            stmt = select(Role).where(Role.name == 'Admin')
+            data = await conn.execute(stmt)
             challenge = str(os.getenv('API_ADMIN_PASSWORD', 'admin'))
             hashed = await make_hash(challenge)
             await conn.execute(insert(User), [
                 {"fname": "Fairuz", "lname": "Tahir", "email": os.getenv(
-                    'API_ADMIN_EMAIL', 'admin@gmail.com'), "challenge": hashed, "role_id": 1}
+                    'API_ADMIN_EMAIL', 'admin@gmail.com'), "challenge": hashed, "role_id": data.scalar()}
             ])
             await conn.commit()
         await conn.close()

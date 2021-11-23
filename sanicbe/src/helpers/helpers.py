@@ -1,6 +1,5 @@
 from sanic.log import logger
 from sanic.exceptions import ServerError
-from sqlalchemy.sql.elements import True_
 from passlib.handlers.pbkdf2 import pbkdf2_sha256
 from sanic.response import json
 from enum import Enum
@@ -14,6 +13,7 @@ import datetime
 import os
 import moment
 import aiofiles
+import uuid
 
 # ------------------------
 # Helper functions Section
@@ -60,9 +60,11 @@ class resType(Enum):
 # MARK: for resJson() purpose
 # TODO: will add more in future to data massage
 def default(o):
-    if type(o) is datetime.date or type(o) is datetime.datetime:
+    if isinstance(o, uuid.UUID):
+        return str(o)
+    elif type(o) is datetime.date or type(o) is datetime.datetime:
         return convertISO_TZ(o)
-    if type(o) is decimal.Decimal:
+    elif type(o) is decimal.Decimal:
         return float(o)
 
 
