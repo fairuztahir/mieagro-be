@@ -1,0 +1,7 @@
+# Ignore built ts files
+dist/**/*
+uploads/
+
+# OS metadata
+.DS_Store
+Thumbs.db

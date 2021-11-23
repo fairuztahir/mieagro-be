@@ -1,0 +1,12 @@
+{
+    "name": "golang-boilerplate",
+    "version": "0.1.0",
+    "description": "Project boilerplate with Go, Vuejs 3, GraphQL and PostgreSQL",
+    "author": "fairuztahir",
+    "email": "mohdfairuztahir@gmail.com",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/fairuztahir/golang-boilerplate.git"
+    },
+    "license": "MIT"
+}

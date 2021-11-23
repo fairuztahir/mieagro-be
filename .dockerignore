@@ -1,0 +1,11 @@
+.editorconfig
+AUTHORS.md
+README.md
+CONTRIBUTING.md
+LICENSE
+.DS_Store
+Thumbs.db
+vendor
+bin/
+node_modules/
+package-lock.json

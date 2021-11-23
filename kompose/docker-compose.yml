@@ -1,0 +1,101 @@
+version: '3'
+
+services:
+  web:
+    container_name: web
+    image: fairuztahir/qp-web:v0.1.1
+    restart: always
+    ports:
+      - 3000:3000
+    volumes:
+      - web-data:/app:cached
+      - node_modules:/app/node_modules
+    depends_on:
+      - api
+    networks:
+      - webnet
+
+  api:
+    container_name: api
+    image: fairuztahir/qp-api:v0.1.1
+    restart: always
+    environment:
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB}
+    # depends_on:
+    #   - db
+    ports:
+      - 5000:5000
+      - 1978:1978
+    volumes:
+      - api-data:/app
+      - tmp:/uploads/images
+    networks:
+      - webnet
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_LISTEN_PORT: ${PGADMIN_LISTEN_PORT}
+    ports:
+      - 5454:5454
+    # depends_on:
+    #   - db
+    networks:
+      - webnet
+
+  goredis:
+    container_name: goRedis
+    image: redis:6.0.8-alpine
+    restart: always
+    ports:
+      - 6379:6379
+    networks:
+      - webnet
+
+  # db:
+  #   container_name: db
+  #   image: postgres:13.1-alpine
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #     POSTGRES_DB: ${POSTGRES_DB}
+  #   ports:
+  #     - 5432:5432
+  #   volumes:
+  #     - db-data:/var/lib/postgresql/data
+  #   networks:
+  #     - webnet
+
+  proxy:
+    container_name: proxy
+    image: fairuztahir/qp-proxy:v0.1.1
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - api
+      - web
+    volumes:
+      - proxy-data:/app
+    networks:
+      - webnet
+
+networks:
+  webnet:
+    driver: bridge
+
+volumes:
+  # db-data:
+  proxy-data:
+  api-data:
+  tmp:
+  web-data:
+  node_modules:

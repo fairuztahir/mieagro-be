@@ -1,0 +1,12 @@
+{
+  "name": "sanicvue-boilerplate",
+  "version": "0.0.1",
+  "description": "Project boilerplate with Sanic Python, Vuejs 3 and PostgreSQL",
+  "author": "fairuztahir",
+  "email": "mohdfairuztahir@gmail.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fairuztahir/sanicvue-boilerplate"
+  },
+  "license": "MIT"
+}

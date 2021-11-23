@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: pgadmin
+  name: pgadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgadmin
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: pgadmin
+    spec:
+      containers:
+        - env:
+          - name: PGADMIN_DEFAULT_EMAIL
+            valueFrom:
+              secretKeyRef:
+                key: PGADMIN_DEFAULT_EMAIL
+                name: pg-secret
+          - name: PGADMIN_DEFAULT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: PGADMIN_DEFAULT_PASSWORD
+                name: pg-secret
+          - name: PGADMIN_LISTEN_PORT
+            valueFrom:
+              secretKeyRef:
+                key: PGADMIN_LISTEN_PORT
+                name: pg-secret
+          - name: SCRIPT_NAME
+            value: /pgadmin4
+          image: dpage/pgadmin4
+          imagePullPolicy: Always
+          name: pgadmin
+          ports:
+            - name: ui-port
+              containerPort: 5454
+          readinessProbe:
+            httpGet:
+              path: /pgadmin4/misc/ping
+              port: 5454
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 5

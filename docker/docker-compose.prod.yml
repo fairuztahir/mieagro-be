@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # web:
+  #   restart: always
+  #   build:
+  #     target: production
+  #     args:
+  #       APP_ENV: ${APP_ENV}
+  #   ports:
+  #     - '3000/tcp'
+  #   volumes:
+  #     - web:/app:cached
+  #     - '/app/node_modules'
+
+  sanicbe:
+    restart: always
+    build:
+      target: production
+      args:
+        APP_ENV: ${APP_ENV}
+    ports:
+      - ${API_PORT}/tcp
+    volumes:
+      - sanicbe:/app
+
+  pgadmin:
+    restart: always
+    ports:
+      - '5454/tcp'
+
+  redis:
+    restart: always
+    ports:
+      - '6379/tcp'
+
+  db:
+    restart: always
+    ports:
+      - '5432/tcp'
+    volumes:
+      - db-data:/var/lib/postgresql/data/
+
+  proxy:
+    restart: always
+    build:
+      target: release
+      args:
+        APP_ENV: ${APP_ENV}
+    ports:
+      - 80:80
+      # - 443:443
+    volumes:
+      - proxy:/app
+
+volumes:
+  db-data:
+  proxy:
+  sanicbe:
+  # web:
