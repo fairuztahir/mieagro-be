@@ -15,6 +15,8 @@ from views.role import RoleController
 from views.auth import AuthController
 from views.odoo import OdooController
 from views.uploads import FileController
+from views.warehouse import WarehouseController
+from views.product import ProductController
 from utils.exportcsv import DownloadCSVView
 from models.base import Base
 from models.role import Role
@@ -56,9 +58,6 @@ def after_server_start(app):
         await main(app, loop)
         await createUploadPath(app)
 
-        # print(app.url_for("static", name="files.images",
-        #       filename="20211118083559.jpg"))
-
 
 def after_server_stop(app):
     @app.listener('after_server_stop')
@@ -70,7 +69,7 @@ def after_server_stop(app):
 
 def init_blueprints(app):
     v1_0 = Blueprint.group(AuthController.a, UserController.u,
-                           RoleController.r, OdooController.o, DownloadCSVView.c, FileController.f, url_prefix='/', version=1)
+                           RoleController.r, WarehouseController.wh, ProductController.p, OdooController.o, DownloadCSVView.c, FileController.f, url_prefix='/', version=1)
     app.blueprint(v1_0)
 
 

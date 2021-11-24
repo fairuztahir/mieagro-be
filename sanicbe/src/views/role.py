@@ -57,9 +57,6 @@ class RoleController():
                 result = await session.execute(stmt)
                 roles = result.all()
 
-                if not roles:
-                    return resJson(resType.NO_RECORD)
-
                 result_dict = [dict(role) for role in roles]
                 total_ = await session.execute(count_)
                 total = total_.scalar()

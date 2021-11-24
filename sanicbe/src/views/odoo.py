@@ -21,7 +21,7 @@ from odoo.main import (
 
 
 class OdooController():
-    o = Blueprint('odoo', url_prefix='/')
+    o = Blueprint('odoo', url_prefix='/odoo')
 
     @o.get("/warehouses")
     @protected
