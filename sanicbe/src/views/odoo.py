@@ -30,9 +30,7 @@ class OdooController():
             session = request.ctx.session
             params = request.args
             async with session.begin():
-                size = int(params.get('pageSize', 10))
-                page = int(params.get('page', 1))
-                [result, count] = await get_all_warehouse(page, size)
+                [result, count] = await get_all_warehouse()
 
             return resJson(resType.OK, result, count)
         except:

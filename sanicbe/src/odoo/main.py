@@ -39,7 +39,7 @@ async def search_partner():
 
 # return product/variant details by ids = []
 async def get_prod_detail_by_id(ids=[], offset=0, limit=10, count=0):
-    offset = offset_correction(offset)
+    offset = await offset_correction(offset)
     if count == 0:
         count = models.execute_kw(DB, uid, PWD,
                                   'product.product', 'search_count',
@@ -97,13 +97,11 @@ async def get_prod_detail_by_id(ids=[], offset=0, limit=10, count=0):
 
 # Warehouse Info
 # return search detail products
-async def get_all_warehouse(offset=0, limit=10, count=0):
-    offset = offset_correction(offset)
-    if count == 0:
-        count = models.execute_kw(DB, uid, PWD,
-                                  'stock.warehouse',
-                                  'search_count',
-                                  [[['active', '=', True]]])
+async def get_all_warehouse():
+    count = models.execute_kw(DB, uid, PWD,
+                              'stock.warehouse',
+                              'search_count',
+                              [[['active', '=', True]]])
 
     output = models.execute_kw(DB, uid, PWD,
                                'stock.warehouse',
@@ -118,7 +116,7 @@ async def get_all_warehouse(offset=0, limit=10, count=0):
                                    'delivery_steps',
                                    'create_date',
                                    'create_uid'
-                               ], 'offset': offset, 'limit': limit})
+                               ], 'offset': 0, 'limit': count})
 
     return [output, count]
 
@@ -126,7 +124,7 @@ async def get_all_warehouse(offset=0, limit=10, count=0):
 # Product Template
 # Search product main class
 async def get_prod_temp(offset=0, limit=10, count=0):
-    offset = offset_correction(offset)
+    offset = await offset_correction(offset)
     if count == 0:
         count = models.execute_kw(DB, uid, PWD,
                                   'product.template',
@@ -161,7 +159,7 @@ async def get_prod_temp(offset=0, limit=10, count=0):
 
 # POS
 async def get_pos_sale_report(offset=0, limit=10, count=0):
-    offset = offset_correction(offset)
+    offset = await offset_correction(offset)
     if count == 0:
         count = models.execute_kw(DB, uid, PWD,
                                   'account.invoice.report',
@@ -179,7 +177,7 @@ async def get_pos_sale_report(offset=0, limit=10, count=0):
 # POS
 # TODO: date_order, create_date not local time, UTC
 async def get_pos_order(offset=0, limit=10, date=None, count=0):
-    offset = offset_correction(offset)
+    offset = await offset_correction(offset)
     [start_from, end_to] = await converto(date)
 
     if count == 0:
@@ -319,7 +317,7 @@ async def get_pos_order_line(date=None, orderId=0):
 # -----------------
 
 # Set Odoo Offset/page to default
-def offset_correction(offset: int):
+async def offset_correction(offset: int):
     if offset > 0:
         offset = offset - 1
     return int(offset)

@@ -2,19 +2,12 @@ import datetime as dt
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
-from views.odoo import get_export_order
-from models.role import Role
-from sqlalchemy import select
+from views.warehouse import migrateWarehouseToDB
 
 
 async def odooWarehouse(bar, app):
     print('Cronjob running at: %s - %s' % (dt.datetime.now(), bar))
-    async with app.db.connect() as conn:
-        stmt = select(Role).where(Role.name == 'Admin')
-        data = await conn.execute(stmt)
-        print("successss", data.scalar())
-
-    # await get_export_order()
+    app.add_task(migrateWarehouseToDB(app))
 
 
 def assign_time(year="*", month="*", day="*", hour="*", minute="*", second="*"):

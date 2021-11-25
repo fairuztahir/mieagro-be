@@ -17,7 +17,8 @@ from sanic.log import logger
 from sanic import Blueprint
 from models.warehouse import Warehouse
 from utils.auth import protected
-from sqlalchemy import update
+from sqlalchemy import update, select
+from odoo.main import get_all_warehouse
 
 import moment
 
@@ -316,3 +317,16 @@ async def bulkUpdateQuery(session_, model_, pk_, values_):
         return mappings
     except:
         exceptionRaise('bulkUpdateQuery')
+
+
+# Cron auto feed to db func
+async def migrateWarehouseToDB(app):
+    async with app.db.connect() as conn:
+        [output, count] = await get_all_warehouse()
+        print('output', count)
+
+        stmt = select(Warehouse).where(Warehouse.odoo_id == 1)
+        data = await conn.execute(stmt)
+        print("successss", data.scalar())
+        await conn.close()
+    return True
