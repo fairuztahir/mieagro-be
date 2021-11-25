@@ -3,10 +3,17 @@ import datetime as dt
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from views.odoo import get_export_order
+from models.role import Role
+from sqlalchemy import select
 
 
-async def odoo(bar):
+async def odooWarehouse(bar, app):
     print('Cronjob running at: %s - %s' % (dt.datetime.now(), bar))
+    async with app.db.connect() as conn:
+        stmt = select(Role).where(Role.name == 'Admin')
+        data = await conn.execute(stmt)
+        print("successss", data.scalar())
+
     # await get_export_order()
 
 
@@ -22,7 +29,7 @@ scheduler = AsyncIOScheduler()
 
 async def main(app, loop):
     # Example to run by time gap
-    scheduler.add_job(odoo, 'interval', minutes=15, args=["Odoo"])
+    scheduler.add_job(odooWarehouse, 'interval', minutes=1, args=["Odoo", app])
 
     # Run cron with specific time in UTC
     # scheduler.add_job(odoo, trigger=assign_time("*", "*", "*", "11",
