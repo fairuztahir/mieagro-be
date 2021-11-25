@@ -9,6 +9,7 @@ class Warehouse(BaseModel):
     odoo_id = Column(INTEGER(), index=True)
     code = Column(String(20))
     name = Column(String(100))
+    display_name = Column(String(100))
     active = Column(Boolean(), default=False)
     reception_steps = Column(String(20), default='one_step')
     delivery_steps = Column(String(20), default='ship_only')
@@ -23,6 +24,7 @@ class Warehouse(BaseModel):
             "odoo_id": self.odoo_id,
             "code": self.code,
             "name": self.name,
+            "display_name": self.display_name,
             "active": self.active,
             "reception_steps": self.reception_steps,
             "delivery_steps": self.delivery_steps,

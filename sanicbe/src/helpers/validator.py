@@ -216,3 +216,122 @@ def updateUserValidator(input={}):
         },
     }
     return mainValidator(schema, input)
+
+
+# Post role validator
+def postWarehouseValidator(input=[]):
+    schema = {
+        'id': {
+            'required': True,
+            'type': 'integer',
+            'coerce': int,
+            'min': 1
+        },
+        'code': {
+            'required': True,
+            'type': 'string',
+            'empty': False,
+            'maxlength': 20
+        },
+        'name': {
+            'required': True,
+            'type': 'string',
+            'empty': False,
+            'maxlength': 100
+        },
+        'display_name': {
+            'required': True,
+            'type': 'string',
+            'empty': False,
+            'maxlength': 100
+        },
+        'active': {
+            'required': True,
+            'type': 'boolean',
+            'empty': False
+        },
+        'reception_steps': {
+            'required': False,
+            'type': 'string',
+            'empty': False,
+            'maxlength': 20
+        },
+        'delivery_steps': {
+            'required': False,
+            'type': 'string',
+            'empty': False,
+            'maxlength': 20
+        },
+        'create_date': {
+            'required': True,
+            'type': 'string',
+            'empty': False,
+            'maxlength': 20
+        }
+    }
+
+    flag_ = True
+    err_list = []
+    for i in range(len(input)):
+        [result, err] = mainValidator(schema, input[i])
+        if not result:
+            flag_ = False
+            err_list.append({i: err})
+
+    return [flag_, err_list]
+
+
+# Update warehouse validator
+def updateWarehouseValidator(input={}):
+    schema = {
+        'id': {
+            'required': False,
+            'type': 'integer',
+            'empty': False,
+            'coerce': int,
+            'min': 1
+        },
+        'code': {
+            'required': False,
+            'type': 'string',
+            'empty': False,
+            'maxlength': 20
+        },
+        'name': {
+            'required': False,
+            'type': 'string',
+            'empty': False,
+            'maxlength': 100
+        },
+        'display_name': {
+            'required': False,
+            'type': 'string',
+            'empty': False,
+            'maxlength': 100
+        },
+        'active': {
+            'required': False,
+            'type': 'boolean',
+            'empty': False
+        },
+        'reception_steps': {
+            'required': False,
+            'type': 'string',
+            'empty': False,
+            'maxlength': 20
+        },
+        'delivery_steps': {
+            'required': False,
+            'type': 'string',
+            'empty': False,
+            'maxlength': 20
+        },
+        'create_date': {
+            'required': False,
+            'type': 'string',
+            'empty': False,
+            'maxlength': 20
+        }
+    }
+
+    return mainValidator(schema, input)

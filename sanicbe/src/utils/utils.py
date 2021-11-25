@@ -112,6 +112,8 @@ async def findRecordByColumn(session_, model_, column_, value_, onlyId_=True):
         result = await session_.execute(stmt)
         record = result.scalar()
 
+        if not record:
+            return None
         if not onlyId_:
             return record.to_dict()
         else:

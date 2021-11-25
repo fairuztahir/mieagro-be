@@ -11,7 +11,7 @@ from helpers.helpers import (
     find_duplicate,
     set_dict
 )
-from helpers.validator import paginateValidator, postRoleValidator
+from helpers.validator import paginateValidator, postWarehouseValidator, updateWarehouseValidator
 from utils.utils import (
     paginatedQuery,
     insertQuery,
@@ -24,6 +24,9 @@ from sanic.log import logger
 from sanic import Blueprint
 from models.warehouse import Warehouse
 from utils.auth import protected
+from sqlalchemy import update
+
+import moment
 
 # -----------------
 # API Class Section
@@ -49,8 +52,18 @@ class WarehouseController():
                 page = int(params.get('page', 1))
                 sort = str(params.get('sortParam', 'created_at'))
                 order = str(params.get('sortBy', 'DESC'))
-                select_items: any = [Warehouse.id, Warehouse.name,
-                                     Warehouse.description, Warehouse.created_at]
+                select_items: any = [
+                    Warehouse.id,
+                    Warehouse.odoo_id,
+                    Warehouse.code,
+                    Warehouse.name,
+                    Warehouse.display_name,
+                    Warehouse.active,
+                    Warehouse.reception_steps,
+                    Warehouse.delivery_steps,
+                    Warehouse.description,
+                    Warehouse.created_at
+                ]
 
                 [stmt, count_] = paginatedQuery(
                     Warehouse, sort, order, select_items, size, page)
@@ -80,69 +93,41 @@ class WarehouseController():
         except:
             exceptionRaise('getWarehouse')
 
+    # MARK: Support scalar and multi input
+
     @wh.post("/warehouse")
     @protected
     async def createWarehouse(request):
         try:
             session = request.ctx.session
             body = request.json
-            # Input validation
-            [valid, error] = postRoleValidator(body)
-            if not valid:
-                return resJson(resType.INVALID_PARAMS, error, len(error))
-
-            if validate_list(body):
-                return resJson(resType.SINGLE_INSERT)
 
             async with session.begin():
-                output = None
-                [role, err] = await warehouseMultiAndScalarValidate(session, [body])
+                if validate_list(body):
+                    body_records = body
+                else:
+                    body_records = [body]
 
-                if err:
-                    filtered = await listRemoveIf('status', [role])
-                    return resJson(resType.EXISTING, filtered, len(filtered))
+                # Input validation
+                [valid, error] = postWarehouseValidator(body_records)
+                if not valid:
+                    return resJson(resType.INVALID_PARAMS, error, len(error))
 
-                result = await insertQuery(session, Warehouse, role)
+                output_list = []
+
+                [new_list, update_list, redundant_ids] = await insertOrUpdate(session, body_records)
+                if (not update_list) and (not redundant_ids):
+                    # Post new record
+                    result = await insertQuery(session, Warehouse, new_list)
+                else:
+                    return resJson(resType.DUPLICATE, redundant_ids, len(redundant_ids))
 
                 for u in result:
-                    output = dict(u)
+                    output_list.append(dict(u))
 
-            return resJson(resType.OK, output)
+            return resJson(resType.OK, output_list, len(output_list))
         except:
             exceptionRaise('createWarehouse')
-
-    # @r.post("/roles")
-    # @protected
-    # async def createRoles(request):
-    #     try:
-    #         session = request.ctx.session
-    #         body = request.json
-    #         if not validate_list(body):
-    #             return resJson(resType.MULTI_INSERT)
-
-    #         async with session.begin():
-    #             id_list_ = []
-    #             [role, err, duplicate] = await warehouseMultiAndScalarValidate(session, body, True)
-
-    #             if (err) and (len(duplicate) > 0):
-    #                 return resJson(resType.DUPLICATE, duplicate, await count_list(duplicate))
-
-    #             if (err) and (len(role) > 0):
-    #                 if len(role) == 1:
-    #                     list_ = [role]
-    #                 else:
-    #                     list_ = role
-    #                 filtered = await listRemoveIf('status', list_)
-    #                 return resJson(resType.EXISTING, filtered, await count_list(filtered))
-
-    #             result = await insertQuery(session, Warehouse, role)
-
-    #             for u in result:
-    #                 id_list_.append(dict(u))
-
-    #         return resJson(resType.OK, id_list_, len(id_list_))
-    #     except:
-    #         exceptionRaise('createRoles')
 
     @wh.delete("/warehouse/<pk_:uuid>")
     @protected
@@ -163,140 +148,178 @@ class WarehouseController():
         except:
             exceptionRaise('destroyWarehouse')
 
-    # @r.put("/roles")
-    # @protected
-    # async def destroyRoles(request):
-    #     try:
-    #         session = request.ctx.session
-    #         body = request.json
-    #         resMsg = resType.SUCCESS_DEL
-    #         async with session.begin():
-    #             getIds = body.get('ids', [])
-    #             if len(getIds) == 0:
-    #                 return resJson(resType.NO_INPUT)
+    @wh.put("/warehouse/<pk_:uuid>")
+    @protected
+    async def updateWarehouse(request, pk_):
+        try:
+            session = request.ctx.session
+            b = request.json
+            # Input validation
+            [valid, error] = updateWarehouseValidator(b)
+            if not valid:
+                return resJson(resType.INVALID_PARAMS, error, len(error))
 
-    #             # validate if record not exists
-    #             role = await findRecordById(session, Role, getIds, True)
-    #             valid_role = await set_dict(role)
+            resMsg = resType.SUCCESS_UPD
+            async with session.begin():
+                warehouse_ = await findRecordById(session, Warehouse, pk_)
+                if not warehouse_:
+                    return resJson(resType.NO_RECORD)
 
-    #             not_exists_ = await findNotExists(getIds, valid_role)
+                id = b.get('id', None)
+                code = b.get('code', None)
+                name = b.get('name', None)
+                display_name = b.get('display_name', None)
+                active = b.get('active', None)
+                reception_steps = b.get('reception_steps', None)
+                delivery_steps = b.get('delivery_steps', None)
+                create_date = b.get('create_date', None)
 
-    #             if len(not_exists_) > 0:
-    #                 return resJson(resType.NO_RECORD, not_exists_, len(not_exists_))
+                values_ = {}
+                if id != warehouse_.odoo_id:
+                    values_['odoo_id'] = int(id)
+                if code != warehouse_.code:
+                    values_['code'] = code
+                if name != warehouse_.name:
+                    values_['name'] = name
+                if display_name != warehouse_.display_name:
+                    values_['display_name'] = display_name
+                if bool(active) != warehouse_.active:
+                    values_['active'] = bool(active)
+                if reception_steps != warehouse_.reception_steps:
+                    values_['reception_steps'] = reception_steps
+                if delivery_steps != warehouse_.delivery_steps:
+                    values_['delivery_steps'] = delivery_steps
+                if moment.date(str(create_date)).date != warehouse_.created_at:
+                    values_['created_at'] = moment.date(
+                        str(create_date)).date
 
-    #             destroy = await softDelbyId(session, Role, getIds)
-    #             if not destroy:
-    #                 resMsg = resType.FAIL_DELETE
+                if len(values_) < 1:
+                    return resJson(resType.NO_UPD, {})
 
-    #             output = await set_dict(destroy)
-    #         return resJson(resMsg, output, len(output))
-    #     except:
-    #         exceptionRaise('destroyRoles')
+                setWarehouse_ = await updateById(session, Warehouse, pk_, values_)
+                if not setWarehouse_:
+                    resMsg = resType.FAIL_UPD
 
-    # @r.put("/role/<pk_:uuid>")
-    # @protected
-    # async def updateRole(request, pk_):
-    #     try:
-    #         session = request.ctx.session
-    #         body = request.json
-    #         # Input validation
-    #         [valid, error] = postRoleValidator(body)
-    #         if not valid:
-    #             return resJson(resType.INVALID_PARAMS, error, len(error))
+            return resJson(resMsg, setWarehouse_)
+        except:
+            exceptionRaise('updateWarehouse')
 
-    #         resMsg = resType.SUCCESS_UPD
-    #         async with session.begin():
-    #             role_ = await findRecordById(session, Role, pk_)
-    #             if not role_:
-    #                 return resJson(resType.NO_RECORD)
+    @wh.patch("/warehouse")
+    @protected
+    async def addOrUpdateWarehouse(request):
+        try:
+            session = request.ctx.session
+            body = request.json
 
-    #             getName = body.get('name', None)
-    #             getDesc = body.get('desc', None)
+            async with session.begin():
+                if validate_list(body):
+                    body_records = body
+                else:
+                    body_records = [body]
 
-    #             convert_name = capitalName(getName)
-    #             convert_desc = capitalSentence(getDesc)
+                # Input validation
+                [valid, error] = postWarehouseValidator(body_records)
+                if not valid:
+                    return resJson(resType.INVALID_PARAMS, error, len(error))
 
-    #             values_ = {}
-    #             if (getName) and (role_.name != convert_name):
-    #                 values_['name'] = convert_name
+                output_list = []
 
-    #             if (getDesc) and (role_.description != convert_desc):
-    #                 values_['description'] = convert_desc
+                [new_list, update_list, redundant_ids] = await insertOrUpdate(session, body_records)
+                if new_list:
+                    # Post new record
+                    result = await insertQuery(session, Warehouse, new_list)
 
-    #             if len(values_) < 1:
-    #                 return resJson(resType.NO_UPD, {})
+                    for u in result:
+                        output_list.append(u.id)
 
-    #             setRole_ = await updateById(session, Role, pk_, values_)
-    #             if not setRole_:
-    #                 resMsg = resType.FAIL_UPD
+                if update_list:
+                    result = await bulkUpdateQuery(session, Warehouse, redundant_ids, update_list)
 
-    #         return resJson(resMsg, setRole_)
-    #     except:
-    #         exceptionRaise('updateRole')
+                    for u in result:
+                        output_list.append(u)
+
+                if not output_list:
+                    return resJson(resType.NO_UPD, {})
+
+            return resJson(resType.OK, output_list, len(output_list))
+        except:
+            exceptionRaise('addOrUpdateWarehouse')
 
 
 # -----------------
 # functions section
 # -----------------
-async def warehouseMultiAndScalarValidate(session, body, multi=False):
+async def insertOrUpdate(session, body):
     try:
-        role_list, temp_list, temp_name, flag_ = [], [], None, False
-        outer_flag = False
-
+        new_list, update_list, redundant_ids = [], [], []
         for b in body:
-            getName = str(b.get('name', None))
-            getDesc = b.get('desc', None)
+            id = b.get('id', None)
+            code = b.get('code', None)
+            name = b.get('name', None)
+            display_name = b.get('display_name', None)
+            active = b.get('active', None)
+            reception_steps = b.get('reception_steps', None)
+            delivery_steps = b.get('delivery_steps', None)
+            create_date = b.get('create_date', None)
+            w_record = {}
 
-            if getName != temp_name:
-                role_ = await findRecordByColumn(session, Warehouse, Warehouse.name, capitalName(getName))
-                if role_:
-                    flag_ = True
-                    outer_flag = True
-                else:
-                    flag_ = False
+            warehouse = await findRecordByColumn(session, Warehouse, Warehouse.odoo_id, int(id), False)
+            if not warehouse:
+                # register record
+                w_record = {
+                    "odoo_id": int(id),
+                    "code": str(code),
+                    "name": str(name),
+                    "display_name": str(display_name),
+                    "active": bool(active),
+                    "reception_steps": str(reception_steps),
+                    "delivery_steps": str(delivery_steps),
+                    "created_at": moment.date(str(create_date)).date
+                }
+                new_list.append(w_record)
+            else:
+                # update record
+                if code != warehouse['code']:
+                    w_record['code'] = code
+                if name != warehouse['name']:
+                    w_record['name'] = name
+                if display_name != warehouse['display_name']:
+                    w_record['display_name'] = display_name
+                if bool(active) != warehouse['active']:
+                    w_record['active'] = bool(active)
+                if reception_steps != warehouse['reception_steps']:
+                    w_record['reception_steps'] = reception_steps
+                if delivery_steps != warehouse['delivery_steps']:
+                    w_record['delivery_steps'] = delivery_steps
+                if moment.date(str(create_date)).date != warehouse['created_at']:
+                    w_record['created_at'] = moment.date(
+                        str(create_date)).date
 
-                temp_name = getName
+                if w_record:
+                    w_record['odoo_id'] = warehouse['odoo_id']
+                    update_list.append(w_record)
 
-            convert_name = capitalName(getName)
-            convert_desc = capitalSentence(getDesc)
+                redundant_ids.append(int(id))
 
-            role_ = {"name": convert_name, "description": convert_desc}
-            existing = {"record": temp_name, "status": invertBool(flag_)}
-
-            if multi:
-                role_list.append(role_)
-                temp_list.append(existing)
-
-        if multi:
-            dup_list = await find_duplicate(role_list, 'name')
-            if dup_list:
-                outer_flag = True
-
-            if outer_flag:
-                return [temp_list, outer_flag, dup_list]
-
-            return [role_list, outer_flag, None]
-
-        if outer_flag:
-            return [existing, outer_flag]
-
-        return [role_, outer_flag]
+        return [new_list, update_list, redundant_ids]
     except:
-        exceptionRaise('roleMultiAndScalarInput')
+        exceptionRaise('insertOrUpdate')
 
 
-async def findNotExists(ori_, validated_):
+# Bulk update
+async def bulkUpdateQuery(session_, model_, pk_, values_):
     try:
-        display_err = []
-        for a in ori_:
-            flag_ = False
-            for b in validated_:
-                if a == b.get('id'):
-                    flag_ = True
-                    break
-            if not flag_:
-                display_err.append(a)
+        mappings = []
+        for x in values_:
+            print(x)
+            stmt = update(model_).where(model_.odoo_id == x['odoo_id']).\
+                where(model_.deleted_at.is_(None)).\
+                values(x).\
+                returning(model_.id)
 
-        return display_err
+            result = await session_.execute(stmt)
+            mappings.append(result.scalar())
+
+        return mappings
     except:
-        exceptionRaise('findNotExists')
+        exceptionRaise('bulkUpdateQuery')
