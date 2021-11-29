@@ -111,12 +111,27 @@ async def findRecordByColumn(session_, model_, column_, value_, onlyId_=True):
 
         result = await session_.execute(stmt)
         record = result.scalar()
+        # record = result.fetchone()
+        return record
+    except:
+        exceptionRaise('findRecordByColumn')
 
-        if not onlyId_:
-            return record.to_dict()
+
+# Find record data by column name and it's value (Background process)
+# Set onlyId_ = True to return only Id value
+async def findRecordByColumnCron(session_, model_, column_, value_, onlyId_=True):
+    try:
+        if onlyId_:
+            stmt = select([model_.id]).where(column_ == value_).\
+                filter(model_.deleted_at.is_(None))
         else:
-            return record
+            stmt = select(model_).where(column_ == value_).\
+                filter(model_.deleted_at.is_(None))
 
+        result = await session_.execute(stmt)
+        record = result.fetchone()
+
+        return record
     except:
         exceptionRaise('findRecordByColumn')
 
@@ -148,16 +163,16 @@ async def searchRecordByColumn(session_, model_, column_, value_, onlyId_=True):
 async def softDelbyId(session_, model_, pk_):
     try:
         flag_ = validate_list(pk_)
-        a = arrow.utcnow()
+        a = arrow.utcnow().datetime
         if flag_:
             stmt = update(model_).where(model_.id.in_(pk_)).\
                 where(model_.deleted_at.is_(None)).\
-                values(deleted_at=a.datetime).\
+                values(deleted_at=a.replace(tzinfo=None)).\
                 returning(model_.id)
         else:
             stmt = update(model_).where(model_.id == pk_).\
                 where(model_.deleted_at.is_(None)).\
-                values(deleted_at=a.datetime).\
+                values(deleted_at=a.replace(tzinfo=None)).\
                 returning(model_.id)
 
         result = await session_.execute(stmt)

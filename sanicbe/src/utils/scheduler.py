@@ -23,7 +23,7 @@ scheduler = AsyncIOScheduler(timezone=valueOf.UTC_ZONE.fulltext)
 
 async def main(app, loop):
     # Example to run by time gap
-    scheduler.add_job(odoo, 'interval', minutes=59, args=["Odoo", app])
+    scheduler.add_job(odoo, 'interval', minutes=2, args=["Odoo", app])
 
     # Run cron with specific time in UTC
     # scheduler.add_job(odoo, trigger=assign_time("*", "*", "*", "11",

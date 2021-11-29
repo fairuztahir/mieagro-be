@@ -11,6 +11,7 @@ from helpers.query import (
     softDelbyId,
     findRecordById,
     findRecordByColumn,
+    findRecordByColumnCron,
     updateById
 )
 from sanic.log import logger
@@ -183,9 +184,10 @@ class WarehouseController():
                     values_['reception_steps'] = reception_steps
                 if delivery_steps != warehouse_.delivery_steps:
                     values_['delivery_steps'] = delivery_steps
-                if arrow.get(str(create_date)).datetime != warehouse_.created_at:
-                    values_['created_at'] = arrow.get(
-                        str(create_date)).datetime
+
+                date_ = arrow.get(str(create_date)).datetime
+                if date_.replace(tzinfo=None) != warehouse_.created_at:
+                    values_['created_at'] = date_.replace(tzinfo=None)
 
                 if len(values_) < 1:
                     return resJson(resType.NO_UPD, {})
@@ -201,49 +203,49 @@ class WarehouseController():
     @wh.patch("/warehouse")
     @protected
     async def addOrUpdateWarehouse(request):
-        try:
-            session = request.ctx.session
-            body = request.json
+        # try:
+        session = request.ctx.session
+        body = request.json
 
-            async with session.begin():
-                if validate_list(body):
-                    body_records = body
-                else:
-                    body_records = [body]
+        async with session.begin():
+            if validate_list(body):
+                body_records = body
+            else:
+                body_records = [body]
 
-                # Input validation
-                [valid, error] = postWarehouseValidator(body_records)
-                if not valid:
-                    return resJson(resType.INVALID_PARAMS, error, len(error))
+            # Input validation
+            [valid, error] = postWarehouseValidator(body_records)
+            if not valid:
+                return resJson(resType.INVALID_PARAMS, error, len(error))
 
-                output_list = []
+            output_list = []
 
-                [new_list, update_list, redundant_ids] = await insertOrUpdate(session, body_records)
-                if new_list:
-                    # Post new record
-                    result = await insertQuery(session, Warehouse, new_list)
+            [new_list, update_list, redundant_ids] = await insertOrUpdate(session, body_records)
+            if new_list:
+                # Post new record
+                result = await insertQuery(session, Warehouse, new_list)
 
-                    for u in result:
-                        output_list.append(u.id)
+                for u in result:
+                    output_list.append(u.id)
 
-                if update_list:
-                    result = await bulkUpdateQuery(session, Warehouse, redundant_ids, update_list)
+            if update_list:
+                result = await bulkUpdateQuery(session, Warehouse, redundant_ids, update_list)
 
-                    for u in result:
-                        output_list.append(u)
+                for u in result:
+                    output_list.append(u)
 
-                if not output_list:
-                    return resJson(resType.NO_UPD, {})
+            if not output_list:
+                return resJson(resType.NO_UPD, {})
 
-            return resJson(resType.OK, output_list, len(output_list))
-        except:
-            exceptionRaise('addOrUpdateWarehouse')
+        return resJson(resType.OK, output_list, len(output_list))
+        # except:
+        #     exceptionRaise('addOrUpdateWarehouse')
 
 
 # -----------------
 # functions section
 # -----------------
-async def insertOrUpdate(session, body):
+async def insertOrUpdate(session, body, bg=False):
     # try:
     new_list, update_list, redundant_ids = [], [], []
     for b in body:
@@ -257,9 +259,13 @@ async def insertOrUpdate(session, body):
         create_date = b.get('create_date', None)
         w_record = {}
 
-        warehouse = await findRecordByColumnWH(session, Warehouse, Warehouse.odoo_id, int(id), False)
+        if not bg:
+            warehouse = await findRecordByColumn(session, Warehouse, Warehouse.odoo_id, int(id), False)
+        else:
+            warehouse = await findRecordByColumnCron(session, Warehouse, Warehouse.odoo_id, int(id), False)
         if not warehouse:
             # register record
+            date_ = arrow.get(str(create_date)).datetime
             w_record = {
                 "odoo_id": int(id),
                 "code": str(code),
@@ -268,11 +274,13 @@ async def insertOrUpdate(session, body):
                 "active": bool(active),
                 "reception_steps": str(reception_steps),
                 "delivery_steps": str(delivery_steps),
-                "created_at": arrow.get(str(create_date)).datetime
+                "created_at": date_.replace(tzinfo=None)
             }
             new_list.append(w_record)
         else:
             # update record
+            date_ = arrow.get(str(create_date)).datetime
+
             if code != warehouse.code:
                 w_record['code'] = code
             if name != warehouse.name:
@@ -285,8 +293,8 @@ async def insertOrUpdate(session, body):
                 w_record['reception_steps'] = reception_steps
             if delivery_steps != warehouse.delivery_steps:
                 w_record['delivery_steps'] = delivery_steps
-            if arrow.get(str(create_date)).datetime != warehouse.created_at:
-                w_record['created_at'] = arrow.get(str(create_date)).datetime
+            if date_.replace(tzinfo=None) != warehouse.created_at:
+                w_record['created_at'] = date_.replace(tzinfo=None)
 
             if w_record:
                 w_record['odoo_id'] = warehouse.odoo_id
@@ -325,7 +333,7 @@ async def cronAddUpdateProcess(session, body):
         body_records = [body]
     output_list = []
 
-    [new_list, update_list, redundant_ids] = await insertOrUpdate(session, body_records)
+    [new_list, update_list, redundant_ids] = await insertOrUpdate(session, body_records, True)
     if new_list:
         # Post new record
         result = await insertQuery(session, Warehouse, new_list)
@@ -347,7 +355,7 @@ async def cronAddUpdateProcess(session, body):
 
 # Cron auto feed to db func
 async def migrateWarehouseToDB(app):
-    async with app.db.connect() as conn:
+    async with app.db.begin() as conn:
         # TODO: async func can await call from odoo, need improvements?
         [output, count] = await get_all_warehouse()
         output_list = await cronAddUpdateProcess(conn, output)
@@ -362,22 +370,27 @@ async def migrateWarehouseToDB(app):
 
 
 async def findRecordByColumnWH(session_, model_, column_, value_, onlyId_=True):
-    try:
-        if onlyId_:
-            stmt = select([model_.id]).where(column_ == value_).\
-                filter(model_.deleted_at.is_(None))
-        else:
-            stmt = select(model_).where(column_ == value_).\
-                filter(model_.deleted_at.is_(None))
+    # try:
+    print('hoihoihoihoi:', onlyId_)
+    if onlyId_:
+        stmt = select([model_.id]).where(column_ == value_).\
+            filter(model_.deleted_at.is_(None))
+    else:
+        stmt = select(model_).where(column_ == value_).\
+            filter(model_.deleted_at.is_(None))
 
-        result = await session_.execute(stmt)
-        record = result.scalar()
+    result = await session_.execute(stmt)
+    # record = result.scalar()
+    record = result.fetchone()
 
-        print("test", record.to_dict())
-        # print("test", record)
-        if not record:
-            return None
-        return record
+    # print("test", record.to_dict())
+    if not record:
+        return None
 
-    except:
-        exceptionRaise('findRecordByColumnWH')
+    # m = await set_dict(result)
+    # data = [x for x in result]
+    print("test", record)
+    return record
+
+    # except:
+    #     exceptionRaise('findRecordByColumnWH')

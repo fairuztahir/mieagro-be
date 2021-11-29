@@ -354,7 +354,6 @@ async def massage_date_filter(data, start_from, end_to, count):
         tzone = valueOf.TIME_ZONE
         fmt = valueOf.DATE_FORMAT
         utc = arrow.get(date_order)
-        # salah
         date_order = utc.to(tzone.fulltext).datetime
         if (date_order <= end_to) and (date_order >= start_from):
             i['date_order'] = date_order
