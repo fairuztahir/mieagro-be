@@ -356,8 +356,8 @@ async def massage_date_filter(data, start_from, end_to, count):
         utc = arrow.get(date_order)
         date_order = utc.to(tzone.fulltext).datetime
         if (date_order <= end_to) and (date_order >= start_from):
-            i['date_order'] = date_order
-            i['create_date'] = date_order
+            i['date_order'] = utc.datetime
+            i['create_date'] = utc.datetime
             [output, total] = await get_pos_order_line(arrow.get(date_order).format(fmt.fulltext), i['id'])
             dict_order = await set_dict(output)
             record = await massage_pos_order_dict(i, dict_order)

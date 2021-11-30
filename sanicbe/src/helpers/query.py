@@ -111,13 +111,12 @@ async def findRecordByColumn(session_, model_, column_, value_, onlyId_=True):
 
         result = await session_.execute(stmt)
         record = result.scalar()
-        # record = result.fetchone()
         return record
     except:
         exceptionRaise('findRecordByColumn')
 
 
-# Find record data by column name and it's value (Background process)
+# Find record data by column name and it's value (Background asyncpg process)
 # Set onlyId_ = True to return only Id value
 async def findRecordByColumnCron(session_, model_, column_, value_, onlyId_=True):
     try:
@@ -133,7 +132,7 @@ async def findRecordByColumnCron(session_, model_, column_, value_, onlyId_=True
 
         return record
     except:
-        exceptionRaise('findRecordByColumn')
+        exceptionRaise('findRecordByColumnCron')
 
 
 # Search record data by column name and it's value
