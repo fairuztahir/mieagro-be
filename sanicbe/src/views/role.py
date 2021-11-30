@@ -11,7 +11,7 @@ from helpers.func import (
     find_duplicate,
     set_dict
 )
-from helpers.validator import paginateValidator, postRoleValidator
+from helpers.validator import paginateValidator, postRoleValidator, updateRoleValidator
 from helpers.query import (
     paginatedQuery,
     insertQuery,
@@ -200,7 +200,7 @@ class RoleController():
             session = request.ctx.session
             body = request.json
             # Input validation
-            [valid, error] = postRoleValidator(body)
+            [valid, error] = updateRoleValidator(body)
             if not valid:
                 return resJson(resType.INVALID_PARAMS, error, len(error))
 

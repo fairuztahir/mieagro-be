@@ -1,7 +1,7 @@
 from cerberus import Validator
 from .schema.product import prod_post_schema, prod_upd_schema
 from .schema.warehouse import wh_post_schema, wh_upd_schema
-from .schema.role import role_post_schema
+from .schema.role import role_post_schema, role_upd_schema
 from .schema.user import user_post_schema, user_upd_schema, user_reg_schema
 
 
@@ -70,6 +70,11 @@ def paginateValidator(input={}):
 # Post role validator
 def postRoleValidator(input={}):
     return mainValidator(role_post_schema, input)
+
+
+# Post role validator
+def updateRoleValidator(input={}):
+    return mainValidator(role_upd_schema, input)
 
 
 # Post user validator
