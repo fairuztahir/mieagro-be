@@ -123,24 +123,24 @@ async def get_all_warehouse():
 
 # Product Template
 # Search product main class
-async def get_prod_temp(offset=0, limit=10, count=0):
-    offset = await offset_correction(offset)
-    if count == 0:
-        count = models.execute_kw(DB, uid, PWD,
-                                  'product.template',
-                                  'search_count',
-                                  [[['active', '=', True]]])
+async def get_prod_temp():
+    count = models.execute_kw(DB, uid, PWD,
+                              'product.template',
+                              'search_count',
+                              [[['active', '=', True]]])
 
     output = models.execute_kw(DB, uid, PWD,
                                'product.template',
                                'search_read',
                                [[['active', '=', True]]],
                                {'fields': [
+                                   'default_code',
                                    'name',
                                    'display_name',
                                    'description',
                                    'uom_name',
                                    'active',
+                                   'available_in_pos',
                                    'price',
                                    'list_price',
                                    'standard_price',
@@ -152,7 +152,7 @@ async def get_prod_temp(offset=0, limit=10, count=0):
                                    'outgoing_qty',
                                    'create_date',
                                    'create_uid'
-                               ], 'offset': offset, 'limit': limit})
+                               ], 'offset': 0, 'limit': count})
 
     return [output, count]
 

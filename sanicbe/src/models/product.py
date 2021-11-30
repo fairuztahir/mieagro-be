@@ -12,6 +12,7 @@ class Product(BaseModel):
     name = Column(String(100))
     display_name = Column(String(150))
     active = Column(Boolean(), default=False)
+    available_in_pos = Column(Boolean(), default=False)
     uom_name = Column(String(20), default='Units')
     template_price = Column(DOUBLE_PRECISION(
         precision=10, asdecimal=True, decimal_return_scale=4), default=0.0000)

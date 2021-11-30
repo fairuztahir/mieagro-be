@@ -2,28 +2,26 @@ from helpers.func import (
     resJson,
     resType,
     exceptionRaise,
-    capitalName,
-    validate_list,
-    capitalSentence,
-    invertBool,
-    listRemoveIf,
-    count_list,
-    find_duplicate,
-    set_dict
+    validate_list
 )
-from helpers.validator import paginateValidator, postRoleValidator
+from helpers.validator import paginateValidator, postProductValidator, updateProductValidator
 from helpers.query import (
     paginatedQuery,
     insertQuery,
     softDelbyId,
     findRecordById,
     findRecordByColumn,
+    findRecordByColumnCron,
     updateById
 )
 from sanic.log import logger
 from sanic import Blueprint
 from models.product import Product
 from utils.auth import protected
+from sqlalchemy import update
+from odoo.main import get_prod_temp
+
+import arrow
 
 # -----------------
 # API Class Section
@@ -49,8 +47,27 @@ class ProductController():
                 page = int(params.get('page', 1))
                 sort = str(params.get('sortParam', 'created_at'))
                 order = str(params.get('sortBy', 'DESC'))
-                select_items: any = [Product.id, Product.name,
-                                     Product.description, Product.created_at]
+                select_items: any = [
+                    Product.id,
+                    Product.odoo_id,
+                    Product.code,
+                    Product.name,
+                    Product.display_name,
+                    Product.active,
+                    Product.available_in_pos,
+                    Product.uom_name,
+                    Product.template_price,
+                    Product.template_list_price,
+                    Product.template_cost_price,
+                    Product.product_variant_count,
+                    Product.product_variant_ids,
+                    Product.barcode,
+                    Product.qty_available,
+                    Product.incoming_qty,
+                    Product.outgoing_qty,
+                    Product.description,
+                    Product.created_at
+                ]
 
                 [stmt, count_] = paginatedQuery(
                     Product, sort, order, select_items, size, page)
@@ -80,69 +97,41 @@ class ProductController():
         except:
             exceptionRaise('getProduct')
 
+    # MARK: Support scalar and multi input
+
     @p.post("/product")
     @protected
     async def createProduct(request):
         try:
             session = request.ctx.session
             body = request.json
-            # Input validation
-            [valid, error] = postRoleValidator(body)
-            if not valid:
-                return resJson(resType.INVALID_PARAMS, error, len(error))
-
-            if validate_list(body):
-                return resJson(resType.SINGLE_INSERT)
 
             async with session.begin():
-                output = None
-                [role, err] = await warehouseMultiAndScalarValidate(session, [body])
+                if validate_list(body):
+                    body_records = body
+                else:
+                    body_records = [body]
 
-                if err:
-                    filtered = await listRemoveIf('status', [role])
-                    return resJson(resType.EXISTING, filtered, len(filtered))
+                # Input validation
+                [valid, error] = postProductValidator(body_records)
+                if not valid:
+                    return resJson(resType.INVALID_PARAMS, error, len(error))
 
-                result = await insertQuery(session, Product, role)
+                output_list = []
+
+                [new_list, update_list, redundant_ids] = await insertOrUpdate(session, body_records)
+                if (not update_list) and (not redundant_ids):
+                    # Post new record
+                    result = await insertQuery(session, Product, new_list)
+                else:
+                    return resJson(resType.DUPLICATE, redundant_ids, len(redundant_ids))
 
                 for u in result:
-                    output = dict(u)
+                    output_list.append(dict(u))
 
-            return resJson(resType.OK, output)
+            return resJson(resType.OK, output_list, len(output_list))
         except:
-            exceptionRaise('createWarehouse')
-
-    # @r.post("/roles")
-    # @protected
-    # async def createRoles(request):
-    #     try:
-    #         session = request.ctx.session
-    #         body = request.json
-    #         if not validate_list(body):
-    #             return resJson(resType.MULTI_INSERT)
-
-    #         async with session.begin():
-    #             id_list_ = []
-    #             [role, err, duplicate] = await warehouseMultiAndScalarValidate(session, body, True)
-
-    #             if (err) and (len(duplicate) > 0):
-    #                 return resJson(resType.DUPLICATE, duplicate, await count_list(duplicate))
-
-    #             if (err) and (len(role) > 0):
-    #                 if len(role) == 1:
-    #                     list_ = [role]
-    #                 else:
-    #                     list_ = role
-    #                 filtered = await listRemoveIf('status', list_)
-    #                 return resJson(resType.EXISTING, filtered, await count_list(filtered))
-
-    #             result = await insertQuery(session, Warehouse, role)
-
-    #             for u in result:
-    #                 id_list_.append(dict(u))
-
-    #         return resJson(resType.OK, id_list_, len(id_list_))
-    #     except:
-    #         exceptionRaise('createRoles')
+            exceptionRaise('createProduct')
 
     @p.delete("/product/<pk_:uuid>")
     @protected
@@ -161,142 +150,324 @@ class ProductController():
 
             return resJson(resMsg, destroy)
         except:
-            exceptionRaise('destroyProduct')
+            exceptionRaise('destroyWarehouse')
 
-    # @r.put("/roles")
-    # @protected
-    # async def destroyRoles(request):
-    #     try:
-    #         session = request.ctx.session
-    #         body = request.json
-    #         resMsg = resType.SUCCESS_DEL
-    #         async with session.begin():
-    #             getIds = body.get('ids', [])
-    #             if len(getIds) == 0:
-    #                 return resJson(resType.NO_INPUT)
+    @p.put("/product/<pk_:uuid>")
+    @protected
+    async def updateProduct(request, pk_):
+        try:
+            session = request.ctx.session
+            b = request.json
+            # Input validation
+            [valid, error] = updateProductValidator(b)
+            if not valid:
+                return resJson(resType.INVALID_PARAMS, error, len(error))
 
-    #             # validate if record not exists
-    #             role = await findRecordById(session, Role, getIds, True)
-    #             valid_role = await set_dict(role)
+            resMsg = resType.SUCCESS_UPD
+            async with session.begin():
+                product = await findRecordById(session, Product, pk_)
+                if not product:
+                    return resJson(resType.NO_RECORD)
 
-    #             not_exists_ = await findNotExists(getIds, valid_role)
+                id = b.get('id', None)
+                code = b.get('default_code', None)
+                name = b.get('name', None)
+                display_name = b.get('display_name', None)
+                active = b.get('active', None)
+                available_in_pos = b.get('available_in_pos', None)
+                uom_name = b.get('uom_name', None)
+                template_price = b.get('price', None)
+                template_list_price = b.get('list_price', None)
+                template_cost_price = b.get('standard_price', None)
+                product_variant_count = b.get('product_variant_count', None)
+                product_variant_ids = b.get('product_variant_ids', None)
+                barcode = b.get('barcode', None)
+                qty_available = b.get('qty_available', None)
+                incoming_qty = b.get('incoming_qty', None)
+                outgoing_qty = b.get('outgoing_qty', None)
+                description = b.get('description', None)
+                create_date = b.get('create_date', None)
 
-    #             if len(not_exists_) > 0:
-    #                 return resJson(resType.NO_RECORD, not_exists_, len(not_exists_))
+                w_record = {}
+                date_ = arrow.get(str(create_date)).datetime
 
-    #             destroy = await softDelbyId(session, Role, getIds)
-    #             if not destroy:
-    #                 resMsg = resType.FAIL_DELETE
+                # Condition if value is bool False (empty)
+                if not code:
+                    code = None
+                else:
+                    code = str(code)
 
-    #             output = await set_dict(destroy)
-    #         return resJson(resMsg, output, len(output))
-    #     except:
-    #         exceptionRaise('destroyRoles')
+                if not barcode:
+                    barcode = None
+                else:
+                    barcode = str(barcode)
 
-    # @r.put("/role/<pk_:uuid>")
-    # @protected
-    # async def updateRole(request, pk_):
-    #     try:
-    #         session = request.ctx.session
-    #         body = request.json
-    #         # Input validation
-    #         [valid, error] = postRoleValidator(body)
-    #         if not valid:
-    #             return resJson(resType.INVALID_PARAMS, error, len(error))
+                if id != product.odoo_id:
+                    w_record['odoo_id'] = int(id)
+                if code != product.code:
+                    w_record['code'] = code
+                if name != product.name:
+                    w_record['name'] = name
+                if display_name != product.display_name:
+                    w_record['display_name'] = display_name
+                if bool(active) != product.active:
+                    w_record['active'] = bool(active)
+                if bool(available_in_pos) != product.available_in_pos:
+                    w_record['available_in_pos'] = bool(available_in_pos)
+                if uom_name != product.uom_name:
+                    w_record['uom_name'] = uom_name
+                if float(template_price) != product.template_price:
+                    w_record['template_price'] = float(template_price)
+                if float(template_list_price) != product.template_list_price:
+                    w_record['template_list_price'] = float(
+                        template_list_price)
+                if float(template_cost_price) != product.template_cost_price:
+                    w_record['template_cost_price'] = float(
+                        template_cost_price)
+                if int(product_variant_count) != product.product_variant_count:
+                    w_record['product_variant_count'] = int(
+                        product_variant_count)
+                if list(product_variant_ids) != product.product_variant_ids:
+                    w_record['product_variant_ids'] = list(product_variant_ids)
+                if barcode != product.barcode:
+                    w_record['barcode'] = barcode
+                if float(qty_available) != product.qty_available:
+                    w_record['qty_available'] = float(qty_available)
+                if float(incoming_qty) != product.incoming_qty:
+                    w_record['incoming_qty'] = float(incoming_qty)
+                if float(outgoing_qty) != product.outgoing_qty:
+                    w_record['outgoing_qty'] = float(outgoing_qty)
+                if description != product.description:
+                    w_record['description'] = description
+                if date_.replace(tzinfo=None) != product.created_at:
+                    w_record['created_at'] = date_.replace(tzinfo=None)
 
-    #         resMsg = resType.SUCCESS_UPD
-    #         async with session.begin():
-    #             role_ = await findRecordById(session, Role, pk_)
-    #             if not role_:
-    #                 return resJson(resType.NO_RECORD)
+                if len(w_record) < 1:
+                    return resJson(resType.NO_UPD, {})
 
-    #             getName = body.get('name', None)
-    #             getDesc = body.get('desc', None)
+                setProduct = await updateById(session, Product, pk_, w_record)
+                if not setProduct:
+                    resMsg = resType.FAIL_UPD
 
-    #             convert_name = capitalName(getName)
-    #             convert_desc = capitalSentence(getDesc)
+            return resJson(resMsg, setProduct)
+        except:
+            exceptionRaise('updateProduct')
 
-    #             values_ = {}
-    #             if (getName) and (role_.name != convert_name):
-    #                 values_['name'] = convert_name
+    @p.patch("/product")
+    @protected
+    async def addOrUpdateProduct(request):
+        try:
+            session = request.ctx.session
+            body = request.json
 
-    #             if (getDesc) and (role_.description != convert_desc):
-    #                 values_['description'] = convert_desc
+            async with session.begin():
+                if validate_list(body):
+                    body_records = body
+                else:
+                    body_records = [body]
 
-    #             if len(values_) < 1:
-    #                 return resJson(resType.NO_UPD, {})
+                # Input validation
+                [valid, error] = postProductValidator(body_records)
+                if not valid:
+                    return resJson(resType.INVALID_PARAMS, error, len(error))
 
-    #             setRole_ = await updateById(session, Role, pk_, values_)
-    #             if not setRole_:
-    #                 resMsg = resType.FAIL_UPD
+                output_list = []
 
-    #         return resJson(resMsg, setRole_)
-    #     except:
-    #         exceptionRaise('updateRole')
+                [new_list, update_list, redundant_ids] = await insertOrUpdate(session, body_records)
+                if new_list:
+                    # Post new record
+                    result = await insertQuery(session, Product, new_list)
+
+                    for u in result:
+                        output_list.append(u.id)
+
+                if update_list:
+                    result = await bulkUpdateQuery(session, Product, redundant_ids, update_list)
+
+                    for u in result:
+                        output_list.append(u)
+
+                if not output_list:
+                    return resJson(resType.NO_UPD, {})
+
+            return resJson(resType.OK, output_list, len(output_list))
+        except:
+            exceptionRaise('addOrUpdateProduct')
 
 
 # -----------------
 # functions section
 # -----------------
-async def warehouseMultiAndScalarValidate(session, body, multi=False):
+async def insertOrUpdate(session, body, bg=False):
     try:
-        role_list, temp_list, temp_name, flag_ = [], [], None, False
-        outer_flag = False
+        new_list, update_list, redundant_ids = [], [], []
+        # Sort body data by id
+        body.sort(reverse=False, key=lambda e: e['id'])
 
         for b in body:
-            getName = str(b.get('name', None))
-            getDesc = b.get('desc', None)
+            id = b.get('id', None)
+            code = b.get('default_code', None)
+            name = b.get('name', None)
+            display_name = b.get('display_name', None)
+            active = b.get('active', None)
+            available_in_pos = b.get('available_in_pos', None)
+            uom_name = b.get('uom_name', None)
+            template_price = b.get('price', None)
+            template_list_price = b.get('list_price', None)
+            template_cost_price = b.get('standard_price', None)
+            product_variant_count = b.get('product_variant_count', None)
+            product_variant_ids = b.get('product_variant_ids', None)
+            barcode = b.get('barcode', None)
+            qty_available = b.get('qty_available', None)
+            incoming_qty = b.get('incoming_qty', None)
+            outgoing_qty = b.get('outgoing_qty', None)
+            description = b.get('description', None)
+            create_date = b.get('create_date', None)
+            w_record = {}
+            # Condition if value is bool False (empty)
+            if not code:
+                code = None
+            else:
+                code = str(code)
 
-            if getName != temp_name:
-                role_ = await findRecordByColumn(session, Product, Product.name, capitalName(getName))
-                if role_:
-                    flag_ = True
-                    outer_flag = True
-                else:
-                    flag_ = False
+            if not barcode:
+                barcode = None
+            else:
+                barcode = str(barcode)
 
-                temp_name = getName
+            if not bg:
+                product = await findRecordByColumn(session, Product, Product.odoo_id, int(id), False)
+            else:
+                product = await findRecordByColumnCron(session, Product, Product.odoo_id, int(id), False)
+            if not product:
+                # register record
+                date_ = arrow.get(str(create_date)).datetime
+                w_record = {
+                    "odoo_id": int(id),
+                    "code": code,
+                    "name": str(name),
+                    "display_name": str(display_name),
+                    "active": bool(active),
+                    "available_in_pos": bool(available_in_pos),
+                    "uom_name": str(uom_name),
+                    "template_price": float(template_price),
+                    "template_list_price": float(template_list_price),
+                    "template_cost_price": float(template_cost_price),
+                    "product_variant_count": int(product_variant_count),
+                    "product_variant_ids": list(product_variant_ids),
+                    "barcode": barcode,
+                    "qty_available": float(qty_available),
+                    "incoming_qty": float(incoming_qty),
+                    "outgoing_qty": float(outgoing_qty),
+                    "description": str(description),
+                    "created_at": date_.replace(tzinfo=None)
+                }
+                new_list.append(w_record)
+            else:
+                # update record
+                date_ = arrow.get(str(create_date)).datetime
 
-            convert_name = capitalName(getName)
-            convert_desc = capitalSentence(getDesc)
+                if code != product.code:
+                    w_record['code'] = code
+                if name != product.name:
+                    w_record['name'] = name
+                if display_name != product.display_name:
+                    w_record['display_name'] = display_name
+                if bool(active) != product.active:
+                    w_record['active'] = bool(active)
+                if bool(available_in_pos) != product.available_in_pos:
+                    w_record['available_in_pos'] = bool(available_in_pos)
+                if uom_name != product.uom_name:
+                    w_record['uom_name'] = uom_name
+                if float(template_price) != product.template_price:
+                    w_record['template_price'] = float(template_price)
+                if float(template_list_price) != product.template_list_price:
+                    w_record['template_list_price'] = float(
+                        template_list_price)
+                if float(template_cost_price) != product.template_cost_price:
+                    w_record['template_cost_price'] = float(
+                        template_cost_price)
+                if int(product_variant_count) != product.product_variant_count:
+                    w_record['product_variant_count'] = int(
+                        product_variant_count)
+                if list(product_variant_ids) != product.product_variant_ids:
+                    w_record['product_variant_ids'] = list(product_variant_ids)
+                if barcode != product.barcode:
+                    w_record['barcode'] = barcode
+                if float(qty_available) != product.qty_available:
+                    w_record['qty_available'] = float(qty_available)
+                if float(incoming_qty) != product.incoming_qty:
+                    w_record['incoming_qty'] = float(incoming_qty)
+                if float(outgoing_qty) != product.outgoing_qty:
+                    w_record['outgoing_qty'] = float(outgoing_qty)
+                if description != product.description:
+                    w_record['description'] = description
+                if date_.replace(tzinfo=None) != product.created_at:
+                    w_record['created_at'] = date_.replace(tzinfo=None)
 
-            role_ = {"name": convert_name, "description": convert_desc}
-            existing = {"record": temp_name, "status": invertBool(flag_)}
+                if w_record:
+                    w_record['odoo_id'] = product.odoo_id
+                    update_list.append(w_record)
 
-            if multi:
-                role_list.append(role_)
-                temp_list.append(existing)
+                redundant_ids.append(int(id))
 
-        if multi:
-            dup_list = await find_duplicate(role_list, 'name')
-            if dup_list:
-                outer_flag = True
-
-            if outer_flag:
-                return [temp_list, outer_flag, dup_list]
-
-            return [role_list, outer_flag, None]
-
-        if outer_flag:
-            return [existing, outer_flag]
-
-        return [role_, outer_flag]
+        return [new_list, update_list, redundant_ids]
     except:
-        exceptionRaise('roleMultiAndScalarInput')
+        exceptionRaise('insertOrUpdate')
 
 
-async def findNotExists(ori_, validated_):
+# Bulk update
+async def bulkUpdateQuery(session_, model_, pk_, values_):
     try:
-        display_err = []
-        for a in ori_:
-            flag_ = False
-            for b in validated_:
-                if a == b.get('id'):
-                    flag_ = True
-                    break
-            if not flag_:
-                display_err.append(a)
+        mappings = []
+        for x in values_:
+            print(x)
+            stmt = update(model_).where(model_.odoo_id == x['odoo_id']).\
+                where(model_.deleted_at.is_(None)).\
+                values(x).\
+                returning(model_.id)
 
-        return display_err
+            result = await session_.execute(stmt)
+            mappings.append(result.scalar())
+
+        return mappings
     except:
-        exceptionRaise('findNotExists')
+        exceptionRaise('bulkUpdateQuery')
+
+
+async def cronAddUpdateProcess(session, body):
+    if validate_list(body):
+        body_records = body
+    else:
+        body_records = [body]
+    output_list = []
+    [new_list, update_list, redundant_ids] = await insertOrUpdate(session, body_records, True)
+    if new_list:
+        # Post new record
+        result = await insertQuery(session, Product, new_list)
+
+        for u in result:
+            output_list.append(u.id)
+
+    if update_list:
+        result = await bulkUpdateQuery(session, Product, redundant_ids, update_list)
+
+        for u in result:
+            output_list.append(u)
+
+    if (not output_list) and (not redundant_ids):
+        await session.rollback()
+
+    return output_list
+
+
+# Cron auto feed to db func
+async def migrateProductToDB(app):
+    async with app.db.begin() as conn:
+        # TODO: async func can await call from odoo, need improvements?
+        [output, count] = await get_prod_temp()
+        output_list = await cronAddUpdateProcess(conn, output)
+
+        await conn.commit()
+        await conn.close()
+    return True

@@ -63,9 +63,9 @@ class WarehouseController():
                 [stmt, count_] = paginatedQuery(
                     Warehouse, sort, order, select_items, size, page)
                 result = await session.execute(stmt)
-                roles = result.all()
+                warehouses = result.all()
 
-                result_dict = [dict(role) for role in roles]
+                result_dict = [dict(warehouse) for warehouse in warehouses]
                 total_ = await session.execute(count_)
                 total = total_.scalar()
 
@@ -248,6 +248,9 @@ class WarehouseController():
 async def insertOrUpdate(session, body, bg=False):
     try:
         new_list, update_list, redundant_ids = [], [], []
+        # Sort body data by id
+        body.sort(reverse=False, key=lambda e: e['id'])
+
         for b in body:
             id = b.get('id', None)
             code = b.get('code', None)

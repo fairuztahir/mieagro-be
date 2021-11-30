@@ -1,4 +1,8 @@
 from cerberus import Validator
+from .schema.product import prod_post_schema, prod_upd_schema
+from .schema.warehouse import wh_post_schema, wh_upd_schema
+from .schema.role import role_post_schema
+from .schema.user import user_post_schema, user_upd_schema, user_reg_schema
 
 
 # default main validator
@@ -65,273 +69,57 @@ def paginateValidator(input={}):
 
 # Post role validator
 def postRoleValidator(input={}):
-    schema = {
-        'name': {
-            'required': True,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 30
-        },
-        'desc': {
-            'required': False,
-            'type': 'string',
-            'maxlength': 250
-        },
-    }
-    return mainValidator(schema, input)
+    return mainValidator(role_post_schema, input)
 
 
 # Post user validator
 def postUserValidator(input={}):
-    schema = {
-        'first_name': {
-            'required': True,
-            'type': 'list',
-            'schema': {
-                'type': 'string',
-                'empty': False,
-                'maxlength': 30
-            }
-        },
-        'last_name': {
-            'required': False,
-            'type': 'list',
-            'schema': {
-                'type': 'string',
-                'empty': True,
-                'maxlength': 30
-            }
-        },
-        'email': {
-            'required': True,
-            'type': 'list',
-            'schema': {
-                'type': 'string',
-                'empty': False,
-                'regex': '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-            }
-        },
-        'challenge': {
-            'required': True,
-            'type': 'list',
-            'schema': {
-                'type': 'string',
-                'empty': False,
-                'maxlength': 60
-            }
-        },
-        'role': {
-            'required': False,
-            'type': 'list',
-            'schema': {
-                'type': 'string',
-                'empty': False,
-                'maxlength': 30
-            }
-        },
-    }
-    return mainValidator(schema, input)
+    return mainValidator(user_post_schema, input)
 
 
 # Register user validator
 def registerUserValidator(input={}):
-    schema = {
-        'first_name': {
-            'required': True,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 30
-        },
-        'last_name': {
-            'required': False,
-            'type': 'string',
-            'empty': True,
-            'maxlength': 30
-        },
-        'email': {
-            'required': True,
-            'type': 'string',
-            'empty': False,
-            'regex': '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-        },
-        'challenge': {
-            'required': True,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 60
-        },
-        'role': {
-            'required': False,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 30
-        },
-        'x-key': {
-            'required': True,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 30
-        }
-    }
-    return mainValidator(schema, input)
+    return mainValidator(user_reg_schema, input)
 
 
 # Update user validator
 def updateUserValidator(input={}):
-    schema = {
-        'first_name': {
-            'required': False,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 30
-        },
-        'last_name': {
-            'required': False,
-            'type': 'string',
-            'empty': True,
-            'maxlength': 30
-        },
-        'email': {
-            'required': False,
-            'type': 'string',
-            'empty': False,
-            'regex': '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-        },
-        'challenge': {
-            'required': False,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 60
-        },
-        'role': {
-            'required': False,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 30
-        },
-        'status': {
-            'required': False,
-            'type': 'boolean',
-            'empty': False
-        },
-    }
-    return mainValidator(schema, input)
+    return mainValidator(user_upd_schema, input)
 
 
-# Post role validator
+# Post warehouse validator
 def postWarehouseValidator(input=[]):
-    schema = {
-        'id': {
-            'required': True,
-            'type': 'integer',
-            'coerce': int,
-            'min': 1
-        },
-        'code': {
-            'required': True,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 20
-        },
-        'name': {
-            'required': True,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 100
-        },
-        'display_name': {
-            'required': True,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 100
-        },
-        'active': {
-            'required': True,
-            'type': 'boolean',
-            'empty': False
-        },
-        'reception_steps': {
-            'required': False,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 20
-        },
-        'delivery_steps': {
-            'required': False,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 20
-        },
-        'create_date': {
-            'required': True,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 20
-        }
-    }
-
     flag_ = True
     err_list = []
     for i in range(len(input)):
-        [result, err] = mainValidator(schema, input[i])
+        [result, err] = mainValidator(wh_post_schema, input[i])
         if not result:
             flag_ = False
-            err_list.append({i: err})
+            err['id'] = input[i]['id']
+            err_list.append(err)
 
     return [flag_, err_list]
 
 
 # Update warehouse validator
 def updateWarehouseValidator(input={}):
-    schema = {
-        'id': {
-            'required': False,
-            'type': 'integer',
-            'empty': False,
-            'coerce': int,
-            'min': 1
-        },
-        'code': {
-            'required': False,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 20
-        },
-        'name': {
-            'required': False,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 100
-        },
-        'display_name': {
-            'required': False,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 100
-        },
-        'active': {
-            'required': False,
-            'type': 'boolean',
-            'empty': False
-        },
-        'reception_steps': {
-            'required': False,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 20
-        },
-        'delivery_steps': {
-            'required': False,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 20
-        },
-        'create_date': {
-            'required': False,
-            'type': 'string',
-            'empty': False,
-            'maxlength': 20
-        }
-    }
+    return mainValidator(wh_upd_schema, input)
 
-    return mainValidator(schema, input)
+
+# Post product validator
+def postProductValidator(input=[]):
+    flag_ = True
+    err_list = []
+    for i in range(len(input)):
+        [result, err] = mainValidator(prod_post_schema, input[i])
+        if not result:
+            flag_ = False
+            err['id'] = input[i]['id']
+            err_list.append(err)
+
+    return [flag_, err_list]
+
+
+# Update product validator
+def updateProductValidator(input={}):
+    return mainValidator(prod_upd_schema, input)

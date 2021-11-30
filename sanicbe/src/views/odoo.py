@@ -45,7 +45,7 @@ class OdooController():
             async with session.begin():
                 size = int(params.get('pageSize', 10))
                 page = int(params.get('page', 1))
-                [result, count] = await get_prod_temp(page, size)
+                [result, count] = await get_prod_temp()
 
                 for u in result:
                     if u['product_variant_count']:
@@ -68,7 +68,8 @@ class OdooController():
             async with session.begin():
                 size = int(params.get('pageSize', 10))
                 page = int(params.get('page', 1))
-                [result, count] = await get_prod_temp(page, size)
+                [result, count] = await get_prod_temp()
+                result.sort(reverse=False, key=lambda e: e['id'])
 
             return resJson(resType.OK, result, count)
         except:
