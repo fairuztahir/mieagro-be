@@ -135,48 +135,74 @@ async def get_prod_temp():
 
 # Product Attributes
 # Search product attribute class
-async def get_attr():
-    count = models.execute_kw(DB, uid, PWD,
-                              'product.attribute',
-                              'search_count',
-                              [[['id', '>', 0]]])
+async def get_attr(ids=[]):
+    if not ids:
+        condition = ['id', '>', 0]
+    else:
+        condition = ['id', 'in', ids]
 
     output = models.execute_kw(DB, uid, PWD,
                                'product.attribute',
                                'search_read',
-                               [[['id', '>', 0]]])
+                               [[condition]],
+                               {'fields': [
+                                   'name',
+                                   'display_name',
+                                   'value_ids',
+                                   'attribute_line_ids',
+                                   'is_used_on_products',
+                                   'product_tmpl_ids',
+                                   'create_date'
+                               ]})
 
-    return [output, count]
+    return output
 
 
 # Search product attribute value
-async def get_attr_value():
-    count = models.execute_kw(DB, uid, PWD,
-                              'product.attribute.value',
-                              'search_count',
-                              [[['id', '>', 0]]])
+async def get_attr_value(ids=[]):
+    if not ids:
+        condition = ['id', '>', 0]
+    else:
+        condition = ['id', 'in', ids]
 
     output = models.execute_kw(DB, uid, PWD,
                                'product.attribute.value',
                                'search_read',
-                               [[['id', '>', 0]]])
+                               [[condition]],
+                               {'fields': [
+                                   'name',
+                                   'display_name',
+                                   'attribute_id',
+                                   'pav_attribute_line_ids',
+                                   'is_used_on_products',
+                                   'create_date'
+                               ]})
 
-    return [output, count]
+    return output
 
 
 # Search product template attribute line
-async def get_prod_attr_line():
-    count = models.execute_kw(DB, uid, PWD,
-                              'product.template.attribute.line',
-                              'search_count',
-                              [[['id', '>', 0]]])
+async def get_prod_attr_line(ids=[]):
+    if not ids:
+        condition = ['id', '>', 0]
+    else:
+        condition = ['id', 'in', ids]
 
     output = models.execute_kw(DB, uid, PWD,
                                'product.template.attribute.line',
                                'search_read',
-                               [[['id', '>', 0]]])
+                               [[condition]],
+                               {'fields': [
+                                   'display_name',
+                                   'active',
+                                   'product_tmpl_id',
+                                   'attribute_id',
+                                   'value_ids',
+                                   'product_template_value_ids',
+                                   'create_date'
+                               ]})
 
-    return [output, count]
+    return output
 
 
 # Search product template attribute value

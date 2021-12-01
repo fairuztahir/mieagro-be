@@ -79,51 +79,48 @@ class OdooController():
         except:
             exceptionRaise('getProductTemplate')
 
-    @o.get("/attributes")
+    @o.post("/attributes")
     @protected
     async def getAttribute(request):
         try:
             session = request.ctx.session
-            params = request.args
+            params = request.json
             async with session.begin():
-                size = int(params.get('pageSize', 10))
-                page = int(params.get('page', 1))
-                [result, count] = await get_attr()
-                # result.sort(reverse=False, key=lambda e: e['id'])
+                ids = list(params.get('ids', []))
+                result = await get_attr(ids)
+                result.sort(reverse=False, key=lambda e: e['id'])
 
-            return resJson(resType.OK, result, count)
+            return resJson(resType.OK, result, len(result))
         except:
             exceptionRaise('getAttribute')
 
-    @o.get("/attribute-values")
+    @o.post("/attribute-values")
     @protected
     async def getAttributeValue(request):
         try:
             session = request.ctx.session
-            params = request.args
+            params = request.json
             async with session.begin():
-                size = int(params.get('pageSize', 10))
-                page = int(params.get('page', 1))
-                [result, count] = await get_attr_value()
-                # result.sort(reverse=False, key=lambda e: e['id'])
+                ids = list(params.get('ids', []))
+                result = await get_attr_value(ids)
+                result.sort(reverse=False, key=lambda e: e['id'])
 
-            return resJson(resType.OK, result, count)
+            return resJson(resType.OK, result, len(result))
         except:
             exceptionRaise('getAttributeValue')
 
-    @o.get("/product-attribute-line")
+    @o.post("/product-attribute-line")
     @protected
     async def getProductAttributeLine(request):
         try:
             session = request.ctx.session
-            params = request.args
+            params = request.json
             async with session.begin():
-                size = int(params.get('pageSize', 10))
-                page = int(params.get('page', 1))
-                [result, count] = await get_prod_attr_line()
-                # result.sort(reverse=False, key=lambda e: e['id'])
+                ids = list(params.get('ids', []))
+                result = await get_prod_attr_line(ids)
+                result.sort(reverse=False, key=lambda e: e['id'])
 
-            return resJson(resType.OK, result, count)
+            return resJson(resType.OK, result, len(result))
         except:
             exceptionRaise('getProductAttributeLine')
 

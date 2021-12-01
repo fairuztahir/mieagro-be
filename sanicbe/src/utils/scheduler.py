@@ -3,12 +3,14 @@ import datetime as dt
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from views.warehouse import migrateWarehouseToDB
+from views.product import migrateProductToDB
 from helpers.func import valueOf
 
 
 async def odoo(job, app):
     print('Cronjob running at: %s - %s' % (dt.datetime.now(), job))
     app.add_task(migrateWarehouseToDB(app))
+    app.add_task(migrateProductToDB(app))
 
 
 def assign_time(year="*", month="*", day="*", hour="*", minute="*", second="*"):
@@ -23,7 +25,7 @@ scheduler = AsyncIOScheduler(timezone=valueOf.UTC_ZONE.fulltext)
 
 async def main(app, loop):
     # Example to run by time gap
-    scheduler.add_job(odoo, 'interval', minutes=59, args=["Odoo", app])
+    scheduler.add_job(odoo, 'interval', hours=1, minutes=0, args=["Odoo", app])
 
     # Run cron with specific time in UTC
     # scheduler.add_job(odoo, trigger=assign_time("*", "*", "*", "11",
