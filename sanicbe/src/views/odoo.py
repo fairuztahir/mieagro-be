@@ -12,6 +12,10 @@ from helpers.func import (
 from odoo.main import (
     get_all_warehouse,
     get_prod_temp,
+    get_attr,
+    get_attr_value,
+    get_prod_attr_line,
+    get_prod_attr_value,
     get_pos_order,
     get_prod_detail_by_id,
     set_pos_order,
@@ -75,6 +79,70 @@ class OdooController():
         except:
             exceptionRaise('getProductTemplate')
 
+    @o.get("/attributes")
+    @protected
+    async def getAttribute(request):
+        try:
+            session = request.ctx.session
+            params = request.args
+            async with session.begin():
+                size = int(params.get('pageSize', 10))
+                page = int(params.get('page', 1))
+                [result, count] = await get_attr()
+                # result.sort(reverse=False, key=lambda e: e['id'])
+
+            return resJson(resType.OK, result, count)
+        except:
+            exceptionRaise('getAttribute')
+
+    @o.get("/attribute-values")
+    @protected
+    async def getAttributeValue(request):
+        try:
+            session = request.ctx.session
+            params = request.args
+            async with session.begin():
+                size = int(params.get('pageSize', 10))
+                page = int(params.get('page', 1))
+                [result, count] = await get_attr_value()
+                # result.sort(reverse=False, key=lambda e: e['id'])
+
+            return resJson(resType.OK, result, count)
+        except:
+            exceptionRaise('getAttributeValue')
+
+    @o.get("/product-attribute-line")
+    @protected
+    async def getProductAttributeLine(request):
+        try:
+            session = request.ctx.session
+            params = request.args
+            async with session.begin():
+                size = int(params.get('pageSize', 10))
+                page = int(params.get('page', 1))
+                [result, count] = await get_prod_attr_line()
+                # result.sort(reverse=False, key=lambda e: e['id'])
+
+            return resJson(resType.OK, result, count)
+        except:
+            exceptionRaise('getProductAttributeLine')
+
+    @o.get("/product-attribute-value")
+    @protected
+    async def getProductAttributeValue(request):
+        try:
+            session = request.ctx.session
+            params = request.args
+            async with session.begin():
+                size = int(params.get('pageSize', 10))
+                page = int(params.get('page', 1))
+                [result, count] = await get_prod_attr_value()
+                # result.sort(reverse=False, key=lambda e: e['id'])
+
+            return resJson(resType.OK, result, count)
+        except:
+            exceptionRaise('getProductAttributeValue')
+
     @o.post("/product-variants")
     @protected
     async def getProductVariants(request):
@@ -85,7 +153,7 @@ class OdooController():
                 size = int(body.get('pageSize', 10))
                 page = int(body.get('page', 1))
                 variants = list(body.get('ids', []))
-                [result, count] = await get_prod_detail_by_id(variants, page, size)
+                [result, count] = await get_prod_detail_by_id(variants)
 
             return resJson(resType.OK, result, count)
         except:

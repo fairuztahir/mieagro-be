@@ -38,18 +38,17 @@ async def search_partner():
 
 
 # return product/variant details by ids = []
-async def get_prod_detail_by_id(ids=[], offset=0, limit=10, count=0):
-    offset = await offset_correction(offset)
-    if count == 0:
-        count = models.execute_kw(DB, uid, PWD,
-                                  'product.product', 'search_count',
-                                  [[['id', 'in', ids], ['active', '=', True]]])
+async def get_prod_detail_by_id(ids=[]):
+    count = models.execute_kw(DB, uid, PWD,
+                              'product.product', 'search_count',
+                              [[['id', 'in', ids], ['active', '=', True]]])
 
     output = models.execute_kw(DB, uid, PWD,
                                'product.product', 'search_read',
                                [[['id', 'in', ids], ['active', '=', True]]],
                                {'fields': [
                                    'code',
+                                   'default_code',
                                    'name',
                                    'display_name',
                                    'description',
@@ -57,6 +56,8 @@ async def get_prod_detail_by_id(ids=[], offset=0, limit=10, count=0):
                                    'product_tmpl_id',
                                    'barcode',
                                    'is_product_variant',
+                                   'available_in_pos',
+                                   'attribute_line_ids',
                                    'price',
                                    'price_extra',
                                    'free_qty',
@@ -65,34 +66,9 @@ async def get_prod_detail_by_id(ids=[], offset=0, limit=10, count=0):
                                    'outgoing_qty',
                                    'create_date',
                                    'create_uid'
-                               ], 'offset': offset, 'limit': limit})
+                               ], 'offset': 0, 'limit': count})
 
     return [output, count]
-
-
-# async def get_prod_detail_by_id(ids=[]):
-#     return models.execute_kw(DB, uid, PWD,
-#                              'product.product', 'read', ids)
-
-
-# # return search detail products
-# async def get_all_products():
-#     return models.execute_kw(DB, uid, PWD,
-#                              'product.product',
-#                              'search_read',
-#                              [[['active', '=', True]]],
-#                              {'fields': [
-#                                  'name',
-#                                  'code',
-#                                  'price',
-#                                  'price_extra',
-#                                  'description',
-#                                  'display_name',
-#                                  'qty_available',
-#                                  'free_qty',
-#                                  'incoming_qty',
-#                                  'outgoing_qty'
-#                              ], 'limit': 10})
 
 
 # Warehouse Info
@@ -122,7 +98,7 @@ async def get_all_warehouse():
 
 
 # Product Template
-# Search product main class
+# Search product template main class
 async def get_prod_temp():
     count = models.execute_kw(DB, uid, PWD,
                               'product.template',
@@ -157,6 +133,68 @@ async def get_prod_temp():
     return [output, count]
 
 
+# Product Attributes
+# Search product attribute class
+async def get_attr():
+    count = models.execute_kw(DB, uid, PWD,
+                              'product.attribute',
+                              'search_count',
+                              [[['id', '>', 0]]])
+
+    output = models.execute_kw(DB, uid, PWD,
+                               'product.attribute',
+                               'search_read',
+                               [[['id', '>', 0]]])
+
+    return [output, count]
+
+
+# Search product attribute value
+async def get_attr_value():
+    count = models.execute_kw(DB, uid, PWD,
+                              'product.attribute.value',
+                              'search_count',
+                              [[['id', '>', 0]]])
+
+    output = models.execute_kw(DB, uid, PWD,
+                               'product.attribute.value',
+                               'search_read',
+                               [[['id', '>', 0]]])
+
+    return [output, count]
+
+
+# Search product template attribute line
+async def get_prod_attr_line():
+    count = models.execute_kw(DB, uid, PWD,
+                              'product.template.attribute.line',
+                              'search_count',
+                              [[['id', '>', 0]]])
+
+    output = models.execute_kw(DB, uid, PWD,
+                               'product.template.attribute.line',
+                               'search_read',
+                               [[['id', '>', 0]]])
+
+    return [output, count]
+
+
+# Search product template attribute value
+async def get_prod_attr_value():
+    count = models.execute_kw(DB, uid, PWD,
+                              'product.template.attribute.value',
+                              'search_count',
+                              [[['id', '>', 0]]])
+
+    output = models.execute_kw(DB, uid, PWD,
+                               'product.template.attribute.value',
+                               'search_read',
+                               [[['id', '>', 0]]])
+
+    return [output, count]
+
+
+# TODO: lek luu
 # POS
 async def get_pos_sale_report(offset=0, limit=10, count=0):
     offset = await offset_correction(offset)

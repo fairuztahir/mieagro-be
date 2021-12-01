@@ -72,7 +72,7 @@ def postRoleValidator(input={}):
     return mainValidator(role_post_schema, input)
 
 
-# Post role validator
+# Update role validator
 def updateRoleValidator(input={}):
     return mainValidator(role_upd_schema, input)
 
