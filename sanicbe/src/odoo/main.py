@@ -74,11 +74,6 @@ async def get_prod_detail_by_id(ids=[]):
 # Warehouse Info
 # return search detail products
 async def get_all_warehouse():
-    count = models.execute_kw(DB, uid, PWD,
-                              'stock.warehouse',
-                              'search_count',
-                              [[['active', '=', True]]])
-
     output = models.execute_kw(DB, uid, PWD,
                                'stock.warehouse',
                                'search_read',
@@ -92,19 +87,15 @@ async def get_all_warehouse():
                                    'delivery_steps',
                                    'create_date',
                                    'create_uid'
-                               ], 'offset': 0, 'limit': count})
+                               ]})
 
-    return [output, count]
+    output.sort(reverse=False, key=lambda e: e['id'])
+    return output
 
 
 # Product Template
 # Search product template main class
 async def get_prod_temp():
-    count = models.execute_kw(DB, uid, PWD,
-                              'product.template',
-                              'search_count',
-                              [[['active', '=', True]]])
-
     output = models.execute_kw(DB, uid, PWD,
                                'product.template',
                                'search_read',
@@ -128,9 +119,10 @@ async def get_prod_temp():
                                    'outgoing_qty',
                                    'create_date',
                                    'create_uid'
-                               ], 'offset': 0, 'limit': count})
+                               ]})
 
-    return [output, count]
+    output.sort(reverse=False, key=lambda e: e['id'])
+    return output
 
 
 # Product Attributes
@@ -155,6 +147,7 @@ async def get_attr(ids=[]):
                                    'create_date'
                                ]})
 
+    output.sort(reverse=False, key=lambda e: e['id'])
     return output
 
 
@@ -178,6 +171,7 @@ async def get_attr_value(ids=[]):
                                    'create_date'
                                ]})
 
+    output.sort(reverse=False, key=lambda e: e['id'])
     return output
 
 
@@ -202,6 +196,7 @@ async def get_prod_attr_line(ids=[]):
                                    'create_date'
                                ]})
 
+    output.sort(reverse=False, key=lambda e: e['id'])
     return output
 
 

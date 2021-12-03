@@ -465,7 +465,7 @@ async def cronAddUpdateProcess(session, body):
 async def migrateProductToDB(app):
     async with app.db.begin() as conn:
         # TODO: async func can await call from odoo, need improvements?
-        [output, count] = await get_prod_temp()
+        output = await get_prod_temp()
         output_list = await cronAddUpdateProcess(conn, output)
 
         await conn.commit()

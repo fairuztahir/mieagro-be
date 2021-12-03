@@ -17,6 +17,7 @@ from views.odoo import OdooController
 from views.warehouse import WarehouseController
 from views.product import ProductController
 from views.uploads import FileController
+from views.attribute import AttributeController
 from utils.exportcsv import DownloadCSVView
 from utils.scheduler import main, stop
 from models.base import Base
@@ -67,8 +68,19 @@ def after_server_stop(app):
 
 
 def init_blueprints(app):
-    v1_0 = Blueprint.group(AuthController.a, UserController.u,
-                           RoleController.r, WarehouseController.wh, ProductController.p, OdooController.o, DownloadCSVView.c, FileController.f, url_prefix='/', version=1)
+    v1_0 = Blueprint.group(
+        AuthController.a,
+        UserController.u,
+        RoleController.r,
+        WarehouseController.wh,
+        ProductController.p,
+        OdooController.o,
+        DownloadCSVView.c,
+        FileController.f,
+        AttributeController.p,
+        url_prefix='/',
+        version=1
+    )
     app.blueprint(v1_0)
 
 

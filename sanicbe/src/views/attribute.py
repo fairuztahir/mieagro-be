@@ -4,7 +4,7 @@ from helpers.func import (
     exceptionRaise,
     validate_list
 )
-from helpers.validator import paginateValidator, postWarehouseValidator, updateWarehouseValidator
+from helpers.validator import paginateValidator, postAttributeValidator, updateAttributeValidator
 from helpers.query import (
     paginatedQuery,
     insertQuery,
@@ -16,10 +16,10 @@ from helpers.query import (
 )
 from sanic.log import logger
 from sanic import Blueprint
-from models.warehouse import Warehouse
+from models.attribute import Attribute
 from utils.auth import protected
 from sqlalchemy import update
-from odoo.main import get_all_warehouse
+from odoo.main import get_attr
 
 import arrow
 
@@ -28,12 +28,12 @@ import arrow
 # -----------------
 
 
-class WarehouseController():
-    wh = Blueprint('warehouse', url_prefix='/')
+class AttributeController():
+    p = Blueprint('attribute', url_prefix='/')
 
-    @wh.get("/warehouses")
+    @p.get("/attributes")
     @protected
-    async def getWarehouse(request):
+    async def getAttributes(request):
         try:
             session = request.ctx.session
             params = request.args
@@ -48,51 +48,50 @@ class WarehouseController():
                 sort = str(params.get('sortParam', 'created_at'))
                 order = str(params.get('sortBy', 'DESC'))
                 select_items: any = [
-                    Warehouse.id,
-                    Warehouse.odoo_id,
-                    Warehouse.code,
-                    Warehouse.name,
-                    Warehouse.display_name,
-                    Warehouse.active,
-                    Warehouse.reception_steps,
-                    Warehouse.delivery_steps,
-                    Warehouse.description,
-                    Warehouse.created_at
+                    Attribute.id,
+                    Attribute.odoo_id,
+                    Attribute.name,
+                    Attribute.display_name,
+                    Attribute.value_ids,
+                    Attribute.attribute_line_ids,
+                    Attribute.is_used_on_products,
+                    Attribute.product_tmpl_ids,
+                    Attribute.created_at
                 ]
 
                 [stmt, count_] = paginatedQuery(
-                    Warehouse, sort, order, select_items, size, page)
+                    Attribute, sort, order, select_items, size, page)
                 result = await session.execute(stmt)
-                warehouses = result.all()
+                attributes = result.all()
 
-                result_dict = [dict(warehouse) for warehouse in warehouses]
+                result_dict = [dict(attribute) for attribute in attributes]
                 total_ = await session.execute(count_)
                 total = total_.scalar()
 
             return resJson(resType.OK, result_dict, total)
         except:
-            exceptionRaise('getWarehouse')
+            exceptionRaise('getAttributes')
 
-    @wh.get("/warehouse/<pk_:uuid>")
+    @p.get("/attribute/<pk_:uuid>")
     @protected
-    async def getWarehouse(request, pk_):
+    async def getAttribute(request, pk_):
         try:
             session = request.ctx.session
             async with session.begin():
-                warehouse = await findRecordById(session, Warehouse, pk_)
+                attribute = await findRecordById(session, Attribute, pk_)
 
-            if not warehouse:
+            if not attribute:
                 return resJson(resType.NO_RECORD)
 
-            return resJson(resType.OK, warehouse.to_dict())
+            return resJson(resType.OK, attribute.to_dict())
         except:
-            exceptionRaise('getWarehouse')
+            exceptionRaise('getAttribute')
 
     # MARK: Support scalar and multi input
 
-    @wh.post("/warehouse")
+    @p.post("/attribute")
     @protected
-    async def createWarehouse(request):
+    async def createAttribute(request):
         try:
             session = request.ctx.session
             body = request.json
@@ -104,7 +103,7 @@ class WarehouseController():
                     body_records = [body]
 
                 # Input validation
-                [valid, error] = postWarehouseValidator(body_records)
+                [valid, error] = postAttributeValidator(body_records)
                 if not valid:
                     return resJson(resType.INVALID_PARAMS, error, len(error))
 
@@ -113,7 +112,7 @@ class WarehouseController():
                 [new_list, update_list, redundant_ids] = await insertOrUpdate(session, body_records)
                 if (not update_list) and (not redundant_ids):
                     # Post new record
-                    result = await insertQuery(session, Warehouse, new_list)
+                    result = await insertQuery(session, Attribute, new_list)
                 else:
                     return resJson(resType.DUPLICATE, redundant_ids, len(redundant_ids))
 
@@ -122,87 +121,87 @@ class WarehouseController():
 
             return resJson(resType.OK, output_list, len(output_list))
         except:
-            exceptionRaise('createWarehouse')
+            exceptionRaise('createAttribute')
 
-    @wh.delete("/warehouse/<pk_:uuid>")
+    @p.delete("/attribute/<pk_:uuid>")
     @protected
-    async def destroyWarehouse(request, pk_):
+    async def destroyAttribute(request, pk_):
         try:
             session = request.ctx.session
             resMsg = resType.SUCCESS_DEL
             async with session.begin():
-                warehouse = await findRecordById(session, Warehouse, pk_)
-                if not warehouse:
+                attribute = await findRecordById(session, Attribute, pk_)
+                if not attribute:
                     return resJson(resType.NO_RECORD)
 
-                destroy = await softDelbyId(session, Warehouse, pk_)
+                destroy = await softDelbyId(session, Attribute, pk_)
                 if not destroy:
                     resMsg = resType.FAIL_DELETE
 
             return resJson(resMsg, destroy)
         except:
-            exceptionRaise('destroyWarehouse')
+            exceptionRaise('destroyAttribute')
 
-    @wh.put("/warehouse/<pk_:uuid>")
+    @p.put("/attribute/<pk_:uuid>")
     @protected
-    async def updateWarehouse(request, pk_):
+    async def updateAttribute(request, pk_):
         try:
             session = request.ctx.session
             b = request.json
             # Input validation
-            [valid, error] = updateWarehouseValidator(b)
+            [valid, error] = updateAttributeValidator(b)
             if not valid:
                 return resJson(resType.INVALID_PARAMS, error, len(error))
 
             resMsg = resType.SUCCESS_UPD
             async with session.begin():
-                warehouse_ = await findRecordById(session, Warehouse, pk_)
-                if not warehouse_:
+                attribute = await findRecordById(session, Attribute, pk_)
+                if not attribute:
                     return resJson(resType.NO_RECORD)
 
                 id = b.get('id', None)
-                code = b.get('code', None)
                 name = b.get('name', None)
                 display_name = b.get('display_name', None)
-                active = b.get('active', None)
-                reception_steps = b.get('reception_steps', None)
-                delivery_steps = b.get('delivery_steps', None)
+                value_ids = b.get('value_ids', None)
+                attribute_line_ids = b.get('attribute_line_ids', None)
+                is_used_on_products = b.get('is_used_on_products', None)
+                product_tmpl_ids = b.get('product_tmpl_ids', None)
                 create_date = b.get('create_date', None)
 
-                values_ = {}
-                if id != warehouse_.odoo_id:
-                    values_['odoo_id'] = int(id)
-                if code != warehouse_.code:
-                    values_['code'] = code
-                if name != warehouse_.name:
-                    values_['name'] = name
-                if display_name != warehouse_.display_name:
-                    values_['display_name'] = display_name
-                if bool(active) != warehouse_.active:
-                    values_['active'] = bool(active)
-                if reception_steps != warehouse_.reception_steps:
-                    values_['reception_steps'] = reception_steps
-                if delivery_steps != warehouse_.delivery_steps:
-                    values_['delivery_steps'] = delivery_steps
-
+                w_record = {}
                 date_ = arrow.get(str(create_date)).datetime
-                if date_.replace(tzinfo=None) != warehouse_.created_at:
-                    values_['created_at'] = date_.replace(tzinfo=None)
 
-                if len(values_) < 1:
+                if id != attribute.odoo_id:
+                    w_record['odoo_id'] = int(id)
+                if name != attribute.name:
+                    w_record['name'] = name
+                if display_name != attribute.display_name:
+                    w_record['display_name'] = display_name
+                if list(value_ids) != attribute.value_ids:
+                    w_record['value_ids'] = list(value_ids)
+                if list(attribute_line_ids) != attribute.attribute_line_ids:
+                    w_record['attribute_line_ids'] = list(attribute_line_ids)
+                if bool(is_used_on_products) != attribute.is_used_on_products:
+                    w_record['is_used_on_products'] = bool(is_used_on_products)
+                if list(product_tmpl_ids) != attribute.product_tmpl_ids:
+                    w_record['product_tmpl_ids'] = list(product_tmpl_ids)
+                if date_.replace(tzinfo=None) != attribute.created_at:
+                    w_record['created_at'] = date_.replace(tzinfo=None)
+
+                if len(w_record) < 1:
                     return resJson(resType.NO_UPD, {})
 
-                setWarehouse_ = await updateById(session, Warehouse, pk_, values_)
-                if not setWarehouse_:
+                setAttr = await updateById(session, Attribute, pk_, w_record)
+                if not setAttr:
                     resMsg = resType.FAIL_UPD
 
-            return resJson(resMsg, setWarehouse_)
+            return resJson(resMsg, setAttr)
         except:
-            exceptionRaise('updateWarehouse')
+            exceptionRaise('updateAttribute')
 
-    @wh.patch("/warehouse")
+    @p.patch("/attribute")
     @protected
-    async def addOrUpdateWarehouse(request):
+    async def addOrUpdateAttribute(request):
         try:
             session = request.ctx.session
             body = request.json
@@ -214,7 +213,7 @@ class WarehouseController():
                     body_records = [body]
 
                 # Input validation
-                [valid, error] = postWarehouseValidator(body_records)
+                [valid, error] = postAttributeValidator(body_records)
                 if not valid:
                     return resJson(resType.INVALID_PARAMS, error, len(error))
 
@@ -223,13 +222,13 @@ class WarehouseController():
                 [new_list, update_list, redundant_ids] = await insertOrUpdate(session, body_records)
                 if new_list:
                     # Post new record
-                    result = await insertQuery(session, Warehouse, new_list)
+                    result = await insertQuery(session, Attribute, new_list)
 
                     for u in result:
                         output_list.append(u.id)
 
                 if update_list:
-                    result = await bulkUpdateQuery(session, Warehouse, redundant_ids, update_list)
+                    result = await bulkUpdateQuery(session, Attribute, redundant_ids, update_list)
 
                     for u in result:
                         output_list.append(u)
@@ -239,7 +238,7 @@ class WarehouseController():
 
             return resJson(resType.OK, output_list, len(output_list))
         except:
-            exceptionRaise('addOrUpdateWarehouse')
+            exceptionRaise('addOrUpdateAttribute')
 
 
 # -----------------
@@ -253,30 +252,30 @@ async def insertOrUpdate(session, body, bg=False):
 
         for b in body:
             id = b.get('id', None)
-            code = b.get('code', None)
             name = b.get('name', None)
             display_name = b.get('display_name', None)
-            active = b.get('active', None)
-            reception_steps = b.get('reception_steps', None)
-            delivery_steps = b.get('delivery_steps', None)
+            value_ids = b.get('value_ids', None)
+            attribute_line_ids = b.get('attribute_line_ids', None)
+            is_used_on_products = b.get('is_used_on_products', None)
+            product_tmpl_ids = b.get('product_tmpl_ids', None)
             create_date = b.get('create_date', None)
             w_record = {}
 
             if not bg:
-                warehouse = await findRecordByColumn(session, Warehouse, Warehouse.odoo_id, int(id), False)
+                attribute = await findRecordByColumn(session, Attribute, Attribute.odoo_id, int(id), False)
             else:
-                warehouse = await findRecordByColumnCron(session, Warehouse, Warehouse.odoo_id, int(id), False)
-            if not warehouse:
+                attribute = await findRecordByColumnCron(session, Attribute, Attribute.odoo_id, int(id), False)
+            if not attribute:
                 # register record
                 date_ = arrow.get(str(create_date)).datetime
                 w_record = {
                     "odoo_id": int(id),
-                    "code": str(code),
                     "name": str(name),
                     "display_name": str(display_name),
-                    "active": bool(active),
-                    "reception_steps": str(reception_steps),
-                    "delivery_steps": str(delivery_steps),
+                    "value_ids": list(value_ids),
+                    "attribute_line_ids": list(attribute_line_ids),
+                    "is_used_on_products": bool(is_used_on_products),
+                    "product_tmpl_ids": list(product_tmpl_ids),
                     "created_at": date_.replace(tzinfo=None)
                 }
                 new_list.append(w_record)
@@ -284,23 +283,23 @@ async def insertOrUpdate(session, body, bg=False):
                 # update record
                 date_ = arrow.get(str(create_date)).datetime
 
-                if code != warehouse.code:
-                    w_record['code'] = code
-                if name != warehouse.name:
+                if name != attribute.name:
                     w_record['name'] = name
-                if display_name != warehouse.display_name:
+                if display_name != attribute.display_name:
                     w_record['display_name'] = display_name
-                if bool(active) != warehouse.active:
-                    w_record['active'] = bool(active)
-                if reception_steps != warehouse.reception_steps:
-                    w_record['reception_steps'] = reception_steps
-                if delivery_steps != warehouse.delivery_steps:
-                    w_record['delivery_steps'] = delivery_steps
-                if date_.replace(tzinfo=None) != warehouse.created_at:
+                if list(value_ids) != attribute.value_ids:
+                    w_record['value_ids'] = list(value_ids)
+                if list(attribute_line_ids) != attribute.attribute_line_ids:
+                    w_record['attribute_line_ids'] = list(attribute_line_ids)
+                if bool(is_used_on_products) != attribute.is_used_on_products:
+                    w_record['is_used_on_products'] = bool(is_used_on_products)
+                if list(product_tmpl_ids) != attribute.product_tmpl_ids:
+                    w_record['product_tmpl_ids'] = list(product_tmpl_ids)
+                if date_.replace(tzinfo=None) != attribute.created_at:
                     w_record['created_at'] = date_.replace(tzinfo=None)
 
                 if w_record:
-                    w_record['odoo_id'] = warehouse.odoo_id
+                    w_record['odoo_id'] = attribute.odoo_id
                     update_list.append(w_record)
 
                 redundant_ids.append(int(id))
@@ -338,13 +337,13 @@ async def cronAddUpdateProcess(session, body):
     [new_list, update_list, redundant_ids] = await insertOrUpdate(session, body_records, True)
     if new_list:
         # Post new record
-        result = await insertQuery(session, Warehouse, new_list)
+        result = await insertQuery(session, Attribute, new_list)
 
         for u in result:
             output_list.append(u.id)
 
     if update_list:
-        result = await bulkUpdateQuery(session, Warehouse, redundant_ids, update_list)
+        result = await bulkUpdateQuery(session, Attribute, redundant_ids, update_list)
 
         for u in result:
             output_list.append(u)
@@ -356,10 +355,10 @@ async def cronAddUpdateProcess(session, body):
 
 
 # Cron auto feed to db func
-async def migrateWarehouseToDB(app):
+async def migrateAttributeToDB(app):
     async with app.db.begin() as conn:
         # TODO: async func can await call from odoo, need improvements?
-        output = await get_all_warehouse()
+        output = await get_attr()
         output_list = await cronAddUpdateProcess(conn, output)
 
         await conn.commit()

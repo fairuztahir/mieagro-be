@@ -33,9 +33,9 @@ class OdooController():
             session = request.ctx.session
             params = request.args
             async with session.begin():
-                [result, count] = await get_all_warehouse()
+                result = await get_all_warehouse()
 
-            return resJson(resType.OK, result, count)
+            return resJson(resType.OK, result, len(result))
         except:
             exceptionRaise('getWarehouses')
 
@@ -49,7 +49,7 @@ class OdooController():
             async with session.begin():
                 size = int(params.get('pageSize', 10))
                 page = int(params.get('page', 1))
-                [result, count] = await get_prod_temp()
+                result = await get_prod_temp()
 
                 for u in result:
                     if u['product_variant_count']:
@@ -59,7 +59,7 @@ class OdooController():
 
                         u['product_variant_details'] = get_variants
 
-            return resJson(resType.OK, result, count)
+            return resJson(resType.OK, result, len(result))
         except:
             exceptionRaise('getProducts')
 
@@ -72,10 +72,9 @@ class OdooController():
             async with session.begin():
                 size = int(params.get('pageSize', 10))
                 page = int(params.get('page', 1))
-                [result, count] = await get_prod_temp()
-                result.sort(reverse=False, key=lambda e: e['id'])
+                result = await get_prod_temp()
 
-            return resJson(resType.OK, result, count)
+            return resJson(resType.OK, result, len(result))
         except:
             exceptionRaise('getProductTemplate')
 
@@ -88,7 +87,6 @@ class OdooController():
             async with session.begin():
                 ids = list(params.get('ids', []))
                 result = await get_attr(ids)
-                result.sort(reverse=False, key=lambda e: e['id'])
 
             return resJson(resType.OK, result, len(result))
         except:
@@ -103,7 +101,6 @@ class OdooController():
             async with session.begin():
                 ids = list(params.get('ids', []))
                 result = await get_attr_value(ids)
-                result.sort(reverse=False, key=lambda e: e['id'])
 
             return resJson(resType.OK, result, len(result))
         except:
@@ -118,7 +115,6 @@ class OdooController():
             async with session.begin():
                 ids = list(params.get('ids', []))
                 result = await get_prod_attr_line(ids)
-                result.sort(reverse=False, key=lambda e: e['id'])
 
             return resJson(resType.OK, result, len(result))
         except:
