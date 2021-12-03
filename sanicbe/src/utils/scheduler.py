@@ -1,4 +1,5 @@
 import datetime as dt
+import time
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -10,6 +11,7 @@ from helpers.func import valueOf
 async def odoo(job, app):
     print('Cronjob running at: %s - %s' % (dt.datetime.now(), job))
     app.add_task(migrateWarehouseToDB(app))
+    time.sleep(5)
     app.add_task(migrateProductToDB(app))
 
 
