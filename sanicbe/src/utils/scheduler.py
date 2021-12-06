@@ -5,6 +5,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from views.warehouse import migrateWarehouseToDB
 from views.product import migrateProductToDB
+from views.attribute import migrateAttributeToDB
 from helpers.func import valueOf
 
 
@@ -13,6 +14,8 @@ async def odoo(job, app):
     app.add_task(migrateWarehouseToDB(app))
     time.sleep(5)
     app.add_task(migrateProductToDB(app))
+    time.sleep(5)
+    app.add_task(migrateAttributeToDB(app))
 
 
 def assign_time(year="*", month="*", day="*", hour="*", minute="*", second="*"):

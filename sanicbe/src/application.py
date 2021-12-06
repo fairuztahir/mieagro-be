@@ -3,7 +3,7 @@ import asyncpg
 import asyncio_redis
 
 from contextvars import ContextVar
-from sanic import Sanic, Blueprint
+from sanic import Sanic, Blueprint, views
 from sanic.log import logger
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -18,6 +18,7 @@ from views.warehouse import WarehouseController
 from views.product import ProductController
 from views.uploads import FileController
 from views.attribute import AttributeController
+from views.attribute_value import AttributeValueController
 from utils.exportcsv import DownloadCSVView
 from utils.scheduler import main, stop
 from models.base import Base
@@ -78,6 +79,7 @@ def init_blueprints(app):
         DownloadCSVView.c,
         FileController.f,
         AttributeController.p,
+        AttributeValueController.p,
         url_prefix='/',
         version=1
     )

@@ -4,6 +4,7 @@ from .schema.warehouse import wh_post_schema, wh_upd_schema
 from .schema.role import role_post_schema, role_upd_schema
 from .schema.user import user_post_schema, user_upd_schema, user_reg_schema
 from .schema.attribute import attr_post_schema, attr_upd_schema
+from .schema.attribute_value import attr_value_post_schema, attr_value_upd_schema
 
 
 # default main validator
@@ -148,3 +149,22 @@ def postAttributeValidator(input=[]):
 # Update attribute validator
 def updateAttributeValidator(input={}):
     return mainValidator(attr_upd_schema, input)
+
+
+# Post attribute value validator
+def postAttributeValueValidator(input=[]):
+    flag_ = True
+    err_list = []
+    for i in range(len(input)):
+        [result, err] = mainValidator(attr_value_post_schema, input[i])
+        if not result:
+            flag_ = False
+            err['id'] = input[i]['id']
+            err_list.append(err)
+
+    return [flag_, err_list]
+
+
+# Update attribute value validator
+def updateAttributeValueValidator(input={}):
+    return mainValidator(attr_value_upd_schema, input)
