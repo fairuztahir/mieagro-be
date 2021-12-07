@@ -1,6 +1,6 @@
 import os
 import asyncpg
-import asyncio_redis
+import aioredis
 
 from contextvars import ContextVar
 from sanic import Sanic, Blueprint, views
@@ -48,7 +48,7 @@ def before_server_start(app):
         )
         debug_mode = os.getenv('APP_ENV', '') == 'dev'
         app.db = create_async_engine(dsn, echo=debug_mode)
-        app.redis = await asyncio_redis.Pool.create(host='redis', poolsize=10)
+        await redis_pool(app)
         await db_migrate(app)
 
 
@@ -66,6 +66,7 @@ def after_server_stop(app):
         await stop()
         await app.db.dispose()
         app.redis.close()
+        await app.redis.wait_closed()
 
 
 def init_blueprints(app):
@@ -84,6 +85,14 @@ def init_blueprints(app):
         version=1
     )
     app.blueprint(v1_0)
+
+
+async def redis_pool(app):
+    # MARK: using aioredis v1.3.1, got bug with v2.0.0 and need to downgrade python 3.10 to 3.9
+    app.redis = await aioredis.create_redis_pool('redis://redis:6379', encoding='utf-8', maxsize=10)
+    # await app.redis.set('my-key', 'value')
+    # val = await app.redis.get('my-key')
+    # print('raw value:', val)
 
 
 async def db_migrate(app):

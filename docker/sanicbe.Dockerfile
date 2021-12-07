@@ -1,10 +1,12 @@
 # syntax=docker/dockerfile:1
 ARG APP_ENV
 
-FROM python:slim as base
+# FROM python:slim as base
+FROM python:3.9-slim as base
 RUN apt-get -y update \
     && apt-get -y upgrade \
     && apt-get install gcc -y \
+    && pip install --upgrade pip \
     && apt-get clean
 
 FROM base as dev-preinstall
@@ -28,8 +30,8 @@ VOLUME [ "/app" ]
 CMD ["python", "src/main.py"]
 
 
-
-FROM python:slim as production
+# FROM python:slim as production
+FROM python:3.9-slim as production
 WORKDIR /app
 COPY --from=postinstall /root/.local /root/.local
 COPY ./sanicbe/src .
