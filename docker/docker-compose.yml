@@ -21,7 +21,7 @@ services:
     build:
       context: ../
       dockerfile: ./docker/sanicbe.Dockerfile
-    image: ${PROJECT_ID}/mieagro-sanicbe:${VERSION}
+    image: ${PROJECT_ID}/mieagro-be:${VERSION}
     environment:
       APP_ENV: ${APP_ENV}
       API_PORT: ${API_PORT}
