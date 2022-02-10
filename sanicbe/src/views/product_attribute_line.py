@@ -4,7 +4,7 @@ from helpers.func import (
     exceptionRaise,
     validate_list
 )
-from helpers.validator import paginateValidator, postAttributeValidator, updateAttributeValidator
+from helpers.validator import paginateValidator, postProdAttributeLineValidator, updateProdAttributeLineValidator
 from helpers.query import (
     paginatedQuery,
     insertQuery,
@@ -16,10 +16,10 @@ from helpers.query import (
 )
 from sanic.log import logger
 from sanic import Blueprint
-from models.attribute import Attribute
+from models.product_attribute_line import ProductAttributeLine
 from utils.auth import protected
 from sqlalchemy import update
-from odoo.main import get_attr
+from odoo.main import get_prod_attr_line
 
 import arrow
 
@@ -28,12 +28,12 @@ import arrow
 # -----------------
 
 
-class AttributeController():
-    p = Blueprint('attribute', url_prefix='/')
+class ProductAttributeLineController():
+    p = Blueprint('prod_attribute_lines', url_prefix='/')
 
-    @p.get("/attributes")
+    @p.get("/prod-attribute-lines")
     @protected
-    async def getAttributes(request):
+    async def getProdAttributeLines(request):
         try:
             session = request.ctx.session
             params = request.args
@@ -48,50 +48,51 @@ class AttributeController():
                 sort = str(params.get('sortParam', 'created_at'))
                 order = str(params.get('sortBy', 'DESC'))
                 select_items: any = [
-                    Attribute.id,
-                    Attribute.odoo_id,
-                    Attribute.name,
-                    Attribute.display_name,
-                    Attribute.value_ids,
-                    Attribute.attribute_line_ids,
-                    Attribute.is_used_on_products,
-                    Attribute.product_tmpl_ids,
-                    Attribute.created_at
+                    ProductAttributeLine.id,
+                    ProductAttributeLine.odoo_id,
+                    ProductAttributeLine.display_name,
+                    ProductAttributeLine.active,
+                    ProductAttributeLine.product_tmpl_id,
+                    ProductAttributeLine.attribute_id,
+                    ProductAttributeLine.value_ids,
+                    ProductAttributeLine.product_template_value_ids,
+                    ProductAttributeLine.created_at
                 ]
 
                 [stmt, count_] = paginatedQuery(
-                    Attribute, sort, order, select_items, size, page)
+                    ProductAttributeLine, sort, order, select_items, size, page)
                 result = await session.execute(stmt)
-                attributes = result.all()
+                attribute_lines = result.all()
 
-                result_dict = [dict(attribute) for attribute in attributes]
+                result_dict = [dict(attribute_line)
+                               for attribute_line in attribute_lines]
                 total_ = await session.execute(count_)
                 total = total_.scalar()
 
             return resJson(resType.OK, result_dict, total)
         except:
-            exceptionRaise('getAttributes')
+            exceptionRaise('getProdAttributeLines')
 
-    @p.get("/attribute/<pk_:uuid>")
+    @p.get("/prod-attribute-line/<pk_:uuid>")
     @protected
-    async def getAttribute(request, pk_):
+    async def getProdAttributeLine(request, pk_):
         try:
             session = request.ctx.session
             async with session.begin():
-                attribute = await findRecordById(session, Attribute, pk_)
+                attribute_line = await findRecordById(session, ProductAttributeLine, pk_)
 
-            if not attribute:
+            if not attribute_line:
                 return resJson(resType.NO_RECORD)
 
-            return resJson(resType.OK, attribute.to_dict())
+            return resJson(resType.OK, attribute_line.to_dict())
         except:
-            exceptionRaise('getAttribute')
+            exceptionRaise('getProdAttributeLine')
+
 
     # MARK: Support scalar and multi input
-
-    @p.post("/attribute")
+    @p.post("/prod-attribute-line")
     @protected
-    async def createAttribute(request):
+    async def createProdAttributeLine(request):
         try:
             session = request.ctx.session
             body = request.json
@@ -103,7 +104,7 @@ class AttributeController():
                     body_records = [body]
 
                 # Input validation
-                [valid, error] = postAttributeValidator(body_records)
+                [valid, error] = postProdAttributeLineValidator(body_records)
                 if not valid:
                     return resJson(resType.INVALID_PARAMS, error, len(error))
 
@@ -112,7 +113,7 @@ class AttributeController():
                 [new_list, update_list, redundant_ids] = await insertOrUpdate(session, body_records)
                 if (not update_list) and (not redundant_ids):
                     # Post new record
-                    result = await insertQuery(session, Attribute, new_list)
+                    result = await insertQuery(session, ProductAttributeLine, new_list)
                 else:
                     return resJson(resType.DUPLICATE, redundant_ids, len(redundant_ids))
 
@@ -121,87 +122,90 @@ class AttributeController():
 
             return resJson(resType.OK, output_list, len(output_list))
         except:
-            exceptionRaise('createAttribute')
+            exceptionRaise('createProdAttributeLine')
 
-    @p.delete("/attribute/<pk_:uuid>")
+    @p.delete("/prod-attribute-line/<pk_:uuid>")
     @protected
-    async def destroyAttribute(request, pk_):
+    async def destroyProdAttributeLine(request, pk_):
         try:
             session = request.ctx.session
             resMsg = resType.SUCCESS_DEL
             async with session.begin():
-                attribute = await findRecordById(session, Attribute, pk_)
-                if not attribute:
+                attribute_line = await findRecordById(session, ProductAttributeLine, pk_)
+                if not attribute_line:
                     return resJson(resType.NO_RECORD)
 
-                destroy = await softDelbyId(session, Attribute, pk_)
+                destroy = await softDelbyId(session, ProductAttributeLine, pk_)
                 if not destroy:
                     resMsg = resType.FAIL_DELETE
 
             return resJson(resMsg, destroy)
         except:
-            exceptionRaise('destroyAttribute')
+            exceptionRaise('destroyProdAttributeLine')
 
-    @p.put("/attribute/<pk_:uuid>")
+    @p.put("/prod-attribute-line/<pk_:uuid>")
     @protected
-    async def updateAttribute(request, pk_):
+    async def updateProdAttributeLine(request, pk_):
         try:
             session = request.ctx.session
             b = request.json
             # Input validation
-            [valid, error] = updateAttributeValidator(b)
+            [valid, error] = updateProdAttributeLineValidator(b)
             if not valid:
                 return resJson(resType.INVALID_PARAMS, error, len(error))
 
             resMsg = resType.SUCCESS_UPD
             async with session.begin():
-                attribute = await findRecordById(session, Attribute, pk_)
-                if not attribute:
+                attribute_line = await findRecordById(session, ProductAttributeLine, pk_)
+                if not attribute_line:
                     return resJson(resType.NO_RECORD)
 
                 id = b.get('id', None)
-                name = b.get('name', None)
                 display_name = b.get('display_name', None)
+                active = b.get('active', None)
+                product_tmpl_id = b.get('product_tmpl_id', None)
+                attribute_id = b.get('attribute_id', None)
                 value_ids = b.get('value_ids', None)
-                attribute_line_ids = b.get('attribute_line_ids', None)
-                is_used_on_products = b.get('is_used_on_products', None)
-                product_tmpl_ids = b.get('product_tmpl_ids', None)
+                product_template_value_ids = b.get('product_template_value_ids', None)
                 create_date = b.get('create_date', None)
 
                 w_record = {}
                 date_ = arrow.get(str(create_date)).datetime
 
-                if id != attribute.odoo_id:
+                if id != attribute_line.odoo_id:
                     w_record['odoo_id'] = int(id)
-                if name != attribute.name:
-                    w_record['name'] = name
-                if display_name != attribute.display_name:
+                if display_name != attribute_line.display_name:
                     w_record['display_name'] = display_name
-                if list(value_ids) != attribute.value_ids:
-                    w_record['value_ids'] = list(value_ids)
-                if list(attribute_line_ids) != attribute.attribute_line_ids:
-                    w_record['attribute_line_ids'] = list(attribute_line_ids)
-                if bool(is_used_on_products) != attribute.is_used_on_products:
-                    w_record['is_used_on_products'] = bool(is_used_on_products)
-                if list(product_tmpl_ids) != attribute.product_tmpl_ids:
-                    w_record['product_tmpl_ids'] = list(product_tmpl_ids)
-                if date_.replace(tzinfo=None) != attribute.created_at:
+                if bool(active) != attribute_line.active:
+                    w_record['active'] = bool(active)
+                if int(product_tmpl_id[0]) != attribute_line.product_tmpl_id:
+                    w_record['product_tmpl_id'] = int(
+                        product_tmpl_id[0])
+                if int(attribute_id[0]) != attribute_line.attribute_id:
+                    w_record['attribute_id'] = int(attribute_id[0])
+                if list(value_ids) != attribute_line.value_ids:
+                    w_record['value_ids'] = list(
+                        value_ids)
+                if list(product_template_value_ids) != attribute_line.product_template_value_ids:
+                    w_record['product_template_value_ids'] = list(
+                        product_template_value_ids)
+                if date_.replace(tzinfo=None) != attribute_line.created_at:
                     w_record['created_at'] = date_.replace(tzinfo=None)
 
                 if len(w_record) < 1:
                     return resJson(resType.NO_UPD, {})
 
-                setAttr = await updateById(session, Attribute, pk_, w_record)
+                setAttr = await updateById(session, ProductAttributeLine, pk_, w_record)
                 if not setAttr:
                     resMsg = resType.FAIL_UPD
 
             return resJson(resMsg, setAttr)
         except:
-            exceptionRaise('updateAttribute')
+            exceptionRaise('updateProdAttributeLine')
 
-    @p.patch("/attribute")
+    @p.patch("/prod-attribute-line")
     @protected
-    async def addOrUpdateAttribute(request):
+    async def addOrUpdateProdAttributeLine(request):
         try:
             session = request.ctx.session
             body = request.json
@@ -213,7 +217,7 @@ class AttributeController():
                     body_records = [body]
 
                 # Input validation
-                [valid, error] = postAttributeValidator(body_records)
+                [valid, error] = postProdAttributeLineValidator(body_records)
                 if not valid:
                     return resJson(resType.INVALID_PARAMS, error, len(error))
 
@@ -222,13 +226,13 @@ class AttributeController():
                 [new_list, update_list, redundant_ids] = await insertOrUpdate(session, body_records)
                 if new_list:
                     # Post new record
-                    result = await insertQuery(session, Attribute, new_list)
+                    result = await insertQuery(session, ProductAttributeLine, new_list)
 
                     for u in result:
                         output_list.append(u.id)
 
                 if update_list:
-                    result = await bulkUpdateQuery(session, Attribute, redundant_ids, update_list)
+                    result = await bulkUpdateQuery(session, ProductAttributeLine, redundant_ids, update_list)
 
                     for u in result:
                         output_list.append(u)
@@ -238,7 +242,7 @@ class AttributeController():
 
             return resJson(resType.OK, output_list, len(output_list))
         except:
-            exceptionRaise('addOrUpdateAttribute')
+            exceptionRaise('addOrUpdateProdAttributeLine')
 
 
 # -----------------
@@ -252,30 +256,30 @@ async def insertOrUpdate(session, body, bg=False):
 
         for b in body:
             id = b.get('id', None)
-            name = b.get('name', None)
             display_name = b.get('display_name', None)
+            active = b.get('active', None)
+            product_tmpl_id = b.get('product_tmpl_id', None)
+            attribute_id = b.get('attribute_id', None)
             value_ids = b.get('value_ids', None)
-            attribute_line_ids = b.get('attribute_line_ids', None)
-            is_used_on_products = b.get('is_used_on_products', None)
-            product_tmpl_ids = b.get('product_tmpl_ids', None)
+            product_template_value_ids = b.get('product_template_value_ids', None)
             create_date = b.get('create_date', None)
             w_record = {}
 
             if not bg:
-                attribute = await findRecordByColumn(session, Attribute, Attribute.odoo_id, int(id), False)
+                attribute_line = await findRecordByColumn(session, ProductAttributeLine, ProductAttributeLine.odoo_id, int(id), False)
             else:
-                attribute = await findRecordByColumnCron(session, Attribute, Attribute.odoo_id, int(id), False)
-            if not attribute:
+                attribute_line = await findRecordByColumnCron(session, ProductAttributeLine, ProductAttributeLine.odoo_id, int(id), False)
+            if not attribute_line:
                 # register record
                 date_ = arrow.get(str(create_date)).datetime
                 w_record = {
                     "odoo_id": int(id),
-                    "name": str(name),
                     "display_name": str(display_name),
+                    "active": bool(active),
+                    "product_tmpl_id": int(product_tmpl_id[0]),
+                    "attribute_id": int(attribute_id[0]),
                     "value_ids": list(value_ids),
-                    "attribute_line_ids": list(attribute_line_ids),
-                    "is_used_on_products": bool(is_used_on_products),
-                    "product_tmpl_ids": list(product_tmpl_ids),
+                    "product_template_value_ids": list(product_template_value_ids),
                     "created_at": date_.replace(tzinfo=None)
                 }
                 new_list.append(w_record)
@@ -283,23 +287,25 @@ async def insertOrUpdate(session, body, bg=False):
                 # update record
                 date_ = arrow.get(str(create_date)).datetime
 
-                if name != attribute.name:
-                    w_record['name'] = name
-                if display_name != attribute.display_name:
+                if display_name != attribute_line.display_name:
                     w_record['display_name'] = display_name
-                if list(value_ids) != attribute.value_ids:
-                    w_record['value_ids'] = list(value_ids)
-                if list(attribute_line_ids) != attribute.attribute_line_ids:
-                    w_record['attribute_line_ids'] = list(attribute_line_ids)
-                if bool(is_used_on_products) != attribute.is_used_on_products:
-                    w_record['is_used_on_products'] = bool(is_used_on_products)
-                if list(product_tmpl_ids) != attribute.product_tmpl_ids:
-                    w_record['product_tmpl_ids'] = list(product_tmpl_ids)
-                if date_.replace(tzinfo=None) != attribute.created_at:
+                if bool(active) != attribute_line.active:
+                    w_record['active'] = bool(active)
+                if int(product_tmpl_id[0]) != attribute_line.product_tmpl_id:
+                    w_record['product_tmpl_id'] = int(product_tmpl_id[0])
+                if int(attribute_id[0]) != attribute_line.attribute_id:
+                    w_record['attribute_id'] = int(attribute_id[0])
+                if list(value_ids) != attribute_line.value_ids:
+                    w_record['value_ids'] = list(
+                        value_ids)
+                if list(product_template_value_ids) != attribute_line.product_template_value_ids:
+                    w_record['product_template_value_ids'] = list(
+                        product_template_value_ids)
+                if date_.replace(tzinfo=None) != attribute_line.created_at:
                     w_record['created_at'] = date_.replace(tzinfo=None)
 
                 if w_record:
-                    w_record['odoo_id'] = attribute.odoo_id
+                    w_record['odoo_id'] = attribute_line.odoo_id
                     update_list.append(w_record)
 
                 redundant_ids.append(int(id))
@@ -337,13 +343,13 @@ async def cronAddUpdateProcess(session, body):
     [new_list, update_list, redundant_ids] = await insertOrUpdate(session, body_records, True)
     if new_list:
         # Post new record
-        result = await insertQuery(session, Attribute, new_list)
+        result = await insertQuery(session, ProductAttributeLine, new_list)
 
         for u in result:
             output_list.append(u.id)
 
     if update_list:
-        result = await bulkUpdateQuery(session, Attribute, redundant_ids, update_list)
+        result = await bulkUpdateQuery(session, ProductAttributeLine, redundant_ids, update_list)
 
         for u in result:
             output_list.append(u)
@@ -355,10 +361,10 @@ async def cronAddUpdateProcess(session, body):
 
 
 # Cron auto feed to db func
-async def migrateAttributeToDB(app):
+async def migrateProdAttributeLineToDB(app):
     async with app.ctx.db.begin() as conn:
         # TODO: async func can await call from odoo, need improvements?
-        output = await get_attr()
+        output = await get_prod_attr_line()
         _ = await cronAddUpdateProcess(conn, output)
 
         await conn.commit()

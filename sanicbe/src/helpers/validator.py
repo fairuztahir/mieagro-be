@@ -5,6 +5,7 @@ from .schema.role import role_post_schema, role_upd_schema
 from .schema.user import user_post_schema, user_upd_schema, user_reg_schema, users_post_schema
 from .schema.attribute import attr_post_schema, attr_upd_schema
 from .schema.attribute_value import attr_value_post_schema, attr_value_upd_schema
+from .schema.prod_attribute_line import prod_attr_line_post_schema, prod_attr_line_upd_schema
 
 
 # default main validator
@@ -192,3 +193,22 @@ def postAttributeValueValidator(input=[]):
 # Update attribute value validator
 def updateAttributeValueValidator(input={}):
     return mainValidator(attr_value_upd_schema, input)
+
+
+# Post prod attribute line validator
+def postProdAttributeLineValidator(input=[]):
+    flag_ = True
+    err_list = []
+    for i in range(len(input)):
+        [result, err] = mainValidator(prod_attr_line_post_schema, input[i])
+        if not result:
+            flag_ = False
+            err['id'] = input[i]['id']
+            err_list.append(err)
+
+    return [flag_, err_list]
+
+
+# Update prod attribute line validator
+def updateProdAttributeLineValidator(input={}):
+    return mainValidator(prod_attr_line_upd_schema, input)
