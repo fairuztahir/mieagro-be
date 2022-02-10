@@ -37,11 +37,10 @@ class AuthController():
                 LO_EMAIL = lowerString(GET_EMAIL)
 
                 user_ = await findUserByEmail(session, User, LO_EMAIL, User.role)
-                getUser_ = user_.to_dict()
-
                 if not user_:
                     return resJson(resType.INVALID_AUTH)
 
+                getUser_ = user_.to_dict()
                 if not await is_hash_valid(GET_CHALLENGE, getUser_['challenge']):
                     return resJson(resType.INVALID_AUTH)
 

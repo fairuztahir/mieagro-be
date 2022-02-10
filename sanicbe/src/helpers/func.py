@@ -294,6 +294,22 @@ async def write_file(path, body, oldPath=None):
     return True
 
 
+# Remove file
+async def del_file(oldPath=None):
+    if oldPath:
+        os.remove(f"./uploads{oldPath}")
+
+    return True
+
+
+# Set folder path with year and month
+async def getYearMth():
+    TIMESTR = arrow.utcnow().format('YYYY-MM')
+    arr = TIMESTR.split("-")
+    CONCATSTR = arr[0] + "/" + arr[1]
+    return CONCATSTR
+
+
 # Set path for images type
 async def getPathImage(file_name, defaultName=False):
     file_name_type = file_name.split('.')[-1]
@@ -302,9 +318,12 @@ async def getPathImage(file_name, defaultName=False):
     else:
         setName = datetime.datetime.now().strftime(
             valueOf.STRFTIME.fulltext)+'.'+file_name_type
-
-    setPath = f"{valueOf.UPLOAD_DIR.fulltext}/images/{str(setName)}"
-    return [setName, setPath]
+    subFolder = await getYearMth()
+    setPath = f"{valueOf.UPLOAD_DIR.fulltext}/images/{subFolder}/{str(setName)}"
+    # Validate path
+    await createUploadSubPath(f"{valueOf.UPLOAD_DIR.fulltext}/images/{subFolder}")
+    setDBPath = f"/images/{subFolder}/{str(setName)}"
+    return [setDBPath, setPath]
 
 
 # Set path for files type
@@ -315,11 +334,22 @@ async def getPathFile(file_name, defaultName=False):
     else:
         setName = datetime.datetime.now().strftime(
             valueOf.STRFTIME.fulltext)+'.'+file_name_type
+    subFolder = await getYearMth()
+    setPath = f"{valueOf.UPLOAD_DIR.fulltext}/files/{subFolder}/{str(setName)}"
+    # Validate path
+    await createUploadSubPath(f"{valueOf.UPLOAD_DIR.fulltext}/files/{subFolder}")
+    setDBPath = f"/files/{subFolder}/{str(setName)}"
+    return [setDBPath, setPath]
 
-    setPath = f"{valueOf.UPLOAD_DIR.fulltext}/files/{str(setName)}"
-    return [setName, setPath]
 
-# Validate uploads path
+# Validate subfolder uploads path
+async def createUploadSubPath(path):
+    # Create uploads folder if doesn't exist
+    if not os.path.exists(path):
+        os.makedirs(path)
+    return True
+
+# Validate default uploads path
 
 
 async def createUploadPath(app):

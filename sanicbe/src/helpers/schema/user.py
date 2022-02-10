@@ -23,7 +23,7 @@ user_post_schema = {
         'schema': {
                 'type': 'string',
                 'empty': False,
-                'regex': '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+                'regex': r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
         }
     },
     'challenge': {
@@ -63,7 +63,7 @@ user_upd_schema = {
         'required': False,
         'type': 'string',
         'empty': False,
-        'regex': '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        'regex': r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
     },
     'challenge': {
         'required': False,
@@ -101,7 +101,7 @@ user_reg_schema = {
         'required': True,
         'type': 'string',
         'empty': False,
-        'regex': '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        'regex': r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
     },
     'challenge': {
         'required': True,
@@ -121,4 +121,46 @@ user_reg_schema = {
         'empty': False,
         'maxlength': 30
     }
+}
+
+users_post_schema = {
+    'data': {
+        'type': 'list',
+        'required': True,
+        'schema': {
+            'type': 'dict',
+            'schema': {
+                'first_name': {
+                    'required': True,
+                    'type': 'string',
+                    'empty': False,
+                    'maxlength': 30
+                },
+                'last_name': {
+                    'required': False,
+                    'type': 'string',
+                    'empty': True,
+                    'maxlength': 30
+                },
+                'email': {
+                    'required': True,
+                    'type': 'string',
+                    'empty': False,
+                    'regex': r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+                },
+                'challenge': {
+                    'required': True,
+                    'type': 'string',
+                    'empty': False,
+                    'maxlength': 60
+                },
+                'role': {
+                    'required': False,
+                    'type': 'string',
+                    'empty': False,
+                    'maxlength': 30
+                },
+            }
+        },
+    },
 }

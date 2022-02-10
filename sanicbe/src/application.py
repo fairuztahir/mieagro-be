@@ -3,7 +3,7 @@ import asyncpg
 import aioredis
 
 from contextvars import ContextVar
-from sanic import Sanic, Blueprint, views
+from sanic import Sanic, Blueprint
 from sanic.log import logger
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -25,6 +25,7 @@ from models.base import Base
 from models.role import Role
 from models.user import User
 from helpers.func import make_hash, createUploadPath, valueOf
+from helpers.seeds.main import userSeed, roleSeed
 
 
 def create(*args, **kwargs):
@@ -47,7 +48,7 @@ def before_server_start(app):
             database=os.getenv('POSTGRES_DB', 'postgres')
         )
         debug_mode = os.getenv('APP_ENV', '') == 'dev'
-        app.db = create_async_engine(dsn, echo=debug_mode)
+        app.ctx.db = create_async_engine(dsn, echo=debug_mode)
         await redis_pool(app)
         await db_migrate(app)
 
@@ -64,9 +65,8 @@ def after_server_stop(app):
     @app.listener('after_server_stop')
     async def run(app, loop):
         await stop()
-        await app.db.dispose()
-        app.redis.close()
-        await app.redis.wait_closed()
+        await app.ctx.db.dispose()
+        await app.ctx.redis.disconnect()
 
 
 def init_blueprints(app):
@@ -88,41 +88,45 @@ def init_blueprints(app):
 
 
 async def redis_pool(app):
-    # MARK: using aioredis v1.3.1, got bug with v2.0.0 and need to downgrade python 3.10 to 3.9
-    app.redis = await aioredis.create_redis_pool('redis://redis:6379', encoding='utf-8', maxsize=10)
-    # await app.redis.set('my-key', 'value')
-    # val = await app.redis.get('my-key')
-    # print('raw value:', val)
+    # MARK: using aioredis > v2 https://aioredis.readthedocs.io/en/latest/examples/#pubsub
+    app.ctx.redis = aioredis.ConnectionPool.from_url(
+        "redis://redis:6379", encoding="utf-8", decode_responses=True
+    )
+    meanings = aioredis.Redis(connection_pool=app.ctx.redis)
+    try:
+        await meanings.set("life", 42)
+        print(f"Test Redis: {await meanings.get('life')}")
+        await meanings.delete("life")
+    finally:
+        await app.ctx.redis.disconnect()
 
 
 async def db_migrate(app):
-    async with app.db.begin() as conn:
+    async with app.ctx.db.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
-    async with app.db.connect() as conn:
+    async with app.ctx.db.connect() as conn:
         stmt = select(Role.id).where(Role.name == 'Admin')
         data = await conn.execute(stmt)
         if not data.scalar():
-            await conn.execute(insert(Role), [
-                {"name": "Admin", "description": "Admin role setting with all privileges."},
-                {"name": "User", "description": "User role setting with limited privileges."}
-            ])
+            await conn.execute(insert(Role), roleSeed)
             await conn.commit()
 
             stmt = select(Role.id).where(Role.name == 'Admin')
             data = await conn.execute(stmt)
             challenge = str(os.getenv('API_ADMIN_PASSWORD', 'admin'))
             hashed = await make_hash(challenge)
-            await conn.execute(insert(User), [
-                {"fname": "Fairuz", "lname": "Tahir", "email": os.getenv(
-                    'API_ADMIN_EMAIL', 'admin@gmail.com'), "challenge": hashed, "role_id": data.scalar()}
-            ])
+            email = str(os.getenv('API_ADMIN_EMAIL', 'admin@gmail.com'))
+            userSeed[0]["email"] = email
+            userSeed[0]["challenge"] = hashed
+            userSeed[0]["role_id"] = data.scalar()
+            await conn.execute(insert(User), userSeed)
             await conn.commit()
         await conn.close()
 
 
 async def drop_db(app):
-    async with app.db.begin() as conn:
+    async with app.ctx.db.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
 
 
@@ -133,7 +137,7 @@ def add_middleware(app):
     @app.middleware("request")
     async def inject_session(request):
         request.ctx.session = sessionmaker(
-            app.db, AsyncSession, expire_on_commit=False)()
+            app.ctx.db, AsyncSession, expire_on_commit=False)()
         request.ctx.session_ctx_token = _base_model_session_ctx.set(
             request.ctx.session)
 

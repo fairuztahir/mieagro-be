@@ -10,8 +10,8 @@ CORS(app, automatic_options=True)
 
 # Used as K8 health check.
 @app.route("/ping", methods=['GET', 'OPTIONS'])
-async def test(request):
-    return json({"ping": "pong!"})
+async def ping(request):
+    return json({"message": "pong!"})
 
 if __name__ == "__main__":
     debug_mode = os.getenv('APP_ENV', '') == 'dev'

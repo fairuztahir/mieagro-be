@@ -2,7 +2,7 @@ from cerberus import Validator
 from .schema.product import prod_post_schema, prod_upd_schema
 from .schema.warehouse import wh_post_schema, wh_upd_schema
 from .schema.role import role_post_schema, role_upd_schema
-from .schema.user import user_post_schema, user_upd_schema, user_reg_schema
+from .schema.user import user_post_schema, user_upd_schema, user_reg_schema, users_post_schema
 from .schema.attribute import attr_post_schema, attr_upd_schema
 from .schema.attribute_value import attr_value_post_schema, attr_value_upd_schema
 
@@ -21,6 +21,25 @@ def mainValidator(schema={}, document={}):
                 arr[key] = value[0][0][0]
             else:
                 arr[key] = value[0]
+        return [False, arr]
+    else:
+        return [True, None]
+
+
+# default main validator
+def nestedValidator(schema={}, document={}):
+    v = Validator()
+    v.allow_unknown = True
+
+    if not v.validate(document, schema):
+        arr = []
+        for _, value in v.errors.items():
+            for k, v in value[0].items():
+                tmp = {}
+                for c, d in v[0].items():
+                    tmp['data_row'] = k
+                    tmp[c] = d[0]
+                arr.append(tmp)
         return [False, arr]
     else:
         return [True, None]
@@ -82,6 +101,11 @@ def updateRoleValidator(input={}):
 # Post user validator
 def postUserValidator(input={}):
     return mainValidator(user_post_schema, input)
+
+
+# Post users validator
+def postUsersValidator(input={}):
+    return nestedValidator(users_post_schema, input)
 
 
 # Register user validator
