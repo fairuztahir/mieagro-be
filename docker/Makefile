@@ -1,4 +1,4 @@
-.PHONY: build up start down destroy stop restart logs logs-api ps dangling-volume clear-dangling-volume dangling-image clear-dangling-image clear-volume clear-image clear-container prune
+.PHONY: build up start down destroy stop restart logs logs-api ps dangling-volume clear-dangling-volume dangling-image clear-dangling-image clear-volume clear-image clear-container prune scan
 ifeq '$(findstring ;,$(PATH))' ';'
     UNAME := Windows
 else
@@ -11,6 +11,7 @@ ifneq (,$(wildcard ./.env))
     include .env
     export
 endif
+project_id := $(or ${project_id}, ${PROJECT_ID})
 env := $(or ${env}, ${APP_ENV})
 ifeq ($(UNAME),Windows)
     OSCMD := set "COMPOSE_DOCKER_CLI_BUILD=1" && set "DOCKER_BUILDKIT=1"
@@ -22,6 +23,15 @@ endif
 all:                     ## Default process Build and Up containers with cache
 	@echo starting --$(env) build and up containers
 	@$(OSCMD) && docker compose -f docker-compose.yml -f docker-compose.$(env).yml up -d --build
+
+.PHONY: test
+test:                    ## Default process Build and Up containers with cache for test
+	@echo starting --test build and up containers
+	@$(OSCMD) && docker compose -f docker-compose.test.yml up -d --build
+
+.PHONY: test-destroy
+test-destroy:            ## Remove container service and volumes for test
+	@docker compose -f docker-compose.test.yml down -v $(c)
 
 .PHONY: fresh
 fresh:                   ## Build and Up containers without cache
@@ -82,6 +92,8 @@ clear-container:         ## Remove all containers
 	@docker container rm $(shell docker ps -aq) -f
 prune:					 ## Remove all cached, existing images, containers
 	@docker system prune -a
+scan:					 ## Scan existing images with Snyk, c=<image-name>
+	@docker scan $(project_id)/koavue-$(c)
 
 # Sorry, lazy to install node tool to create a commit message..
 # https://dzone.com/articles/using-conventional-commit-in-project

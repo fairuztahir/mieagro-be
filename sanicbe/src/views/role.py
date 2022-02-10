@@ -289,10 +289,10 @@ async def findNotExists(ori_, validated_):
     try:
         display_err = []
         for a in ori_:
-            flag_ = False
+            flag_ = True
             for b in validated_:
                 if a == b.get('id'):
-                    flag_ = True
+                    flag_ = False
                     break
             if not flag_:
                 display_err.append(a)

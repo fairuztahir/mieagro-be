@@ -9,9 +9,10 @@ from helpers.func import (
     valid_file_type,
     valid_file_size,
     getPathImage,
-    write_file
+    write_file,
+    del_file
 )
-from helpers.validator import paginateValidator, postUserValidator, updateUserValidator
+from helpers.validator import paginateValidator, postUserValidator, updateUserValidator, postUsersValidator
 from helpers.query import (
     paginatedQuery,
     insertQuery,
@@ -110,12 +111,12 @@ class UserController():
                     output = dict(u)
 
                 if img and img.type != 'text/plain':
-                    [file_name, file_path, flag_] = await validateImage(img)
+                    [db_path, _, flag_] = await validateImage(img)
 
                     if flag_:
                         return resJson(flag_)
 
-                    values_ = {"avatar_url": f"/images/{file_name}"}
+                    values_ = {"avatar_url": db_path}
                     setUser_ = await updateById(session, User, output['id'], values_)
                     if not setUser_:
                         return resJson(resType.FAIL_UPD)
@@ -131,14 +132,22 @@ class UserController():
             session = request.ctx.session
             body = request.json
 
-            validate_ = validate_list(body)
+            # Input validation
+            [valid, error] = postUsersValidator(body)
+            if not valid:
+                return resJson(resType.INVALID_PARAMS, error, len(error))
+
+            if len(body["data"]) < 1:
+                return resJson(resType.NO_UPD, {})
+
+            validate_ = validate_list(body["data"])
             if not validate_:
                 return resJson(resType.MULTI_INSERT)
 
             async with session.begin():
 
                 id_list_ = []
-                [user_list, exist_list] = await userMultiAndScalarValidate(session, body, validate_)
+                [user_list, exist_list] = await userMultiAndScalarValidate(session, body["data"], validate_)
                 if exist_list:
                     return resJson(resType.EMAIL_EXISTED, exist_list, len(exist_list))
 
@@ -233,6 +242,8 @@ class UserController():
                 destroy = await softDelbyId(session, User, pk_)
                 if not destroy:
                     resMsg = resType.FAIL_DELETE
+                else:
+                    await del_file(user.avatar_url)
 
             return resJson(resMsg, destroy)
         except:
@@ -257,12 +268,12 @@ class UserController():
                 # get old image url
                 user_ = user_.to_dict()
                 # Store image file
-                [file_name, file_path, flag_] = await validateImage(body, user_['avatar_url'])
+                [db_path, _, flag_] = await validateImage(body, user_['avatar_url'])
 
                 if flag_:
                     return resJson(flag_)
 
-                values_ = {"avatar_url": f"/images/{file_name}"}
+                values_ = {"avatar_url": db_path}
                 setUser_ = await updateById(session, User, pk_, values_)
                 if not setUser_:
                     return resJson(resType.FAIL_UPD)
@@ -333,12 +344,12 @@ async def validateImage(body, oldPath=None):
         if not validate_size:
             flag = resType.INVALID_IMG_SIZE
 
-        [file_name, file_path] = await getPathImage(image_name)
+        [db_path, file_path] = await getPathImage(image_name)
 
         if not flag:
             await write_file(file_path, image_body, oldPath)
 
-        return [file_name, file_path, flag]
+        return [db_path, file_path, flag]
     except:
         exceptionRaise('validateImage')
 
@@ -350,42 +361,3 @@ async def checkEmailExist(session, email):
         flag = False
 
     return flag
-
-
-# class UserSchema(Schema):
-#     id = fields.Integer(required=True)
-#     email = fields.Email(required=True)
-#     password = fields.String(required=True, validate=[Length(min=4)])
-
-
-# class Auth(HTTPMethodView):
-#     async def get(self, request):
-#         return json({"hello": "world"})
-
-#     async def post(self, request):
-#         logger.info(request.json)
-#         res, errs = UserSchema(exclude=['id']).load(request.json)
-#         if errs:
-#             return json({"valid": False, "data": errs}, status=400)
-
-#         async with request.app.db.acquire() as conn:
-#             _user = await conn.fetchrow('''
-#             SELECT * FROM users WHERE email=$1
-#             ''', res['email'])
-
-#         if not (
-#                 _user and
-#                 pbkdf2_sha256.verify(res['password'], _user['password'])
-#         ):
-#             return json({
-#                 "valid": False,
-#                 "data": 'Wrong email or password'
-#             }, status=401)
-
-#         data = UserSchema(exclude=['password']).dump(_user).data
-
-#         token = uuid.uuid4().hex
-
-#         await request.app.redis.set(token, ujson.dumps(data))
-
-#         return json({"valid": True, "data": {"access_token": token}})

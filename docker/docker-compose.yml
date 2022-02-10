@@ -1,43 +1,27 @@
 version: '3.8'
 
 services:
-  # web:
-  #   container_name: web
-  #   build:
-  #     context: ../
-  #     dockerfile: ./docker/web.Dockerfile
-  #   image: ${PROJECT_ID}/mieagro-web:${VERSION}
-  #   environment:
-  #     VUE_APP_I18N_LOCALE: ${VUE_APP_I18N_LOCALE}
-  #     VUE_APP_I18N_FALLBACK_LOCALE: ${VUE_APP_I18N_FALLBACK_LOCALE}
-  #   depends_on:
-  #     - sanicbe
-  #   tty: true
-  #   networks:
-  #     - webnet
+  web:
+    container_name: web
+    build:
+      context: ../
+      dockerfile: ./docker/web.Dockerfile
+    image: ${PROJECT_ID}/sanicvue-web:${VERSION}
+    environment:
+      VUE_APP_I18N_LOCALE: ${VUE_APP_I18N_LOCALE}
+      VUE_APP_I18N_FALLBACK_LOCALE: ${VUE_APP_I18N_FALLBACK_LOCALE}
+    depends_on:
+      - sanicbe
+    tty: true
+    networks:
+      - webnet
 
   sanicbe:
     container_name: sanicbe
     build:
       context: ../
       dockerfile: ./docker/sanicbe.Dockerfile
-    image: ${PROJECT_ID}/mieagro-be:${VERSION}
-    environment:
-      APP_ENV: ${APP_ENV}
-      API_PORT: ${API_PORT}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      API_ADMIN_EMAIL: ${API_ADMIN_EMAIL}
-      API_ADMIN_PASSWORD: ${API_ADMIN_PASSWORD}
-      JWT_SECRET: ${JWT_SECRET}
-      REG_KEY: ${REG_KEY}
-      TIMEZONE_ENV: ${TIMEZONE_ENV}
-      ODOO_HOST: ${ODOO_HOST}
-      ODOO_DB: ${ODOO_DB}
-      ODOO_USER: ${ODOO_USER}
-      ODOO_PWD: ${ODOO_PWD}
+    image: ${PROJECT_ID}/sanicvue-be:${VERSION}
     depends_on:
       - pgadmin
     tty: true
@@ -58,17 +42,13 @@ services:
 
   redis:
     container_name: redis
-    image: redis:6.0.8-alpine
+    image: redis:6.2-alpine
     networks:
       - webnet
 
   db:
     container_name: db
     image: postgres:14-alpine
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
     networks:
       - webnet
 
@@ -77,10 +57,9 @@ services:
     build:
       context: ../
       dockerfile: ./docker/proxy.Dockerfile
-    image: ${PROJECT_ID}/mieagro-proxy:${VERSION}
+    image: ${PROJECT_ID}/sanicvue-proxy:${VERSION}
     depends_on:
-      - sanicbe
-      # - web
+      - web
     networks:
       - webnet
 

@@ -1,17 +1,17 @@
 version: '3.8'
 
 services:
-  # web:
-  #   restart: always
-  #   build:
-  #     target: production
-  #     args:
-  #       APP_ENV: ${APP_ENV}
-  #   ports:
-  #     - '3000/tcp'
-  #   volumes:
-  #     - web:/app:cached
-  #     - '/app/node_modules'
+  web:
+    restart: always
+    build:
+      target: production
+      args:
+        APP_ENV: ${APP_ENV}
+    ports:
+      - '3000/tcp'
+    volumes:
+      - web:/app:cached
+      - '/app/node_modules'
 
   sanicbe:
     restart: always
@@ -19,6 +19,22 @@ services:
       target: production
       args:
         APP_ENV: ${APP_ENV}
+    environment:
+      APP_ENV: ${APP_ENV}
+      API_PORT: ${API_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      API_ADMIN_EMAIL: ${API_ADMIN_EMAIL}
+      API_ADMIN_PASSWORD: ${API_ADMIN_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      REG_KEY: ${REG_KEY}
+      TIMEZONE_ENV: ${TIMEZONE_ENV}
+      ODOO_HOST: ${ODOO_HOST}
+      ODOO_DB: ${ODOO_DB}
+      ODOO_USER: ${ODOO_USER}
+      ODOO_PWD: ${ODOO_PWD}
     ports:
       - ${API_PORT}/tcp
     volumes:
@@ -36,6 +52,10 @@ services:
 
   db:
     restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - '5432/tcp'
     volumes:
@@ -57,4 +77,4 @@ volumes:
   db-data:
   proxy:
   sanicbe:
-  # web:
+  web:
