@@ -1,30 +1,21 @@
 version: '3.8'
 
 services:
-  web:
-    restart: unless-stopped
-    build:
-      target: development
-      args:
-        APP_ENV: ${APP_ENV}
-    ports:
-      - ${WEB_PORT}:3000
-    volumes:
-      - ../web:/app:cached
-      - '/app/node_modules'
-
   sanicbe:
-    restart: unless-stopped
+    container_name: sanicbe
     build:
-      target: development
+      context: ../
+      dockerfile: ./docker/sanicbe.Dockerfile
+      target: testing
       args:
-        APP_ENV: ${APP_ENV}
+        APP_ENV: test
+    image: ${PROJECT_ID}/sanicvue-be:${VERSION}
     environment:
       APP_ENV: ${APP_ENV}
       API_PORT: ${API_PORT}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_DB: db_test
       POSTGRES_HOST: ${POSTGRES_HOST}
       API_ADMIN_EMAIL: ${API_ADMIN_EMAIL}
       API_ADMIN_PASSWORD: ${API_ADMIN_PASSWORD}
@@ -35,43 +26,77 @@ services:
       ODOO_DB: ${ODOO_DB}
       ODOO_USER: ${ODOO_USER}
       ODOO_PWD: ${ODOO_PWD}
+    depends_on:
+      - pgadmin
+    tty: true
     volumes:
       - ../sanicbe:/app
     ports:
       - ${API_PORT}:${API_PORT}
+    networks:
+      - webnet
 
   pgadmin:
     restart: unless-stopped
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_LISTEN_PORT: ${PGADMIN_LISTEN_PORT}
     ports:
       - 5454:5454/tcp
+    networks:
+      - webnet
 
   redis:
     restart: unless-stopped
+    container_name: redis
+    image: redis:6.2-alpine
     ports:
       - 6380:6379/tcp
+    networks:
+      - webnet
 
   db:
     restart: unless-stopped
+    container_name: db
+    image: postgres:14-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_DB: db_test
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     volumes:
       - db-data:/var/lib/postgresql/data/
+    networks:
+      - webnet
 
   proxy:
     restart: unless-stopped
+    container_name: proxy
     build:
+      context: ../
+      dockerfile: ./docker/proxy.Dockerfile
       target: release
       args:
-        APP_ENV: ${APP_ENV}
+        APP_ENV: test
+    image: ${PROJECT_ID}/sanicvue-proxy:${VERSION}
+    depends_on:
+      - pgadmin
     ports:
       - 80:80
     volumes:
       - proxy:/app
+    networks:
+      - webnet
 
 volumes:
   db-data:
   proxy:
+
+networks:
+  webnet:

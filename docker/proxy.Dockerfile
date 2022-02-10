@@ -10,6 +10,10 @@ FROM base as dev-preinstall
 COPY ./proxy/nginx-dev.conf /etc/nginx/conf.d/default.conf
 
 
+FROM base as test-preinstall
+COPY ./proxy/nginx-test.conf /etc/nginx/conf.d/default.conf
+
+
 FROM base as prod-preinstall
 # RUN --mount=type=cache,target=/root/.cache/proxy
 COPY ./proxy/nginx-prod.conf /etc/nginx/conf.d/default.conf
