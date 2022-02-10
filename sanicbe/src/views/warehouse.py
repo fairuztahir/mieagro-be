@@ -357,7 +357,7 @@ async def cronAddUpdateProcess(session, body):
 
 # Cron auto feed to db func
 async def migrateWarehouseToDB(app):
-    async with app.db.begin() as conn:
+    async with app.ctx.db.begin() as conn:
         # TODO: async func can await call from odoo, need improvements?
         output = await get_all_warehouse()
         output_list = await cronAddUpdateProcess(conn, output)

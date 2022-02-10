@@ -351,7 +351,7 @@ async def cronAddUpdateProcess(session, body):
 
 # Cron auto feed to db func
 async def migrateAttributeValueToDB(app):
-    async with app.db.begin() as conn:
+    async with app.ctx.db.begin() as conn:
         # TODO: async func can await call from odoo, need improvements?
         output = await get_attr_value()
         output_list = await cronAddUpdateProcess(conn, output)
