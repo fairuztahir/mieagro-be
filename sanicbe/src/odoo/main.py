@@ -142,7 +142,7 @@ async def get_attr(ids=[]):
                                    'display_name',
                                    'value_ids',
                                    'attribute_line_ids',
-                                   'is_used_on_products',
+                                   # 'is_used_on_products', deprecated in v15
                                    'product_tmpl_ids',
                                    'create_date'
                                ]})
