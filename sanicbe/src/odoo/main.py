@@ -201,18 +201,34 @@ async def get_prod_attr_line(ids=[]):
 
 
 # Search product template attribute value
-async def get_prod_attr_value():
-    count = models.execute_kw(DB, uid, PWD,
-                              'product.template.attribute.value',
-                              'search_count',
-                              [[['id', '>', 0]]])
+async def get_prod_attr_value(ids=[]):
+    if not ids:
+        condition = ['id', '>', 0]
+    else:
+        condition = ['id', 'in', ids]
 
     output = models.execute_kw(DB, uid, PWD,
                                'product.template.attribute.value',
                                'search_read',
-                               [[['id', '>', 0]]])
+                               [[condition]],
+                               {'fields': [
+                                   'ptav_active',
+                                   'name',
+                                   'display_name',
+                                   'product_attribute_value_id',
+                                   'attribute_line_id',
+                                   'price_extra',
+                                   'exclude_for',
+                                   'product_tmpl_id',
+                                   'attribute_id',
+                                   'ptav_product_variant_ids',
+                                   'is_custom',
+                                   'display_type',
+                                   'create_date'
+                               ]})
 
-    return [output, count]
+    output.sort(reverse=False, key=lambda e: e['id'])
+    return output
 
 
 # TODO: lek luu
