@@ -120,19 +120,17 @@ class OdooController():
         except:
             exceptionRaise('getProductAttributeLine')
 
-    @o.get("/product-attribute-value")
+    @o.post("/product-attribute-value")
     @protected
     async def getProductAttributeValue(request):
         try:
             session = request.ctx.session
-            params = request.args
+            params = request.json
             async with session.begin():
-                size = int(params.get('pageSize', 10))
-                page = int(params.get('page', 1))
-                [result, count] = await get_prod_attr_value()
-                # result.sort(reverse=False, key=lambda e: e['id'])
+                ids = list(params.get('ids', []))
+                result = await get_prod_attr_value(ids)
 
-            return resJson(resType.OK, result, count)
+            return resJson(resType.OK, result, len(result))
         except:
             exceptionRaise('getProductAttributeValue')
 

@@ -4,7 +4,7 @@ from helpers.func import (
     exceptionRaise,
     validate_list
 )
-from helpers.validator import paginateValidator, postAttributeValueValidator, updateAttributeValueValidator
+from helpers.validator import paginateValidator, postProdAttributeValueValidator, updateProdAttributeValueValidator
 from helpers.query import (
     paginatedQuery,
     insertQuery,
@@ -16,10 +16,10 @@ from helpers.query import (
 )
 from sanic.log import logger
 from sanic import Blueprint
-from models.attribute_value import AttributeValue
+from models.product_attribute_value import ProductAttributeValue
 from utils.auth import protected
 from sqlalchemy import update
-from odoo.main import get_attr_value
+from odoo.main import get_prod_attr_value
 
 import arrow
 
@@ -28,12 +28,12 @@ import arrow
 # -----------------
 
 
-class AttributeValueController():
-    p = Blueprint('attribute_value', url_prefix='/')
+class ProductAttributeValueController():
+    p = Blueprint('prod_attribute_value', url_prefix='/')
 
-    @p.get("/attribute-values")
+    @p.get("/prod-attribute-values")
     @protected
-    async def getAttributeValues(request):
+    async def getProdAttributeValues(request):
         try:
             session = request.ctx.session
             params = request.args
@@ -48,18 +48,25 @@ class AttributeValueController():
                 sort = str(params.get('sortParam', 'created_at'))
                 order = str(params.get('sortBy', 'DESC'))
                 select_items: any = [
-                    AttributeValue.id,
-                    AttributeValue.odoo_id,
-                    AttributeValue.name,
-                    AttributeValue.display_name,
-                    AttributeValue.attribute_id,
-                    AttributeValue.pav_attribute_line_ids,
-                    AttributeValue.is_used_on_products,
-                    AttributeValue.created_at
+                    ProductAttributeValue.id,
+                    ProductAttributeValue.odoo_id,
+                    ProductAttributeValue.name,
+                    ProductAttributeValue.display_name,
+                    ProductAttributeValue.ptav_active,
+                    ProductAttributeValue.product_attribute_value_id,
+                    ProductAttributeValue.attribute_line_id,
+                    ProductAttributeValue.price_extra,
+                    ProductAttributeValue.exclude_for,
+                    ProductAttributeValue.product_tmpl_id,
+                    ProductAttributeValue.attribute_id,
+                    ProductAttributeValue.ptav_product_variant_ids,
+                    ProductAttributeValue.is_custom,
+                    ProductAttributeValue.display_type,
+                    ProductAttributeValue.created_at
                 ]
 
                 [stmt, count_] = paginatedQuery(
-                    AttributeValue, sort, order, select_items, size, page)
+                    ProductAttributeValue, sort, order, select_items, size, page)
                 result = await session.execute(stmt)
                 attribute_values = result.all()
 
@@ -70,28 +77,28 @@ class AttributeValueController():
 
             return resJson(resType.OK, result_dict, total)
         except:
-            exceptionRaise('getAttributeValues')
+            exceptionRaise('getProdAttributeValues')
 
-    @p.get("/attribute-value/<pk_:uuid>")
+    @p.get("/prod-attribute-value/<pk_:uuid>")
     @protected
-    async def getAttributeValue(request, pk_):
+    async def getProdAttributeValue(request, pk_):
         try:
             session = request.ctx.session
             async with session.begin():
-                attribute_value = await findRecordById(session, AttributeValue, pk_)
+                attribute_value = await findRecordById(session, ProductAttributeValue, pk_)
 
             if not attribute_value:
                 return resJson(resType.NO_RECORD)
 
             return resJson(resType.OK, attribute_value.to_dict())
         except:
-            exceptionRaise('getAttributeValue')
+            exceptionRaise('getProdAttributeValue')
+
 
     # MARK: Support scalar and multi input
-
-    @p.post("/attribute-value")
+    @p.post("/prod-attribute-value")
     @protected
-    async def createAttributeValue(request):
+    async def createProdAttributeValue(request):
         try:
             session = request.ctx.session
             body = request.json
@@ -103,7 +110,7 @@ class AttributeValueController():
                     body_records = [body]
 
                 # Input validation
-                [valid, error] = postAttributeValueValidator(body_records)
+                [valid, error] = postProdAttributeValueValidator(body_records)
                 if not valid:
                     return resJson(resType.INVALID_PARAMS, error, len(error))
 
@@ -112,7 +119,7 @@ class AttributeValueController():
                 [new_list, update_list, redundant_ids] = await insertOrUpdate(session, body_records)
                 if (not update_list) and (not redundant_ids):
                     # Post new record
-                    result = await insertQuery(session, AttributeValue, new_list)
+                    result = await insertQuery(session, ProductAttributeValue, new_list)
                 else:
                     return resJson(resType.DUPLICATE, redundant_ids, len(redundant_ids))
 
@@ -121,50 +128,57 @@ class AttributeValueController():
 
             return resJson(resType.OK, output_list, len(output_list))
         except:
-            exceptionRaise('createAttributeValue')
+            exceptionRaise('createProdAttributeValue')
 
-    @p.delete("/attribute-value/<pk_:uuid>")
+    @p.delete("/prod-attribute-value/<pk_:uuid>")
     @protected
-    async def destroyAttributeValue(request, pk_):
+    async def destroyProdAttributeValue(request, pk_):
         try:
             session = request.ctx.session
             resMsg = resType.SUCCESS_DEL
             async with session.begin():
-                attribute_value = await findRecordById(session, AttributeValue, pk_)
+                attribute_value = await findRecordById(session, ProductAttributeValue, pk_)
                 if not attribute_value:
                     return resJson(resType.NO_RECORD)
 
-                destroy = await softDelbyId(session, AttributeValue, pk_)
+                destroy = await softDelbyId(session, ProductAttributeValue, pk_)
                 if not destroy:
                     resMsg = resType.FAIL_DELETE
 
             return resJson(resMsg, destroy)
         except:
-            exceptionRaise('destroyAttributeValue')
+            exceptionRaise('destroyProdAttributeValue')
 
-    @p.put("/attribute-value/<pk_:uuid>")
+    @p.put("/prod-attribute-value/<pk_:uuid>")
     @protected
-    async def updateAttributeValue(request, pk_):
+    async def updateProdAttributeValue(request, pk_):
         try:
             session = request.ctx.session
             b = request.json
             # Input validation
-            [valid, error] = updateAttributeValueValidator(b)
+            [valid, error] = updateProdAttributeValueValidator(b)
             if not valid:
                 return resJson(resType.INVALID_PARAMS, error, len(error))
 
             resMsg = resType.SUCCESS_UPD
             async with session.begin():
-                attribute_value = await findRecordById(session, AttributeValue, pk_)
+                attribute_value = await findRecordById(session, ProductAttributeValue, pk_)
                 if not attribute_value:
                     return resJson(resType.NO_RECORD)
 
                 id = b.get('id', None)
                 name = b.get('name', None)
                 display_name = b.get('display_name', None)
+                ptav_active = b.get('ptav_active', None)
+                product_attribute_value_id = b.get('product_attribute_value_id', None)
+                attribute_line_id = b.get('attribute_line_id', None)
+                price_extra = b.get('price_extra', None)
+                exclude_for = b.get('exclude_for', None)
+                product_tmpl_id = b.get('product_tmpl_id', None)
                 attribute_id = b.get('attribute_id', None)
-                pav_attribute_line_ids = b.get('pav_attribute_line_ids', None)
-                is_used_on_products = b.get('is_used_on_products', None)
+                ptav_product_variant_ids = b.get('ptav_product_variant_ids', None)
+                is_custom = b.get('is_custom', None)
+                display_type = b.get('display_type', None)
                 create_date = b.get('create_date', None)
 
                 w_record = {}
@@ -176,30 +190,46 @@ class AttributeValueController():
                     w_record['name'] = name
                 if display_name != attribute_value.display_name:
                     w_record['display_name'] = display_name
+                if bool(ptav_active) != attribute_value.ptav_active:
+                    w_record['ptav_active'] = bool(ptav_active)
+                if int(product_attribute_value_id[0]) != attribute_value.product_attribute_value_id:
+                    w_record['product_attribute_value_id'] = int(
+                        product_attribute_value_id[0])
+                if int(attribute_line_id[0]) != attribute_value.attribute_line_id:
+                    w_record['attribute_line_id'] = int(attribute_line_id[0])
+                if float(price_extra) != attribute_value.price_extra:
+                    w_record['price_extra'] = float(price_extra)
+                if list(exclude_for) != attribute_value.exclude_for:
+                    w_record['exclude_for'] = list(
+                        exclude_for)
+                if int(product_tmpl_id[0]) != attribute_value.product_tmpl_id:
+                    w_record['product_tmpl_id'] = int(product_tmpl_id[0])
                 if int(attribute_id[0]) != attribute_value.attribute_id:
                     w_record['attribute_id'] = int(attribute_id[0])
-                if list(pav_attribute_line_ids) != attribute_value.pav_attribute_line_ids:
-                    w_record['pav_attribute_line_ids'] = list(
-                        pav_attribute_line_ids)
-                if bool(is_used_on_products) != attribute_value.is_used_on_products:
-                    w_record['is_used_on_products'] = bool(is_used_on_products)
+                if list(ptav_product_variant_ids) != attribute_value.ptav_product_variant_ids:
+                    w_record['ptav_product_variant_ids'] = list(
+                        ptav_product_variant_ids)
+                if bool(is_custom) != attribute_value.is_custom:
+                    w_record['is_custom'] = bool(is_custom)
+                if display_type != attribute_value.display_type:
+                    w_record['display_type'] = display_type
                 if date_.replace(tzinfo=None) != attribute_value.created_at:
                     w_record['created_at'] = date_.replace(tzinfo=None)
 
                 if len(w_record) < 1:
                     return resJson(resType.NO_UPD, {})
 
-                setAttr = await updateById(session, AttributeValue, pk_, w_record)
+                setAttr = await updateById(session, ProductAttributeValue, pk_, w_record)
                 if not setAttr:
                     resMsg = resType.FAIL_UPD
 
             return resJson(resMsg, setAttr)
         except:
-            exceptionRaise('updateAttributeValue')
+            exceptionRaise('updateProdAttributeValue')
 
-    @p.patch("/attribute-value")
+    @p.patch("/prod-attribute-value")
     @protected
-    async def addOrUpdateAttributeValue(request):
+    async def addOrUpdateProdAttributeValue(request):
         try:
             session = request.ctx.session
             body = request.json
@@ -211,7 +241,7 @@ class AttributeValueController():
                     body_records = [body]
 
                 # Input validation
-                [valid, error] = postAttributeValueValidator(body_records)
+                [valid, error] = postProdAttributeValueValidator(body_records)
                 if not valid:
                     return resJson(resType.INVALID_PARAMS, error, len(error))
 
@@ -220,13 +250,13 @@ class AttributeValueController():
                 [new_list, update_list, redundant_ids] = await insertOrUpdate(session, body_records)
                 if new_list:
                     # Post new record
-                    result = await insertQuery(session, AttributeValue, new_list)
+                    result = await insertQuery(session, ProductAttributeValue, new_list)
 
                     for u in result:
                         output_list.append(u.id)
 
                 if update_list:
-                    result = await bulkUpdateQuery(session, AttributeValue, redundant_ids, update_list)
+                    result = await bulkUpdateQuery(session, ProductAttributeValue, redundant_ids, update_list)
 
                     for u in result:
                         output_list.append(u)
@@ -236,7 +266,7 @@ class AttributeValueController():
 
             return resJson(resType.OK, output_list, len(output_list))
         except:
-            exceptionRaise('addOrUpdateAttributeValue')
+            exceptionRaise('addOrUpdateProdAttributeValue')
 
 
 # -----------------
@@ -252,16 +282,23 @@ async def insertOrUpdate(session, body, bg=False):
             id = b.get('id', None)
             name = b.get('name', None)
             display_name = b.get('display_name', None)
+            ptav_active = b.get('ptav_active', None)
+            product_attribute_value_id = b.get('product_attribute_value_id', None)
+            attribute_line_id = b.get('attribute_line_id', None)
+            price_extra = b.get('price_extra', None)
+            exclude_for = b.get('exclude_for', None)
+            product_tmpl_id = b.get('product_tmpl_id', None)
             attribute_id = b.get('attribute_id', None)
-            pav_attribute_line_ids = b.get('pav_attribute_line_ids', None)
-            is_used_on_products = b.get('is_used_on_products', None)
+            ptav_product_variant_ids = b.get('ptav_product_variant_ids', None)
+            is_custom = b.get('is_custom', None)
+            display_type = b.get('display_type', None)
             create_date = b.get('create_date', None)
             w_record = {}
 
             if not bg:
-                attribute_value = await findRecordByColumn(session, AttributeValue, AttributeValue.odoo_id, int(id), False)
+                attribute_value = await findRecordByColumn(session, ProductAttributeValue, ProductAttributeValue.odoo_id, int(id), False)
             else:
-                attribute_value = await findRecordByColumnCron(session, AttributeValue, AttributeValue.odoo_id, int(id), False)
+                attribute_value = await findRecordByColumnCron(session, ProductAttributeValue, ProductAttributeValue.odoo_id, int(id), False)
             if not attribute_value:
                 # register record
                 date_ = arrow.get(str(create_date)).datetime
@@ -269,9 +306,16 @@ async def insertOrUpdate(session, body, bg=False):
                     "odoo_id": int(id),
                     "name": str(name),
                     "display_name": str(display_name),
+                    "ptav_active": bool(ptav_active),
+                    "product_attribute_value_id": int(product_attribute_value_id[0]),
+                    "attribute_line_id": int(attribute_line_id[0]),
+                    "price_extra": float(price_extra),
+                    "exclude_for": list(exclude_for),
+                    "product_tmpl_id": int(product_tmpl_id[0]),
                     "attribute_id": int(attribute_id[0]),
-                    "pav_attribute_line_ids": list(pav_attribute_line_ids),
-                    "is_used_on_products": bool(is_used_on_products),
+                    "ptav_product_variant_ids": list(ptav_product_variant_ids),
+                    "is_custom": bool(is_custom),
+                    "display_type": str(display_type),
                     "created_at": date_.replace(tzinfo=None)
                 }
                 new_list.append(w_record)
@@ -283,13 +327,29 @@ async def insertOrUpdate(session, body, bg=False):
                     w_record['name'] = name
                 if display_name != attribute_value.display_name:
                     w_record['display_name'] = display_name
+                if bool(ptav_active) != attribute_value.ptav_active:
+                    w_record['ptav_active'] = bool(ptav_active)
+                if int(product_attribute_value_id[0]) != attribute_value.product_attribute_value_id:
+                    w_record['product_attribute_value_id'] = int(
+                        product_attribute_value_id[0])
+                if int(attribute_line_id[0]) != attribute_value.attribute_line_id:
+                    w_record['attribute_line_id'] = int(attribute_line_id[0])
+                if float(price_extra) != attribute_value.price_extra:
+                    w_record['price_extra'] = float(price_extra)
+                if list(exclude_for) != attribute_value.exclude_for:
+                    w_record['exclude_for'] = list(
+                        exclude_for)
+                if int(product_tmpl_id[0]) != attribute_value.product_tmpl_id:
+                    w_record['product_tmpl_id'] = int(product_tmpl_id[0])
                 if int(attribute_id[0]) != attribute_value.attribute_id:
                     w_record['attribute_id'] = int(attribute_id[0])
-                if list(pav_attribute_line_ids) != attribute_value.pav_attribute_line_ids:
-                    w_record['pav_attribute_line_ids'] = list(
-                        pav_attribute_line_ids)
-                if bool(is_used_on_products) != attribute_value.is_used_on_products:
-                    w_record['is_used_on_products'] = bool(is_used_on_products)
+                if list(ptav_product_variant_ids) != attribute_value.ptav_product_variant_ids:
+                    w_record['ptav_product_variant_ids'] = list(
+                        ptav_product_variant_ids)
+                if bool(is_custom) != attribute_value.is_custom:
+                    w_record['is_custom'] = bool(is_custom)
+                if display_type != attribute_value.display_type:
+                    w_record['display_type'] = display_type
                 if date_.replace(tzinfo=None) != attribute_value.created_at:
                     w_record['created_at'] = date_.replace(tzinfo=None)
 
@@ -332,13 +392,13 @@ async def cronAddUpdateProcess(session, body):
     [new_list, update_list, redundant_ids] = await insertOrUpdate(session, body_records, True)
     if new_list:
         # Post new record
-        result = await insertQuery(session, AttributeValue, new_list)
+        result = await insertQuery(session, ProductAttributeValue, new_list)
 
         for u in result:
             output_list.append(u.id)
 
     if update_list:
-        result = await bulkUpdateQuery(session, AttributeValue, redundant_ids, update_list)
+        result = await bulkUpdateQuery(session, ProductAttributeValue, redundant_ids, update_list)
 
         for u in result:
             output_list.append(u)
@@ -350,10 +410,10 @@ async def cronAddUpdateProcess(session, body):
 
 
 # Cron auto feed to db func
-async def migrateAttributeValueToDB(app):
+async def migrateProdAttributeValueToDB(app):
     async with app.ctx.db.begin() as conn:
         # TODO: async func can await call from odoo, need improvements?
-        output = await get_attr_value()
+        output = await get_prod_attr_value()
         _ = await cronAddUpdateProcess(conn, output)
 
         await conn.commit()

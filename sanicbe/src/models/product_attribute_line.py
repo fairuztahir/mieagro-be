@@ -4,15 +4,15 @@ from sqlalchemy.orm import relationship
 from .base import BaseModel
 
 
-class Attribute(BaseModel):
-    __tablename__ = "attributes"
+class ProductAttributeLine(BaseModel):
+    __tablename__ = "product_attribute_line"
     odoo_id = Column(INTEGER(), index=True)
-    name = Column(String(100))
     display_name = Column(String(100))
+    active = Column(Boolean(), default=False)
+    product_tmpl_id = Column(INTEGER(), nullable=True)
+    attribute_id = Column(INTEGER(), nullable=True)
     value_ids = Column(ARRAY(INTEGER), nullable=True)
-    attribute_line_ids = Column(ARRAY(INTEGER), nullable=True)
-    # is_used_on_products = Column(Boolean(), default=False) MARK: deprecated in v15
-    product_tmpl_ids = Column(ARRAY(INTEGER), nullable=True)
+    product_template_value_ids = Column(ARRAY(INTEGER), nullable=True)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     deleted_at = Column(DateTime, nullable=True)
@@ -21,11 +21,11 @@ class Attribute(BaseModel):
         return {
             "id": self.id,
             "odoo_id": self.odoo_id,
-            "name": self.name,
             "display_name": self.display_name,
+            "active": self.active,
+            "product_tmpl_id": self.product_tmpl_id,
+            "attribute_id": self.attribute_id,
             "value_ids": self.value_ids,
-            "attribute_line_ids": self.attribute_line_ids,
-            # "is_used_on_products": self.is_used_on_products, MARK: deprecated in v15
-            "product_tmpl_ids": self.product_tmpl_ids,
+            "product_template_value_ids": self.product_template_value_ids,
             "created_at": self.created_at
         }

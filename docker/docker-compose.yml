@@ -6,7 +6,7 @@ services:
     build:
       context: ../
       dockerfile: ./docker/web.Dockerfile
-    image: ${PROJECT_ID}/sanicvue-web:${VERSION}
+    image: ${PROJECT_ID}/mieagro-web:${VERSION}
     environment:
       VUE_APP_I18N_LOCALE: ${VUE_APP_I18N_LOCALE}
       VUE_APP_I18N_FALLBACK_LOCALE: ${VUE_APP_I18N_FALLBACK_LOCALE}
@@ -21,7 +21,7 @@ services:
     build:
       context: ../
       dockerfile: ./docker/sanicbe.Dockerfile
-    image: ${PROJECT_ID}/sanicvue-be:${VERSION}
+    image: ${PROJECT_ID}/mieagro-be:${VERSION}
     depends_on:
       - pgadmin
     tty: true
@@ -57,7 +57,7 @@ services:
     build:
       context: ../
       dockerfile: ./docker/proxy.Dockerfile
-    image: ${PROJECT_ID}/sanicvue-proxy:${VERSION}
+    image: ${PROJECT_ID}/mieagro-proxy:${VERSION}
     depends_on:
       - web
     networks:

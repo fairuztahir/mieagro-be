@@ -54,7 +54,7 @@ class AttributeController():
                     Attribute.display_name,
                     Attribute.value_ids,
                     Attribute.attribute_line_ids,
-                    Attribute.is_used_on_products,
+                    # Attribute.is_used_on_products,
                     Attribute.product_tmpl_ids,
                     Attribute.created_at
                 ]
@@ -164,7 +164,7 @@ class AttributeController():
                 display_name = b.get('display_name', None)
                 value_ids = b.get('value_ids', None)
                 attribute_line_ids = b.get('attribute_line_ids', None)
-                is_used_on_products = b.get('is_used_on_products', None)
+                # is_used_on_products = b.get('is_used_on_products', None)
                 product_tmpl_ids = b.get('product_tmpl_ids', None)
                 create_date = b.get('create_date', None)
 
@@ -181,8 +181,8 @@ class AttributeController():
                     w_record['value_ids'] = list(value_ids)
                 if list(attribute_line_ids) != attribute.attribute_line_ids:
                     w_record['attribute_line_ids'] = list(attribute_line_ids)
-                if bool(is_used_on_products) != attribute.is_used_on_products:
-                    w_record['is_used_on_products'] = bool(is_used_on_products)
+                # if bool(is_used_on_products) != attribute.is_used_on_products:
+                #     w_record['is_used_on_products'] = bool(is_used_on_products)
                 if list(product_tmpl_ids) != attribute.product_tmpl_ids:
                     w_record['product_tmpl_ids'] = list(product_tmpl_ids)
                 if date_.replace(tzinfo=None) != attribute.created_at:
@@ -256,7 +256,7 @@ async def insertOrUpdate(session, body, bg=False):
             display_name = b.get('display_name', None)
             value_ids = b.get('value_ids', None)
             attribute_line_ids = b.get('attribute_line_ids', None)
-            is_used_on_products = b.get('is_used_on_products', None)
+            # is_used_on_products = b.get('is_used_on_products', None)
             product_tmpl_ids = b.get('product_tmpl_ids', None)
             create_date = b.get('create_date', None)
             w_record = {}
@@ -274,7 +274,7 @@ async def insertOrUpdate(session, body, bg=False):
                     "display_name": str(display_name),
                     "value_ids": list(value_ids),
                     "attribute_line_ids": list(attribute_line_ids),
-                    "is_used_on_products": bool(is_used_on_products),
+                    # "is_used_on_products": bool(is_used_on_products),
                     "product_tmpl_ids": list(product_tmpl_ids),
                     "created_at": date_.replace(tzinfo=None)
                 }
@@ -291,8 +291,8 @@ async def insertOrUpdate(session, body, bg=False):
                     w_record['value_ids'] = list(value_ids)
                 if list(attribute_line_ids) != attribute.attribute_line_ids:
                     w_record['attribute_line_ids'] = list(attribute_line_ids)
-                if bool(is_used_on_products) != attribute.is_used_on_products:
-                    w_record['is_used_on_products'] = bool(is_used_on_products)
+                # if bool(is_used_on_products) != attribute.is_used_on_products:
+                #     w_record['is_used_on_products'] = bool(is_used_on_products)
                 if list(product_tmpl_ids) != attribute.product_tmpl_ids:
                     w_record['product_tmpl_ids'] = list(product_tmpl_ids)
                 if date_.replace(tzinfo=None) != attribute.created_at:
@@ -356,10 +356,10 @@ async def cronAddUpdateProcess(session, body):
 
 # Cron auto feed to db func
 async def migrateAttributeToDB(app):
-    async with app.db.begin() as conn:
+    async with app.ctx.db.begin() as conn:
         # TODO: async func can await call from odoo, need improvements?
         output = await get_attr()
-        output_list = await cronAddUpdateProcess(conn, output)
+        _ = await cronAddUpdateProcess(conn, output)
 
         await conn.commit()
         await conn.close()
