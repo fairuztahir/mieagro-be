@@ -12,6 +12,7 @@ class Product(BaseModel):
     name = Column(String(100))
     display_name = Column(String(150))
     active = Column(Boolean(), default=False)
+    categ_id = Column(INTEGER(), nullable=True)
     available_in_pos = Column(Boolean(), default=False)
     uom_name = Column(String(20), default='Units')
     template_price = Column(DOUBLE_PRECISION(
@@ -42,6 +43,7 @@ class Product(BaseModel):
             "name": self.name,
             "display_name": self.display_name,
             "active": self.active,
+            "categ_id": self.categ_id,
             "uom_name": self.uom_name,
             "template_price": self.template_price,
             "template_list_price": self.template_list_price,
