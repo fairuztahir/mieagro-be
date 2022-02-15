@@ -39,13 +39,14 @@ async def search_partner():
 
 # return product/variant details by ids = []
 async def get_prod_detail_by_id(ids=[]):
-    count = models.execute_kw(DB, uid, PWD,
-                              'product.product', 'search_count',
-                              [[['id', 'in', ids], ['active', '=', True]]])
+    if not ids:
+        condition = ['id', '>', 0]
+    else:
+        condition = ['id', 'in', ids]
 
     output = models.execute_kw(DB, uid, PWD,
                                'product.product', 'search_read',
-                               [[['id', 'in', ids], ['active', '=', True]]],
+                               [[condition]],
                                {'fields': [
                                    'code',
                                    'default_code',
@@ -66,9 +67,10 @@ async def get_prod_detail_by_id(ids=[]):
                                    'outgoing_qty',
                                    'create_date',
                                    'create_uid'
-                               ], 'offset': 0, 'limit': count})
+                               ]})
 
-    return [output, count]
+    output.sort(reverse=False, key=lambda e: e['id'])
+    return output
 
 
 # Warehouse Info

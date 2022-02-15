@@ -47,16 +47,11 @@ class OdooController():
             params = request.args
 
             async with session.begin():
-                size = int(params.get('pageSize', 10))
-                page = int(params.get('page', 1))
                 result = await get_prod_temp()
 
                 for u in result:
                     if u['product_variant_count']:
-                        subpage = 1
-                        size_ = len(u['product_variant_ids'])
-                        [get_variants, count_variant] = await get_prod_detail_by_id(u['product_variant_ids'], subpage, size_)
-
+                        get_variants = await get_prod_detail_by_id(u['product_variant_ids'])
                         u['product_variant_details'] = get_variants
 
             return resJson(resType.OK, result, len(result))
@@ -141,12 +136,10 @@ class OdooController():
             session = request.ctx.session
             body = request.json
             async with session.begin():
-                size = int(body.get('pageSize', 10))
-                page = int(body.get('page', 1))
-                variants = list(body.get('ids', []))
-                [result, count] = await get_prod_detail_by_id(variants)
+                variants = list(body.get('ids', None))
+                result = await get_prod_detail_by_id(variants)
 
-            return resJson(resType.OK, result, count)
+            return resJson(resType.OK, result, len(result))
         except:
             exceptionRaise('getProductVariants')
 
