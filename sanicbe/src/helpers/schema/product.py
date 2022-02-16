@@ -28,6 +28,10 @@ prod_post_schema = {
         'type': 'boolean',
         'empty': False
     },
+    'categ_id': {
+        'required': True,
+        'type': 'list'
+    },
     'available_in_pos': {
         'required': True,
         'type': 'boolean',
@@ -127,6 +131,10 @@ prod_upd_schema = {
         'required': False,
         'type': 'boolean',
         'empty': False
+    },
+    'categ_id': {
+        'required': False,
+        'type': 'list'
     },
     'available_in_pos': {
         'required': False,

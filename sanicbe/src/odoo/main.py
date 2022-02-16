@@ -39,13 +39,14 @@ async def search_partner():
 
 # return product/variant details by ids = []
 async def get_prod_detail_by_id(ids=[]):
-    count = models.execute_kw(DB, uid, PWD,
-                              'product.product', 'search_count',
-                              [[['id', 'in', ids], ['active', '=', True]]])
+    if not ids:
+        condition = ['id', '>', 0]
+    else:
+        condition = ['id', 'in', ids]
 
     output = models.execute_kw(DB, uid, PWD,
                                'product.product', 'search_read',
-                               [[['id', 'in', ids], ['active', '=', True]]],
+                               [[condition]],
                                {'fields': [
                                    'code',
                                    'default_code',
@@ -66,9 +67,10 @@ async def get_prod_detail_by_id(ids=[]):
                                    'outgoing_qty',
                                    'create_date',
                                    'create_uid'
-                               ], 'offset': 0, 'limit': count})
+                               ]})
 
-    return [output, count]
+    output.sort(reverse=False, key=lambda e: e['id'])
+    return output
 
 
 # Warehouse Info
@@ -105,6 +107,7 @@ async def get_prod_temp():
                                    'name',
                                    'display_name',
                                    'description',
+                                   'categ_id',
                                    'uom_name',
                                    'active',
                                    'available_in_pos',
@@ -365,9 +368,30 @@ async def get_pos_order_line(date=None, orderId=0):
 
     return [output, count]
 
-# # return product category id
-# async def get_prod_cat():
-#     return models.execute_kw(DB, uid, PWD, 'product.category', 'search_read', [[['name', '!=', 'a']]])
+# return product category id
+async def get_prod_cat(ids=[]):
+    if not ids:
+        condition = ['id', '>', 0]
+    else:
+        condition = ['id', 'in', ids]
+
+    output = models.execute_kw(DB, uid, PWD,
+                               'product.category',
+                               'search_read',
+                               [[condition]],
+                               {'fields': [
+                                   'name',
+                                   'complete_name',
+                                   'display_name',
+                                   'parent_id',
+                                   'parent_path',
+                                   'child_id',
+                                   'product_count',
+                                   'create_date',
+                               ]})
+                               
+    output.sort(reverse=False, key=lambda e: e['id'])
+    return output
 
 
 # return product category details by id

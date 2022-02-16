@@ -21,6 +21,7 @@ from views.attribute import AttributeController
 from views.attribute_value import AttributeValueController
 from views.product_attribute_line import ProductAttributeLineController
 from views.product_attribute_value import ProductAttributeValueController
+from views.product_variant import ProductVariantController
 from utils.exportcsv import DownloadCSVView
 from utils.scheduler import main, stop
 from models.base import Base
@@ -85,6 +86,7 @@ def init_blueprints(app):
         AttributeValueController.p,
         ProductAttributeLineController.p,
         ProductAttributeValueController.p,
+        ProductVariantController.p,
         url_prefix='/',
         version=1
     )
