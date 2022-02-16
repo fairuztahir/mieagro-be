@@ -54,6 +54,7 @@ class ProductController():
                     Product.name,
                     Product.display_name,
                     Product.active,
+                    Product.categ_id,
                     Product.available_in_pos,
                     Product.uom_name,
                     Product.template_price,
@@ -174,6 +175,7 @@ class ProductController():
                 name = b.get('name', None)
                 display_name = b.get('display_name', None)
                 active = b.get('active', None)
+                categ_id = b.get('categ_id', None)
                 available_in_pos = b.get('available_in_pos', None)
                 uom_name = b.get('uom_name', None)
                 template_price = b.get('price', None)
@@ -212,6 +214,9 @@ class ProductController():
                     w_record['display_name'] = display_name
                 if bool(active) != product.active:
                     w_record['active'] = bool(active)
+                if int(categ_id[0]) != product.categ_id:
+                    w_record['categ_id'] = int(
+                        categ_id[0])
                 if bool(available_in_pos) != product.available_in_pos:
                     w_record['available_in_pos'] = bool(available_in_pos)
                 if uom_name != product.uom_name:
@@ -310,6 +315,7 @@ async def insertOrUpdate(session, body, bg=False):
             name = b.get('name', None)
             display_name = b.get('display_name', None)
             active = b.get('active', None)
+            categ_id = b.get('categ_id', None)
             available_in_pos = b.get('available_in_pos', None)
             uom_name = b.get('uom_name', None)
             template_price = b.get('price', None)
@@ -348,6 +354,7 @@ async def insertOrUpdate(session, body, bg=False):
                     "name": str(name),
                     "display_name": str(display_name),
                     "active": bool(active),
+                    "categ_id": int(categ_id[0]),
                     "available_in_pos": bool(available_in_pos),
                     "uom_name": str(uom_name),
                     "template_price": float(template_price),
@@ -375,6 +382,9 @@ async def insertOrUpdate(session, body, bg=False):
                     w_record['display_name'] = display_name
                 if bool(active) != product.active:
                     w_record['active'] = bool(active)
+                if int(categ_id[0]) != product.categ_id:
+                    w_record['categ_id'] = int(
+                        categ_id[0])
                 if bool(available_in_pos) != product.available_in_pos:
                     w_record['available_in_pos'] = bool(available_in_pos)
                 if uom_name != product.uom_name:

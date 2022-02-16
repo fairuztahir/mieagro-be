@@ -8,6 +8,8 @@ from views.product import migrateProductToDB
 from views.attribute import migrateAttributeToDB
 from views.attribute_value import migrateAttributeValueToDB
 from views.product_attribute_line import migrateProdAttributeLineToDB
+from views.product_attribute_value import migrateProdAttributeValueToDB
+from views.product_variant import migrateProdVariantToDB
 from helpers.func import valueOf
 
 
@@ -22,6 +24,10 @@ async def odoo(job, app):
     app.add_task(migrateAttributeValueToDB(app))
     await asyncio.sleep(5)
     app.add_task(migrateProdAttributeLineToDB(app))
+    await asyncio.sleep(5)
+    app.add_task(migrateProdAttributeValueToDB(app))
+    await asyncio.sleep(5)
+    app.add_task(migrateProdVariantToDB(app))
 
 
 def assign_time(year="*", month="*", day="*", hour="*", minute="*", second="*"):
