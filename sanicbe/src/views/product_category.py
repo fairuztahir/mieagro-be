@@ -169,7 +169,7 @@ class ProductCategoryController():
                 if parent_id == False:
                     parent_id = None
                 else:
-                    parent_id = parent_id[0]
+                    parent_id = int(parent_id[0])
 
                 parent_path = b.get('parent_path', None)
                 child_id = b.get('child_id', None)
@@ -187,8 +187,8 @@ class ProductCategoryController():
                     w_record['complete_name'] = complete_name
                 if display_name != category.display_name:
                     w_record['display_name'] = display_name
-                if int(parent_id) != category.parent_id:
-                    w_record['parent_id'] = int(parent_id)
+                if parent_id != category.parent_id:
+                    w_record['parent_id'] = parent_id
                 if parent_path != category.parent_path:
                     w_record['parent_path'] = parent_path
                 if list(child_id) != category.child_id:
@@ -269,7 +269,7 @@ async def insertOrUpdate(session, body, bg=False):
             if parent_id == False:
                 parent_id = None
             else:
-                parent_id = parent_id[0]
+                parent_id = int(parent_id[0])
 
             parent_path = b.get('parent_path', None)
             child_id = b.get('child_id', None)
@@ -289,7 +289,7 @@ async def insertOrUpdate(session, body, bg=False):
                     "name": str(name),
                     "complete_name": str(complete_name),
                     "display_name": str(display_name),
-                    "parent_id": int(parent_id),
+                    "parent_id": parent_id,
                     "parent_path": str(parent_path),
                     "child_id": list(child_id),
                     "product_count": int(product_count),
@@ -306,8 +306,8 @@ async def insertOrUpdate(session, body, bg=False):
                     w_record['complete_name'] = complete_name
                 if display_name != category.display_name:
                     w_record['display_name'] = display_name
-                if int(parent_id) != category.parent_id:
-                    w_record['parent_id'] = int(parent_id)
+                if parent_id != category.parent_id:
+                    w_record['parent_id'] = parent_id
                 if parent_path != category.parent_path:
                     w_record['parent_path'] = parent_path
                 if list(child_id) != category.child_id:
