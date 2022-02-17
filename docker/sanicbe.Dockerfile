@@ -38,7 +38,7 @@ FROM postinstall as testing
 WORKDIR /app
 
 VOLUME [ "/app" ]
-CMD ["pytest", "src/tests"]
+CMD ["pytest", "--verbose", "src/tests"]
 
 
 # FROM python:slim as production
