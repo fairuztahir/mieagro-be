@@ -4,7 +4,7 @@ from helpers.func import (
     exceptionRaise,
     validate_list
 )
-from helpers.validator import paginateValidator, postProdAttributeLineValidator, updateProdAttributeLineValidator
+from helpers.validator import paginateValidator, postProdCategoryValidator, updateProdCategoryValidator
 from helpers.query import (
     paginatedQuery,
     insertQuery,
@@ -28,10 +28,10 @@ import arrow
 # -----------------
 
 
-class ProductAttributeLineController():
+class ProductCategoryController():
     p = Blueprint('prod_category', url_prefix='/')
 
-    @p.get("/prod_categories")
+    @p.get("/prod-categories")
     @protected
     async def getProdCategories(request):
         try:
@@ -105,7 +105,7 @@ class ProductAttributeLineController():
                     body_records = [body]
 
                 # Input validation
-                [valid, error] = postProdAttributeLineValidator(body_records)
+                [valid, error] = postProdCategoryValidator(body_records)
                 if not valid:
                     return resJson(resType.INVALID_PARAMS, error, len(error))
 
@@ -151,7 +151,7 @@ class ProductAttributeLineController():
             session = request.ctx.session
             b = request.json
             # Input validation
-            [valid, error] = updateProdAttributeLineValidator(b)
+            [valid, error] = updateProdCategoryValidator(b)
             if not valid:
                 return resJson(resType.INVALID_PARAMS, error, len(error))
 
@@ -223,7 +223,7 @@ class ProductAttributeLineController():
                     body_records = [body]
 
                 # Input validation
-                [valid, error] = postProdAttributeLineValidator(body_records)
+                [valid, error] = postProdCategoryValidator(body_records)
                 if not valid:
                     return resJson(resType.INVALID_PARAMS, error, len(error))
 
