@@ -204,6 +204,11 @@ class ProductController():
                 else:
                     barcode = str(barcode)
 
+                if not description:
+                    description = None
+                else:
+                    description = str(description)
+
                 if id != product.odoo_id:
                     w_record['odoo_id'] = int(id)
                 if code != product.code:
@@ -341,6 +346,11 @@ async def insertOrUpdate(session, body, bg=False):
             else:
                 barcode = str(barcode)
 
+            if not description:
+                description = None
+            else:
+                description = str(description)
+
             if not bg:
                 product = await findRecordByColumn(session, Product, Product.odoo_id, int(id), False)
             else:
@@ -366,7 +376,7 @@ async def insertOrUpdate(session, body, bg=False):
                     "qty_available": float(qty_available),
                     "incoming_qty": float(incoming_qty),
                     "outgoing_qty": float(outgoing_qty),
-                    "description": str(description),
+                    "description": description,
                     "created_at": date_.replace(tzinfo=None)
                 }
                 new_list.append(w_record)
