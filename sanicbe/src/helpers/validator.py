@@ -8,6 +8,7 @@ from .schema.attribute_value import attr_value_post_schema, attr_value_upd_schem
 from .schema.prod_attribute_line import prod_attr_line_post_schema, prod_attr_line_upd_schema
 from .schema.prod_attribute_value import prod_attr_value_post_schema, prod_attr_value_upd_schema
 from .schema.product_variant import prod_variant_post_schema, prod_variant_upd_schema
+from .schema.product_category import prod_category_post_schema, prod_category_upd_schema
 
 
 # default main validator
@@ -252,3 +253,22 @@ def postProdVariantValidator(input=[]):
 # Update prod variant validator
 def updateProdVariantValidator(input={}):
     return mainValidator(prod_variant_upd_schema, input)
+
+
+# Post prod category validator
+def postProdCategoryValidator(input=[]):
+    flag_ = True
+    err_list = []
+    for i in range(len(input)):
+        [result, err] = mainValidator(prod_category_post_schema, input[i])
+        if not result:
+            flag_ = False
+            err['id'] = input[i]['id']
+            err_list.append(err)
+
+    return [flag_, err_list]
+
+
+# Update prod category validator
+def updateProdCategoryValidator(input={}):
+    return mainValidator(prod_category_upd_schema, input)

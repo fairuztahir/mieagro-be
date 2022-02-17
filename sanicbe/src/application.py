@@ -22,6 +22,7 @@ from views.attribute_value import AttributeValueController
 from views.product_attribute_line import ProductAttributeLineController
 from views.product_attribute_value import ProductAttributeValueController
 from views.product_variant import ProductVariantController
+from views.product_category import ProductCategoryController
 from utils.exportcsv import DownloadCSVView
 from utils.scheduler import main, stop
 from models.base import Base
@@ -78,6 +79,7 @@ def init_blueprints(app):
         UserController.u,
         RoleController.r,
         WarehouseController.wh,
+        ProductCategoryController.p,
         ProductController.p,
         OdooController.o,
         DownloadCSVView.c,

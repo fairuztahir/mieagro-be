@@ -10,12 +10,15 @@ from views.attribute_value import migrateAttributeValueToDB
 from views.product_attribute_line import migrateProdAttributeLineToDB
 from views.product_attribute_value import migrateProdAttributeValueToDB
 from views.product_variant import migrateProdVariantToDB
+from views.product_category import migrateProdCategoryToDB
 from helpers.func import valueOf
 
 
 async def odoo(job, app):
     print('Cronjob running at: %s - %s' % (dt.datetime.now(), job))
     app.add_task(migrateWarehouseToDB(app))
+    await asyncio.sleep(5)
+    app.add_task(migrateProdCategoryToDB(app))
     await asyncio.sleep(5)
     app.add_task(migrateProductToDB(app))
     await asyncio.sleep(5)
