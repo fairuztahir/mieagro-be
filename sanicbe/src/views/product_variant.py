@@ -99,8 +99,8 @@ class ProductVariantController():
         except:
             exceptionRaise('getProdVariant')
 
-
     # MARK: Support scalar and multi input
+
     @p.post("/prod-variant")
     @protected
     async def createProdVariant(request):
@@ -180,6 +180,11 @@ class ProductVariantController():
                 active = b.get('active', None)
                 product_tmpl_id = b.get('product_tmpl_id', None)
                 barcode = b.get('barcode', None)
+                if barcode == False:
+                    barcode = None
+                else:
+                    barcode = str(barcode)
+
                 is_product_variant = b.get('is_product_variant', None)
                 available_in_pos = b.get('available_in_pos', None)
                 attribute_line_ids = b.get('attribute_line_ids', None)
@@ -307,6 +312,11 @@ async def insertOrUpdate(session, body, bg=False):
             active = b.get('active', None)
             product_tmpl_id = b.get('product_tmpl_id', None)
             barcode = b.get('barcode', None)
+            if barcode == False:
+                barcode = None
+            else:
+                barcode = str(barcode)
+
             is_product_variant = b.get('is_product_variant', None)
             available_in_pos = b.get('available_in_pos', None)
             attribute_line_ids = b.get('attribute_line_ids', None)
@@ -335,7 +345,7 @@ async def insertOrUpdate(session, body, bg=False):
                     "description": str(description),
                     "active": bool(active),
                     "product_tmpl_id": int(product_tmpl_id[0]),
-                    "barcode": str(barcode),
+                    "barcode": barcode,
                     "is_product_variant": bool(is_product_variant),
                     "available_in_pos": bool(available_in_pos),
                     "attribute_line_ids": list(attribute_line_ids),

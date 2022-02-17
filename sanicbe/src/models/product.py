@@ -8,7 +8,7 @@ from .base import BaseModel
 class Product(BaseModel):
     __tablename__ = "products"
     odoo_id = Column(INTEGER(), index=True)
-    code = Column(String(20))
+    code = Column(String(20), nullable=True)
     name = Column(String(100))
     display_name = Column(String(150))
     active = Column(Boolean(), default=False)

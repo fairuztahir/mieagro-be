@@ -46,7 +46,7 @@ prod_variant_post_schema = {
     },
     'barcode': {
         'required': True,
-        'type': 'string',
+        'type': ['string', 'boolean'],
         'empty': False,
         'maxlength': 50
     },
@@ -144,7 +144,7 @@ prod_variant_upd_schema = {
     },
     'barcode': {
         'required': True,
-        'type': 'string',
+        'type': ['string', 'boolean'],
         'empty': False,
         'maxlength': 50
     },

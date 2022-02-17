@@ -90,7 +90,7 @@ prod_post_schema = {
     },
     'description': {
         'required': True,
-        'type': 'string',
+        'type': ['string', 'boolean'],
         'empty': True,
         'maxlength': 200
     },
@@ -194,7 +194,7 @@ prod_upd_schema = {
     },
     'description': {
         'required': False,
-        'type': 'string',
+        'type': ['string', 'boolean'],
         'empty': False,
         'maxlength': 200
     },
