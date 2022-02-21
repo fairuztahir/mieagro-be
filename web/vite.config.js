@@ -19,6 +19,14 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  optimizeDeps: {
+    entries: ['./src/App.vue']
+  },
+  server: {
+    watch: {
+      usePolling: true,
+    }
+  }
   /* remove the need to specify .vue files https://vitejs.dev/config/#resolve-extensions
   resolve: {
     extensions: [

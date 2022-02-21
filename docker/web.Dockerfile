@@ -18,7 +18,7 @@ WORKDIR /app
 COPY ./web .
 RUN --mount=type=cache,target=/root/.cache/node \
     --mount=type=cache,target=/root/.cache/node-build \
-    npm install --silent --no-optional && npm cache clean --force
+    npm install --silent && npm cache clean --force
 ENV PATH /app/node_modules/.bin:$PATH
 
 
@@ -27,7 +27,7 @@ WORKDIR /app
 COPY ./web .
 RUN --mount=type=cache,target=/root/.cache/node \
     --mount=type=cache,target=/root/.cache/node-build \
-    npm install --silent --no-optional && npm cache clean --force
+    npm install --silent && npm cache clean --force
 ENV PATH /app/node_modules/.bin:$PATH
 
 
