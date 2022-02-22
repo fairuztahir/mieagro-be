@@ -73,7 +73,7 @@
         class="mb-5"
         cols="12"
       >
-        <h2 class="headline font-weight-bold mb-5">
+        <h2 class="headline font-weight-bold mb-5 wel">
           Ecosystem
         </h2>
 
@@ -150,3 +150,9 @@ export default {
   }),
 }
 </script>
+
+<style scoped>
+  .wel {
+    color: red;
+  }
+</style>
