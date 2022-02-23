@@ -1,18 +1,24 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 // import HomeView from '../views/HomeView.vue';
-import HelloWorld from "../views/HelloWorld2.vue";
+import HelloWorld from "@/views/HelloWorld2.vue";
+import Test from "@/views/dashboard/Index.vue";
+import PageNotFound from "@/views/PageNotFound.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "home",
+    name: "Home",
     component: HelloWorld,
   },
   {
     path: "/test",
-    name: "test",
-    component: () =>
-      import(/* webpackChunkName: "test" */ "@/views/dashboard/Index.vue"),
+    name: "Test",
+    component: Test,
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "PageNotFound",
+    component: PageNotFound,
   },
   // {
   //   path: '/about',
