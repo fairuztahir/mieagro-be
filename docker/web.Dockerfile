@@ -2,7 +2,7 @@
 ARG APP_ENV
 
 # Building the base image
-FROM node:17-alpine AS base
+FROM node:16.14-alpine3.14 AS base
 # Get the latest npm version
 # RUN npm i npm@latest -g
 RUN apk update && apk upgrade
@@ -18,7 +18,7 @@ WORKDIR /app
 COPY ./web .
 RUN --mount=type=cache,target=/root/.cache/node \
     --mount=type=cache,target=/root/.cache/node-build \
-    npm install --silent --no-optional && npm cache clean --force
+    npm install --silent && npm cache clean --force
 ENV PATH /app/node_modules/.bin:$PATH
 
 
@@ -27,7 +27,7 @@ WORKDIR /app
 COPY ./web .
 RUN --mount=type=cache,target=/root/.cache/node \
     --mount=type=cache,target=/root/.cache/node-build \
-    npm install --silent --no-optional && npm cache clean --force
+    npm install --silent && npm cache clean --force
 ENV PATH /app/node_modules/.bin:$PATH
 
 
@@ -45,7 +45,7 @@ ENV PATH /app/node_modules/.bin:$PATH
 FROM ${APP_ENV}-preinstall as postinstall
 
 
-FROM node:17-alpine as development
+FROM node:16.14-alpine3.14 as development
 RUN apk update && apk upgrade
 WORKDIR /app
 # RUN --mount=type=cache,target=/root/.cache/node \

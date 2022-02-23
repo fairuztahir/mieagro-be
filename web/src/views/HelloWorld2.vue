@@ -12,7 +12,7 @@
 
       <v-col class="mb-4">
         <h1 class="display-2 font-weight-bold mb-3">
-          <div>Welcome to the Vuetify 3 Alha Alpha</div>
+          <div>Welcome to the Vuetify 3 Alpha</div>
         </h1>
 
           <small>Vite Preview</small>
@@ -93,16 +93,12 @@
   </v-container>
 </template>
 
-
 <script lang="ts">
-import logo from '@/assets/logo.svg';
-import { defineComponent } from 'vue';
+import logo from '../assets/logo.svg'
 
-export default defineComponent({
+export default {
   name: 'HelloWorld',
-  props: {
-    msg: String,
-  },
+
   data: () => ({
     ecosystem: [
       {
@@ -152,26 +148,11 @@ export default defineComponent({
       },
     ],
   }),
-});
+}
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.wel {
+  .wel {
     color: red;
   }
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
 </style>
