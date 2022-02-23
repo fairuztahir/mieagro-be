@@ -1,25 +1,25 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 // import HomeView from '../views/HomeView.vue';
-import HelloWorld from "@/views/HelloWorld2.vue";
-import Test from "@/views/dashboard/Index.vue";
-import PageNotFound from "@/views/PageNotFound.vue";
+import HelloWorld from '@/views/HelloWorld2.vue'
+import Test from '@/views/dashboard/Index.vue'
+import PageNotFound from '@/views/PageNotFound.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: "/",
-    name: "Home",
-    component: HelloWorld,
+    path: '/',
+    name: 'Home',
+    component: HelloWorld
   },
   {
-    path: "/test",
-    name: "Test",
-    component: Test,
+    path: '/test',
+    name: 'Test',
+    component: Test
   },
   {
-    path: "/:pathMatch(.*)*",
-    name: "PageNotFound",
-    component: PageNotFound,
-  },
+    path: '/:pathMatch(.*)*',
+    name: 'PageNotFound',
+    component: PageNotFound
+  }
   // {
   //   path: '/about',
   //   name: 'about',
@@ -33,11 +33,11 @@ const routes: Array<RouteRecordRaw> = [
   //   name: 'vuetify',
   //   component: HelloWorld,
   // },
-];
+]
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes,
-});
+  routes
+})
 
-export default router;
+export default router
