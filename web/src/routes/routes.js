@@ -1,24 +1,24 @@
 // Dashboard pages
-import DashboardLayout from "@/pages/Dashboard/Layout/DashboardLayout.vue";
-import Dashboard from "@/pages/Dashboard/Dashboard.vue";
+import DashboardLayout from '@/pages/Dashboard/Layout/DashboardLayout.vue'
+import Dashboard from '@/pages/Dashboard/DashboardMain.vue'
 
 const routes = [
   {
-    path: "/",
-    redirect: "/dashboard",
-    name: "Home",
+    path: '/',
+    redirect: '/dashboard',
+    name: 'Home'
   },
   {
-    path: "/",
+    path: '/',
     component: DashboardLayout,
     children: [
       {
-        path: "dashboard",
-        name: "Dashboard",
-        components: { default: Dashboard },
+        path: 'dashboard',
+        name: 'Dashboard',
+        components: { default: Dashboard }
       }
-    ],
-  },
-];
+    ]
+  }
+]
 
-export default routes;
+export default routes
