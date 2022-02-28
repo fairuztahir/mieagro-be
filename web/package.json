@@ -1,31 +1,18 @@
 {
   "name": "web",
-  "version": "0.1.0",
   "private": true,
+  "version": "0.0.1",
   "scripts": {
-    "serve": "vue-cli-service serve --open --port 3000",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "dev": "npm run serve",
-    "deploy": "npm run build && cd docs && npm run build && cd .. && sudo gh-pages -d dist",
-    "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm run dev"
+    "serve": "vite preview",
+    "build": "vite build",
+    "dev": "vite --host 0.0.0.0"
   },
   "dependencies": {
-    "core-js": "^3.8.3",
-    "vue": "^2.6.14",
-    "vue-router": "^3.5.1",
-    "vuex": "^3.6.2"
+    "vue": "^2.6.14"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.16",
-    "@babel/eslint-parser": "^7.12.16",
-    "@vue/cli-plugin-babel": "~5.0.0",
-    "@vue/cli-plugin-eslint": "~5.0.0",
-    "@vue/cli-plugin-router": "~5.0.0",
-    "@vue/cli-plugin-vuex": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
-    "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3",
-    "vue-template-compiler": "^2.6.14"
+    "prettier": "^2.5.1",
+    "vite": "^2.8.0",
+    "vite-plugin-vue2": "^1.9.3"
   }
 }
