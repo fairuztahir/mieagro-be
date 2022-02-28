@@ -5,12 +5,19 @@
   "scripts": {
     "serve": "vite preview",
     "build": "vite build",
-    "dev": "vite --host 0.0.0.0"
+    "dev": "vite --host 0.0.0.0",
+    "lint": "eslint \"**/*.{vue,ts,js}\"",
+    "format": "prettier .  --write",
+    "preview": "vite preview"
   },
   "dependencies": {
     "vue": "^2.6.14"
   },
   "devDependencies": {
+    "eslint": "^8.10.0",
+    "eslint-config-prettier": "^8.4.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-vue": "^8.5.0",
     "prettier": "^2.5.1",
     "vite": "^2.8.0",
     "vite-plugin-vue2": "^1.9.3"
