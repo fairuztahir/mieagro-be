@@ -10,4 +10,10 @@ module.exports = {
       '@': path.resolve(__dirname, 'src')
     }
   }
+  // css: {
+  //   loaderOptions: {
+  //     sass: { additionalData: '@use "@/sass/overrides.sass" as *' },
+  //     scss: { additionalData: '@use "@/sass/variables.scss" as *;' }
+  //   }
+  // }
 }
