@@ -1,6 +1,3 @@
 {
-  "recommendations": [
-    "johnsoncodehk.volar",
-    "MisterJ.vue-volar-extention-pack"
-  ]
+  "recommendations": ["octref.vetur"]
 }
