@@ -1,14 +1,14 @@
 <template>
   <div class="page-container">
     <md-app>
-      <md-app-toolbar class="md-primary">
+      <md-app-toolbar class="md-primary" md-elevation="0">
         <md-button class="md-icon-button" @click="toggleMenu" v-if="!menuVisible">
           <md-icon>menu</md-icon>
         </md-button>
         <span class="md-title">My Title</span>
       </md-app-toolbar>
 
-      <md-app-drawer :md-active.sync="menuVisible" md-persistent="full">
+      <md-app-drawer :md-active.sync="menuVisible" md-persistent="mini">
         <md-toolbar class="md-transparent" md-elevation="0">
           <span>Navigation</span>
 
@@ -43,7 +43,7 @@
       </md-app-drawer>
 
       <md-app-content>
-        <router-view></router-view>
+        <router-view />
       </md-app-content>
     </md-app>
   </div>

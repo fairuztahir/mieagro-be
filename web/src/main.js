@@ -4,7 +4,8 @@ import VueRouter from 'vue-router'
 import routes from './routes/routes'
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
-import 'vue-material/dist/theme/default.css'
+// import 'vue-material/dist/theme/default.css'
+// import 'vue-material/dist/theme/black-green-light.css'
 
 Vue.use(VueRouter)
 Vue.use(VueMaterial)
