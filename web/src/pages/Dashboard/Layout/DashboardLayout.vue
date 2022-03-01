@@ -1,24 +1,27 @@
 <template>
-  <div class="page-container">
-    <router-view />
-  </div>
+  <v-app>
+    <dashboard-core-drawer />
+    <dashboard-core-app-bar />
+    <dashboard-core-view />
+    <dashboard-core-footer />
+  </v-app>
 </template>
 
 <script>
+import DashboardCoreDrawer from './Drawer.vue'
+import DashboardCoreAppBar from './AppBar.vue'
+import DashboardCoreView from './View.vue'
+import DashboardCoreFooter from './Footer.vue'
 export default {
-  name: 'DashboardLayout'
+  name: 'DashboardLayout',
+  components: {
+    DashboardCoreDrawer,
+    DashboardCoreAppBar,
+    DashboardCoreView,
+    DashboardCoreFooter
+  },
+  data: () => ({
+    expandOnHover: false
+  })
 }
 </script>
-
-<style lang="scss" scoped>
-.md-app {
-  height: 100vh;
-  border: 1px solid rgba(#000, 0.12);
-}
-
-// Demo purposes only
-.md-drawer {
-  width: 230px;
-  max-width: calc(100vw - 125px);
-}
-</style>
