@@ -5,7 +5,9 @@
   "scripts": {
     "serve": "vite preview",
     "build": "vite build",
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0",
+    "lint": "eslint \"**/*.{vue,ts,js}\"",
+    "format": "prettier .  --write",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -16,10 +18,19 @@
     "webfontloader": "^1.0.0"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.13.0",
     "@vitejs/plugin-vue": "^2.2.0",
+    "@vue/eslint-config-typescript": "^10.0.0",
     "@vuetify/vite-plugin": "^1.0.0-alpha.3",
+    "eslint": "^8.10.0",
+    "eslint-config-prettier": "^8.4.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-vue": "^8.5.0",
+    "prettier": "^2.5.1",
     "sass": "^1.38.0",
     "sass-loader": "^10.0.0",
+    "typescript": "^4.6.2",
     "vite": "^2.8.0",
     "vue-cli-plugin-vuetify": "~2.4.6",
     "vuetify-loader": "^2.0.0-alpha.0"
