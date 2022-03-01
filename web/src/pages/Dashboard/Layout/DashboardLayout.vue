@@ -1,24 +1,15 @@
 <template>
-  <div class="page-container">
-    <router-view />
-  </div>
+  <v-app>
+    <dashboard-core-view />
+  </v-app>
 </template>
 
 <script>
+import DashboardCoreView from './View.vue'
 export default {
-  name: 'DashboardLayout'
+  name: 'DashboardLayout',
+  components: {
+    DashboardCoreView
+  }
 }
 </script>
-
-<style lang="scss" scoped>
-.md-app {
-  height: 100vh;
-  border: 1px solid rgba(#000, 0.12);
-}
-
-// Demo purposes only
-.md-drawer {
-  width: 230px;
-  max-width: calc(100vw - 125px);
-}
-</style>
