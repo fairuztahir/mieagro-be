@@ -1,17 +1,11 @@
 <template>
   <v-main>
-    <router-view />
-
-    <dashboard-core-footer />
+    <v-container fluid>
+      <router-view />
+    </v-container>
   </v-main>
 </template>
 
 <script>
-import DashboardCoreFooter from './Footer.vue'
-export default {
-  name: 'DashboardCoreView',
-  components: {
-    DashboardCoreFooter
-  }
-}
+export default {}
 </script>

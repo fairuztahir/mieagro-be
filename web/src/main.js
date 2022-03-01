@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import VueRouter from 'vue-router'
 import routes from '@/routes'
+import stores from '@/stores'
 import vuetify from '@/plugins/vuetify'
 
 Vue.config.productionTip = false
@@ -21,6 +22,7 @@ const router = new VueRouter({
 })
 
 new Vue({
+  stores,
   router,
   vuetify,
   render: (h) => h(App)

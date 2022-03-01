@@ -1,5 +1,5 @@
 <template>
-  <v-footer id="dashboard-core-footer">
+  <v-footer id="dashboard-core-footer" app>
     <v-container>
       <v-row align="center" no-gutters>
         <v-col v-for="(link, i) in links" :key="i" class="text-center mb-sm-0 mb-5" cols="auto">
