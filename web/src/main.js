@@ -1,18 +1,14 @@
 import Vue from 'vue'
 import App from './App.vue'
 import VueRouter from 'vue-router'
-import routes from './routes/routes'
-import VueMaterial from 'vue-material'
-import 'vue-material/dist/vue-material.min.css'
-// import 'vue-material/dist/theme/default.css'
-// import 'vue-material/dist/theme/black-green-light.css'
+import routes from './routes'
 
+Vue.config.productionTip = false
 Vue.use(VueRouter)
-Vue.use(VueMaterial)
 
 // configure router
 const router = new VueRouter({
-  routes, // short for routes: routes
+  routes,
   scrollBehavior: (to) => {
     if (to.hash) {
       return { selector: to.hash }
@@ -24,6 +20,6 @@ const router = new VueRouter({
 })
 
 new Vue({
-  render: (h) => h(App),
-  router
+  router,
+  render: (h) => h(App)
 }).$mount('#app')
