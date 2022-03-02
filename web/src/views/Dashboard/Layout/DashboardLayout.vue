@@ -1,22 +1,24 @@
 <template>
   <v-app>
-    <dashboard-core-drawer />
-    <dashboard-core-app-bar />
-    <dashboard-core-view />
+    <DashboardCoreDrawer />
+    <DashboardCoreAppBar />
+    <DashboardCoreView />
+    <DashboardCoreFooter />
   </v-app>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import DashboardCoreDrawer from './Drawer.vue'
+import DashboardCoreDrawer from './DrawerLayout.vue'
 import DashboardCoreAppBar from './AppBar.vue'
-import DashboardCoreView from './View.vue'
+import DashboardCoreView from './ViewLayout.vue'
+import DashboardCoreFooter from './FooterLayout.vue'
 export default defineComponent({
-  name: 'DashboardLayout',
   components: {
     DashboardCoreDrawer,
     DashboardCoreAppBar,
-    DashboardCoreView
+    DashboardCoreView,
+    DashboardCoreFooter
   },
   data: () => ({
     expandOnHover: false
