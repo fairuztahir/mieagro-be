@@ -1,7 +1,7 @@
 <template>
   <v-app :theme="theme">
-    <DashboardCoreDrawer />
-    <DashboardCoreAppBar :title="titleName" />
+    <DashboardCoreDrawer :rail="rail" />
+    <DashboardCoreAppBar :title="titleName" @rail="updateparent" />
     <DashboardCoreView />
     <DashboardCoreFooter />
   </v-app>
@@ -22,32 +22,22 @@ export default defineComponent({
   },
 
   setup() {
+    const titleName = 'Dashboard'
     const theme = ref('light')
+    const toggleTheme = () => (theme.value = theme.value === 'light' ? 'dark' : 'light')
+    let rail = ref(true)
 
     return {
+      titleName,
       theme,
-      toggleTheme: () => (theme.value = theme.value === 'light' ? 'dark' : 'light')
+      toggleTheme,
+      rail
     }
   },
-
-  data: () => ({
-    titleName: 'Home'
-  })
-  // setup() {
-  //   const title = ref('Home')
-
-  //   // expose to template and other options API hooks
-  //   return {
-  //     title
-  //   }
-  // }
-  // props: {
-  //   title: String
-  // }
-  // data() {
-  //   return {
-  //     titleName: this.pageTitle
-  //   }
-  // }
+  methods: {
+    updateparent(event: boolean) {
+        this.rail = event
+    }
+  }
 })
 </script>

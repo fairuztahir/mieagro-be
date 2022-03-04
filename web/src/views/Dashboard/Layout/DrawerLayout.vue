@@ -1,9 +1,6 @@
 <template>
-  <v-navigation-drawer v-model="drawer" :rail="rail" permanent app @click="rail = false">
+  <v-navigation-drawer v-model="drawer" :rail="rail" permanent app >
     <v-list-item prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg" title="John Leider">
-      <template v-slot:append>
-        <v-btn variant="text" icon="mdi-chevron-left" @click.stop="rail = !rail"></v-btn>
-      </template>
     </v-list-item>
 
     <v-divider></v-divider>
@@ -15,25 +12,29 @@
     </v-list> -->
     <v-list density="compact" nav>
       <div v-for="(item, i) in items" :key="i">
-        <v-list-item :prepend-icon="item.icon" :title="item.title" :value="item.title"></v-list-item>
+        <v-list-item :prepend-icon="item.icon" :title="item.title" :value="item.title" :to="item.page"></v-list-item>
       </div>
     </v-list>
   </v-navigation-drawer>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 export default defineComponent({
-  data() {
+  props: {
+    rail: Boolean
+  },
+  setup() {
+    const drawer = ref(true)
+    const items =  ref([
+        { title: 'Dashboard', icon: 'mdi-home-city', page: '/dashboard' },
+        { title: 'My Account', icon: 'mdi-account', page: '/test' },
+        { title: 'Users', icon: 'mdi-account-group-outline', page: '/test2' }
+    ])
     return {
-      drawer: true,
-      items: [
-        { title: 'Home', icon: 'mdi-home-city' },
-        { title: 'My Account', icon: 'mdi-account' },
-        { title: 'Users', icon: 'mdi-account-group-outline' }
-      ],
-      rail: true
+      drawer,
+      items
     }
-  }
+  },
 })
 </script>
