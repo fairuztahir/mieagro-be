@@ -1,6 +1,6 @@
 <template>
   <v-app-bar absolute app color="transparent" flat height="75">
-    <v-btn class="ml-3" elevation="1" :icon="btnImg.icon" small @click="customChange" />
+    <v-btn class="ml-3" elevation="1" :icon="btnImg.icon" small @click="drawerUpdate" />
 
     <!-- <v-app-bar-title class="hidden-sm-and-down font-weight-light">{{ title }}</v-app-bar-title> -->
     <v-toolbar-title class="hidden-sm-and-down font-weight-light" :text="title" />
@@ -25,20 +25,20 @@ export default defineComponent({
     title: String,
     rail: Function
   },
-  setup() {
+  setup(props, context) {
     const btnImg = reactive({ icon: 'mdi-dots-vertical', status: false })
 
-    return {
-      btnImg
-    }
-  },
-  methods: {
-    customChange() {
-      if (!this.btnImg.status) this.btnImg.icon = 'mdi-view-quilt'
-      else this.btnImg.icon = 'mdi-dots-vertical'
+    const drawerUpdate = () => {
+      if (!btnImg.status) btnImg.icon = 'mdi-view-quilt'
+      else btnImg.icon = 'mdi-dots-vertical'
 
-      this.btnImg.status = !this.btnImg.status
-      this.$emit('rail', !this.btnImg.status)
+      btnImg.status = !btnImg.status
+      context.emit('rail', !btnImg.status)
+    }
+
+    return {
+      btnImg,
+      drawerUpdate
     }
   }
 })

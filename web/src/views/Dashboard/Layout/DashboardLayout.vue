@@ -1,14 +1,14 @@
 <template>
   <v-app :theme="theme">
-    <DashboardCoreDrawer :rail="rail" />
-    <DashboardCoreAppBar :title="titleName" @rail="updateparent" />
+    <DashboardCoreDrawer :rail="rail" @title="updateAppBar" />
+    <DashboardCoreAppBar :title="titleName" @rail="updateDrawer" />
     <DashboardCoreView />
     <DashboardCoreFooter />
   </v-app>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, reactive, toRefs } from 'vue'
 import DashboardCoreDrawer from './DrawerLayout.vue'
 import DashboardCoreAppBar from './AppBar.vue'
 import DashboardCoreView from './ViewLayout.vue'
@@ -20,23 +20,24 @@ export default defineComponent({
     DashboardCoreView,
     DashboardCoreFooter
   },
-
   setup() {
-    const titleName = 'Dashboard'
-    const theme = ref('light')
-    const toggleTheme = () => (theme.value = theme.value === 'light' ? 'dark' : 'light')
-    let rail = ref(true)
+    const data = reactive({
+      titleName: 'Dashboard',
+      theme: 'light',
+      rail: true
+    })
 
     return {
-      titleName,
-      theme,
-      toggleTheme,
-      rail
+      ...toRefs(data),
+      toggleTheme: () => (data.theme = data.theme === 'light' ? 'dark' : 'light')
     }
   },
   methods: {
-    updateparent(event: boolean) {
+    updateDrawer(event: boolean) {
       this.rail = event
+    },
+    updateAppBar(event: string) {
+      this.titleName = event
     }
   }
 })
