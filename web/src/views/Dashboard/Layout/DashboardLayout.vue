@@ -36,7 +36,7 @@ export default defineComponent({
   },
   methods: {
     updateparent(event: boolean) {
-        this.rail = event
+      this.rail = event
     }
   }
 })

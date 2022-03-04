@@ -33,12 +33,12 @@ export default defineComponent({
     }
   },
   methods: {
-    customChange () {
+    customChange() {
       if (!this.btnImg.status) this.btnImg.icon = 'mdi-view-quilt'
       else this.btnImg.icon = 'mdi-dots-vertical'
 
       this.btnImg.status = !this.btnImg.status
-      this.$emit("rail", !this.btnImg.status)
+      this.$emit('rail', !this.btnImg.status)
     }
   }
 })
