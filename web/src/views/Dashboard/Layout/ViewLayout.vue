@@ -3,9 +3,11 @@
     <v-container fluid>
       <router-view />
     </v-container>
+    <v-spacer />
   </v-main>
 </template>
 
-<script>
-export default {}
+<script lang="ts">
+import { defineComponent } from 'vue'
+export default defineComponent({})
 </script>
