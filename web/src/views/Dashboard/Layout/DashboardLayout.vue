@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app :theme="theme">
     <DashboardCoreDrawer />
     <DashboardCoreAppBar :title="titleName" />
     <DashboardCoreView />
@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import DashboardCoreDrawer from './DrawerLayout.vue'
 import DashboardCoreAppBar from './AppBar.vue'
 import DashboardCoreView from './ViewLayout.vue'
@@ -20,6 +20,16 @@ export default defineComponent({
     DashboardCoreView,
     DashboardCoreFooter
   },
+
+  setup() {
+    const theme = ref('light')
+
+    return {
+      theme,
+      toggleTheme: () => (theme.value = theme.value === 'light' ? 'dark' : 'light')
+    }
+  },
+
   data: () => ({
     titleName: 'Home'
   })
