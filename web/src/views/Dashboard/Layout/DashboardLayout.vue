@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <DashboardCoreDrawer />
-    <DashboardCoreAppBar />
+    <DashboardCoreAppBar :title="titleName" />
     <DashboardCoreView />
     <DashboardCoreFooter />
   </v-app>
@@ -21,7 +21,23 @@ export default defineComponent({
     DashboardCoreFooter
   },
   data: () => ({
-    expandOnHover: false
+    titleName: 'Home'
   })
+  // setup() {
+  //   const title = ref('Home')
+
+  //   // expose to template and other options API hooks
+  //   return {
+  //     title
+  //   }
+  // }
+  // props: {
+  //   title: String
+  // }
+  // data() {
+  //   return {
+  //     titleName: this.pageTitle
+  //   }
+  // }
 })
 </script>
