@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs } from 'vue'
+import { defineComponent, reactive, toRefs, ref } from 'vue'
 import DashboardCoreDrawer from './DrawerLayout.vue'
 import DashboardCoreAppBar from './AppBar.vue'
 import DashboardCoreView from './ViewLayout.vue'
@@ -23,13 +23,15 @@ export default defineComponent({
   setup() {
     const data = reactive({
       titleName: 'Dashboard',
-      theme: 'light',
       rail: true
     })
 
+    const theme = ref('light')
+
     return {
       ...toRefs(data),
-      toggleTheme: () => (data.theme = data.theme === 'light' ? 'dark' : 'light')
+      theme,
+      toggleTheme: () => (theme.value = theme.value === 'light' ? 'dark' : 'light')
     }
   },
   methods: {

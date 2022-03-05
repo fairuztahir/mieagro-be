@@ -7,12 +7,12 @@
 
     <v-spacer />
 
-    <div class="mx-3" />
+    <!-- <div class="mx-3" /> -->
 
-    <v-btn class="mx-2" dark min-width="0" to="/">
+    <v-btn class="mx-2 changebg" dark min-width="0" to="/">
       <v-icon icon="mdi-view-dashboard"></v-icon>
     </v-btn>
-    <v-btn class="mx-2" dark min-width="0" to="/">
+    <v-btn class="mx-2 changebg" dark min-width="0" to="/">
       <v-icon icon="mdi-account"></v-icon>
     </v-btn>
   </v-app-bar>
@@ -43,3 +43,9 @@ export default defineComponent({
   }
 })
 </script>
+
+<style lang="scss" scoped>
+.changebg {
+  background-color: transparent !important;
+}
+</style>
