@@ -20,7 +20,7 @@ export default defineComponent({})
 
 <style scoped>
 .content {
-    height: 85vh;
+  height: 85vh;
 }
 
 /* route transitions */

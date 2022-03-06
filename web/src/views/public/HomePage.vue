@@ -1,8 +1,8 @@
 <template>
-    <button @click="show = !show">Home</button>
-    <Transition>
-        <p v-if="show">hello</p>
-    </Transition>
+  <button @click="show = !show">Home</button>
+  <Transition>
+    <p v-if="show">hello</p>
+  </Transition>
 </template>
 
 <script lang="ts">

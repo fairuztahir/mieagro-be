@@ -24,12 +24,12 @@ export default defineComponent({
       theme,
       toggleTheme: () => (theme.value = theme.value === 'light' ? 'dark' : 'light')
     }
-  },
+  }
 })
 </script>
 
 <style scoped>
 .v-application {
-    background-color: rgb(215, 252, 207);
+  background-color: rgb(215, 252, 207);
 }
 </style>

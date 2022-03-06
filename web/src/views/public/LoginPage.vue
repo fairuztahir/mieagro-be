@@ -1,8 +1,8 @@
 <template>
-    <button @click="show = !show">Login</button>
-        <Transition>
-            <p v-if="show">hello</p>
-        </Transition>
+  <button @click="show = !show">Login</button>
+  <Transition>
+    <p v-if="show">hello</p>
+  </Transition>
 </template>
 
 <script lang="ts">
@@ -18,10 +18,10 @@ export default defineComponent({
 
 <style scoped>
 .content {
-    height: 100vh;
+  height: 100vh;
 }
 .v-application {
-    background-color: rgb(215, 252, 207);
+  background-color: rgb(215, 252, 207);
 }
 .v-enter-active,
 .v-leave-active {
@@ -33,5 +33,3 @@ export default defineComponent({
   opacity: 0;
 }
 </style>
-
-
