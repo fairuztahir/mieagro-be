@@ -1,5 +1,5 @@
 <template>
-  <v-app :theme="theme">
+  <v-app id="dashboard" :theme="theme">
     <DashboardCoreDrawer :rail="rail" @title="updateAppBar" />
     <DashboardCoreAppBar :title="titleName" @rail="updateDrawer" />
     <DashboardCoreView />

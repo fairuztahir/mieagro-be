@@ -29,7 +29,7 @@ export default defineComponent({
     const data = reactive({
       drawer: true,
       items: [
-        { title: 'Dashboard', icon: 'mdi-view-dashboard', page: '/admin' },
+        { title: 'Dashboard', icon: 'mdi-view-dashboard', page: '/dashboard' },
         { title: 'My Account', icon: 'mdi-account', page: '/login' },
         { title: 'Users', icon: 'mdi-account-group-outline', page: '/' }
       ]

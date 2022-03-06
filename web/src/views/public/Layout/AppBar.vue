@@ -9,10 +9,10 @@
 
     <div class="mx-3" />
 
-    <v-btn class="mx-2 changebg" dark min-width="0" to="/admin">
+    <v-btn class="mx-2 changebg" dark min-width="0" to="/">
       <v-icon icon="mdi-view-dashboard"></v-icon>
     </v-btn>
-    <v-btn class="mx-2 changebg" dark min-width="0" to="/login">
+    <v-btn class="mx-2 changebg" dark min-width="0" to="/">
       <v-icon icon="mdi-account"></v-icon>
     </v-btn>
   </v-app-bar>
@@ -21,22 +21,24 @@
 <script lang="ts">
 import { defineComponent, reactive } from 'vue'
 export default defineComponent({
-  props: {
-    title: String,
-    rail: Function
-  },
+  // props: {
+  //   title: String,
+  //   rail: Function
+  // },
   setup(props, context) {
     const btnImg = reactive({ icon: 'mdi-dots-vertical', status: false })
 
+    const title = 'test'
     const drawerUpdate = () => {
       if (!btnImg.status) btnImg.icon = 'mdi-view-quilt'
       else btnImg.icon = 'mdi-dots-vertical'
 
       btnImg.status = !btnImg.status
-      context.emit('rail', !btnImg.status)
+      // context.emit('rail', !btnImg.status)
     }
 
     return {
+      title,
       btnImg,
       drawerUpdate
     }
