@@ -30,6 +30,6 @@ export default defineComponent({
 
 <style scoped>
 .v-application {
-  background-color: rgb(215, 252, 207);
+  background-color: rgb(215, 252, 207, 0.87);
 }
 </style>

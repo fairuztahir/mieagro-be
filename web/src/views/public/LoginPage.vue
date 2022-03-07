@@ -35,7 +35,7 @@
               </v-col>
             </v-row>
           </v-form>
-          <v-btn color="primary" rounded class="mr-0 mt-3"> Login </v-btn>
+          <v-btn color="primary" rounded class="mr-0 mt-3 font-weight-light"> Login </v-btn>
         </v-card-text>
       </material-card>
     </v-col>
@@ -52,9 +52,7 @@ export default defineComponent({
   },
   setup() {
     const showpass = ref(false)
-    // const avatar = ref('https://demos.creative-tim.com/vue-material-dashboard/img/marc.aba54d65.jpg')
-
-    const avatar = ref('../../../public/test_logo.png')
+    const avatar = ref('/test_logo.png')
 
     return {
       showpass,

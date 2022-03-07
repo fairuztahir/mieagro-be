@@ -17,19 +17,9 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* .content {
-    height: 100vh;
+.no-scroll-page {
+  height: 87vh;
+  /* justify-content: center;
+  align-items: center; */
 }
-.v-application {
-    background-color: rgb(215, 252, 207);
-}
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
-} */
 </style>

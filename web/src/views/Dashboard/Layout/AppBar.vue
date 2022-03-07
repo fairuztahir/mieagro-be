@@ -2,7 +2,6 @@
   <v-app-bar absolute app color="transparent" flat height="75">
     <v-btn class="ml-3" elevation="1" :icon="btnImg.icon" small @click="drawerUpdate" />
 
-    <!-- <v-app-bar-title class="hidden-sm-and-down font-weight-light">{{ title }}</v-app-bar-title> -->
     <v-toolbar-title class="hidden-sm-and-down font-weight-light" :text="title" />
 
     <v-spacer />
@@ -26,11 +25,11 @@ export default defineComponent({
     rail: Function
   },
   setup(props, context) {
-    const btnImg = reactive({ icon: 'mdi-dots-vertical', status: false })
+    const btnImg = reactive({ icon: 'mdi-view-quilt', status: false })
 
     const drawerUpdate = () => {
-      if (!btnImg.status) btnImg.icon = 'mdi-view-quilt'
-      else btnImg.icon = 'mdi-dots-vertical'
+      if (!btnImg.status) btnImg.icon = 'mdi-dots-vertical'
+      else btnImg.icon = 'mdi-view-quilt'
 
       btnImg.status = !btnImg.status
       context.emit('rail', !btnImg.status)

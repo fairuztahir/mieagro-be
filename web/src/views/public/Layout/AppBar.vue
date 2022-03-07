@@ -4,8 +4,6 @@
     <!-- <v-avatar size="x-large" class="ml-3" elevation="1">
       <img src="@/assets/miefoods.png" alt="MieFoods" />
     </v-avatar> -->
-
-    <!-- <v-app-bar-title class="hidden-sm-and-down font-weight-light">{{ title }}</v-app-bar-title> -->
     <v-toolbar-title class="hidden-sm-and-down font-weight-light" :text="title" />
 
     <v-spacer />

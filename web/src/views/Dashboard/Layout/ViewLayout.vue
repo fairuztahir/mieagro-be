@@ -1,6 +1,6 @@
 <template>
   <v-main>
-    <v-container class="content" fluid>
+    <v-container class="no-scroll-page" fluid>
       <router-view v-slot="{ Component, route }">
         <Transition name="route" mode="out-in">
           <div :key="route.name">
@@ -19,8 +19,10 @@ export default defineComponent({})
 </script>
 
 <style scoped>
-.content {
-  height: 85vh;
+.no-scroll-page {
+  height: 87vh;
+  /* justify-content: center;
+  align-items: center; */
 }
 
 .route-enter-active,
