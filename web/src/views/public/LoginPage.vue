@@ -35,7 +35,7 @@
               </v-col>
             </v-row>
           </v-form>
-          <v-btn color="primary" rounded class="mr-0 mt-3 font-weight-light"> Login </v-btn>
+          <v-btn color="primary" rounded class="mr-0 mt-3 font-weight-light"> Log In </v-btn>
         </v-card-text>
       </material-card>
     </v-col>
@@ -67,5 +67,8 @@ export default defineComponent({
   height: 87vh;
   /* justify-content: center;
   align-items: center; */
+}
+.v-card-text {
+  opacity: inherit !important;
 }
 </style>
