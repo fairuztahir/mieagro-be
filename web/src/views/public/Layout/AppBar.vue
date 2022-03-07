@@ -1,12 +1,9 @@
 <template>
   <v-app-bar absolute app color="transparent" flat height="75">
     <!-- <v-btn class="ml-3" elevation="1" :icon="btnImg.icon" small @click="drawerUpdate" /> -->
-    <v-avatar size="x-large" class="ml-3" elevation="1">
-      <img
-        src="@/assets/miefoods.png"
-        alt="MieFoods"
-      >
-    </v-avatar>
+    <!-- <v-avatar size="x-large" class="ml-3" elevation="1">
+      <img src="@/assets/miefoods.png" alt="MieFoods" />
+    </v-avatar> -->
 
     <!-- <v-app-bar-title class="hidden-sm-and-down font-weight-light">{{ title }}</v-app-bar-title> -->
     <v-toolbar-title class="hidden-sm-and-down font-weight-light" :text="title" />
@@ -16,18 +13,14 @@
     <div class="mx-3" />
     <v-hover v-slot="{ isHovering, props }">
       <v-btn stacked class="changebg" dark min-width="0" to="/login" v-bind="props">
-        <v-icon icon="mdi-emoticon-cool" v-if="isHovering"></v-icon>
-        <v-icon icon="mdi-emoticon" v-else></v-icon>
+        <v-icon icon="mdi-lock-open-variant" v-if="isHovering"></v-icon>
+        <v-icon icon="mdi-lock-outline" v-else></v-icon>
       </v-btn>
     </v-hover>
 
     <v-hover v-slot="{ isHovering, props }">
       <v-btn stacked class="changebg" dark min-width="0" to="/" v-bind="props">
-        <v-badge
-          color="error"
-          content="0"
-          inline
-        >
+        <v-badge color="error" content="0" inline>
           <v-icon icon="mdi-heart" v-if="isHovering"></v-icon>
           <v-icon icon="mdi-heart-outline" v-else></v-icon>
         </v-badge>
@@ -36,11 +29,7 @@
 
     <v-hover v-slot="{ isHovering, props }">
       <v-btn stacked class="changebg mr-2" dark min-width="0" to="/" v-bind="props">
-        <v-badge
-          color="error"
-          content="10"
-          inline
-        >
+        <v-badge color="error" content="10" inline>
           <v-icon icon="mdi-cart" v-if="isHovering"></v-icon>
           <v-icon icon="mdi-cart-outline" v-else></v-icon>
         </v-badge>
@@ -81,8 +70,8 @@ export default defineComponent({
 .changebg {
   background-color: transparent !important;
 }
-img {
-  width:170%;
-  height:170%;
-}
+// img {
+//   width: 170%;
+//   height: 170%;
+// }
 </style>

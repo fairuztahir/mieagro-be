@@ -5,7 +5,7 @@
     <v-divider></v-divider>
 
     <v-list density="compact" nav>
-      <div v-for="(item, i) in items" :key="i">
+      <div v-for="(item, i) in items" :key="i" :value="item" active-color="primary">
         <v-list-item
           :prepend-icon="item.icon"
           :title="item.title"
@@ -29,9 +29,9 @@ export default defineComponent({
     const data = reactive({
       drawer: true,
       items: [
-        { title: 'Dashboard', icon: 'mdi-view-dashboard', page: '/admin' },
+        { title: 'Dashboard', icon: 'mdi-view-dashboard', page: '/admin/dashboard' },
         { title: 'My Account', icon: 'mdi-account', page: '/login' },
-        { title: 'Users', icon: 'mdi-account-group-outline', page: '/' }
+        { title: 'Settings', icon: 'mdi-cog-outline', page: '/admin/settings' }
       ]
     })
 

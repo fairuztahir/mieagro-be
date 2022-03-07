@@ -11,6 +11,24 @@ import LoginPage from '@/views/public/LoginPage.vue'
 import Index from '@/views/public/Layout/WebLayout.vue'
 import Home from '@/views/public/HomePage.vue'
 
+const dashboard = {
+  path: '/admin',
+  redirect: '/admin/dashboard',
+  component: DashboardLayout,
+  children: [
+    {
+      path: 'dashboard',
+      name: 'Dashboard',
+      components: { default: Dashboard }
+    },
+    {
+      path: 'settings',
+      name: 'Settings',
+      component: Dashboard
+    }
+  ]
+}
+
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -29,18 +47,7 @@ const routes: Array<RouteRecordRaw> = [
       }
     ]
   },
-  {
-    path: '/admin',
-    redirect: '/admin/dashboard',
-    component: DashboardLayout,
-    children: [
-      {
-        path: 'dashboard',
-        name: 'Dashboard',
-        component: Dashboard
-      }
-    ]
-  }
+  dashboard
 ]
 
 const router = createRouter({

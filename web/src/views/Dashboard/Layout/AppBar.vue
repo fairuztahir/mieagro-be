@@ -9,7 +9,7 @@
 
     <div class="mx-3" />
 
-    <v-btn class="mx-2 changebg" dark min-width="0" to="/admin">
+    <v-btn class="mx-2 changebg" dark min-width="0" to="/admin/dashboard">
       <v-icon icon="mdi-view-dashboard"></v-icon>
     </v-btn>
     <v-btn class="mx-2 changebg" dark min-width="0" to="/login">

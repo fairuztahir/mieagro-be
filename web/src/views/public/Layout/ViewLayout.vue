@@ -1,6 +1,6 @@
 <template>
   <v-main>
-    <v-container class="content" fluid>
+    <v-container fluid>
       <router-view v-slot="{ Component, route }">
         <Transition name="route" mode="out-in">
           <div :key="route.name">
@@ -19,10 +19,6 @@ export default defineComponent({})
 </script>
 
 <style scoped>
-.content {
-  height: 85vh;
-}
-
 /* route transitions */
 /* .route-enter-from {
   opacity: 0;
