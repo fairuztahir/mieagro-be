@@ -10,18 +10,18 @@
 
           <v-form>
             <v-row>
-              <v-col cols="12" md="11">
+              <v-col cols="12" md="12">
                 <v-text-field
                   color="#000"
                   label="Email"
                   prepend-icon="mdi-email"
                   variant="underlined"
-                  class="font-weight-light grey--text"
+                  class="mt-2 font-weight-light grey--text"
                 ></v-text-field>
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="12" md="11">
+              <v-col cols="12" md="12">
                 <v-text-field
                   color="#000"
                   label="Password"

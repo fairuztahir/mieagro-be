@@ -1,7 +1,7 @@
 <template>
   <v-footer app bottom fixed class="d-flex flex-column">
     <div class="text-black text-body-1 font-weight-light pt-3 pt-md-0 text-right">
-      &copy; {{ new Date().getFullYear() }} — <a to="/">Mie Agro</a>
+      &copy; {{ new Date().getFullYear() }}, <a to="/">MieFoods</a>
     </div>
   </v-footer>
 </template>

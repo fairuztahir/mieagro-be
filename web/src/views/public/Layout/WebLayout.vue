@@ -30,6 +30,7 @@ export default defineComponent({
 
 <style scoped>
 .v-application {
-  background-color: rgb(215, 252, 207, 0.87);
+  background: linear-gradient(87deg, rgb(205, 250, 168), rgb(255, 255, 255));
+  /* background-color: rgb(215, 252, 207, 0.87); */
 }
 </style>
