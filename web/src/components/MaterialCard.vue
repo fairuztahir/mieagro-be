@@ -23,7 +23,7 @@
 
         <div v-else-if="title && !icon" class="display-1 font-weight-light" v-text="title" />
 
-        <v-icon v-else-if="icon" size="32" v-text="icon" />
+        <v-icon v-else-if="icon" size="32">{{ icon }}</v-icon>
 
         <div v-if="text" class="headline font-weight-thin" v-text="text" />
       </v-sheet>

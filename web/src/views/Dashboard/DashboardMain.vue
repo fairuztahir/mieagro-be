@@ -1,42 +1,70 @@
 <template>
   <v-row>
-    <v-col cols="12" sm="6" offset-sm="3">
-      <v-card>
-        <v-list lines="two">
-          <v-list-subheader>Today</v-list-subheader>
-
-          <v-list-item prepend-avatar="https://cdn.vuetifyjs.com/images/lists/1.jpg" title="Brunch this weekend?">
-            <template v-slot:subtitle>
-              <span class="font-weight-bold">Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this
-              weekend. Do you want to hang out?
-            </template>
-          </v-list-item>
-
-          <v-divider inset></v-divider>
-
-          <v-list-item prepend-avatar="https://cdn.vuetifyjs.com/images/lists/2.jpg">
-            <template v-slot:title> Summer BBQ <span class="grey--text text--lighten-1">4</span> </template>
-            <template v-slot:subtitle>
-              <span class="font-weight-bold">to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of
-              town this weekend.
-            </template>
-          </v-list-item>
-
-          <v-divider inset></v-divider>
-
-          <v-list-item prepend-avatar="https://cdn.vuetifyjs.com/images/lists/3.jpg" title="Oui oui">
-            <template v-slot:subtitle>
-              <span class="font-weight-bold">Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you
-              ever been?
-            </template>
-          </v-list-item>
-        </v-list>
-      </v-card>
+    <v-col cols="12" sm="6" lg="3">
+      <MaterialStatsCard
+        color="info"
+        icon="mdi-twitter"
+        title="Followers"
+        value="+245"
+        sub-icon="mdi-clock"
+        sub-text="Just Updated"
+      />
     </v-col>
+
+    <v-col
+        cols="12"
+        sm="6"
+        lg="3"
+      >
+        <MaterialStatsCard
+          color="primary"
+          icon="mdi-poll"
+          title="Website Visits"
+          value="75.521"
+          sub-icon="mdi-tag"
+          sub-text="Tracked from Google Analytics"
+        />
+      </v-col>
+
+      <v-col
+        cols="12"
+        sm="6"
+        lg="3"
+      >
+        <MaterialStatsCard
+          color="success"
+          icon="mdi-store"
+          title="Revenue"
+          value="$ 34,245"
+          sub-icon="mdi-calendar"
+          sub-text="Last 24 Hours"
+        />
+      </v-col>
+
+      <v-col
+        cols="12"
+        sm="6"
+        lg="3"
+      >
+        <MaterialStatsCard
+          color="orange"
+          icon="mdi-sofa"
+          title="Bookings"
+          value="184"
+          sub-icon="mdi-alert"
+          sub-icon-color="red"
+          sub-text="Get More Space..."
+        />
+      </v-col>
   </v-row>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-export default defineComponent({})
+import MaterialStatsCard from '@/components/MaterialStatsCard.vue'
+export default defineComponent({
+  components: {
+    MaterialStatsCard
+  }
+})
 </script>
