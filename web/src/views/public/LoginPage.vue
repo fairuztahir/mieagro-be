@@ -1,6 +1,6 @@
 <template>
-  <v-row justify="center">
-    <v-col md="4" sm="6" xs="5">
+  <v-row class="center-vertical">
+    <v-col cols="12" md="4" sm="6" xs="5">
       <material-card class="v-card-profile pt-3" :avatar="avatar">
         <v-card-text class="text-center">
           <h4 class="display-1 mb-1 grey--text">LOGIN PAGE</h4>
@@ -60,11 +60,10 @@ export default defineComponent({
 })
 </script>
 
-<style lang="sass" scoped>
-.no-scroll-page
-  height: 78vh
-  // justify-content: center
-  // align-items: center
+<style lang="sass">
+.center-vertical
+  justify-content: center
+  align-items: center
 
 .v-card-text
   opacity: inherit !important

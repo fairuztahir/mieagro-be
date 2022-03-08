@@ -15,11 +15,7 @@
         <v-spacer class="hidden-sm-and-down" />
 
         <v-col cols="12" md="auto">
-          <div class="body-1 font-weight-light pt-6 pt-md-0 text-center">
-            &copy; 2022, made with
-            <v-icon size="18"> mdi-heart </v-icon>
-            by <a href="https://www.creative-tim.com">MIE AGRO</a>.
-          </div>
+          <div class="body-1 font-weight-light pt-6 pt-md-0 text-center">&copy; 2022, <a href="#">MIE AGRO</a>.</div>
         </v-col>
       </v-row>
     </v-container>
@@ -52,7 +48,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
 .core-footer
   a
     font-size: .825rem
