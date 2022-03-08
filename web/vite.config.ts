@@ -15,13 +15,11 @@ export default defineConfig({
   ],
   define: { 'process.env': {} },
   resolve: {
-    alias: {
-      '@': path.resolve(__dirname, 'src')
-    }
+    alias: [
+      { find: '/^~/', replacement: '' },
+      { find: '@', replacement: path.resolve(__dirname, 'src') }
+    ]
   },
-  // optimizeDeps: {
-  //   entries: ["./src/App.vue"],
-  // },
   server: {
     watch: {
       usePolling: true

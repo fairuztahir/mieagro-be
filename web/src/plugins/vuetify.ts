@@ -1,5 +1,4 @@
 // Styles
-// import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
 import '@/styles/overrides.sass'
 

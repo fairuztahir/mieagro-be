@@ -43,8 +43,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
-.changebg {
-  background-color: transparent !important;
-}
+<style lang="sass" scoped>
+.changebg
+  background-color: transparent !important
 </style>

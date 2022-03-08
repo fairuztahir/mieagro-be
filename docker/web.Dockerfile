@@ -37,7 +37,7 @@ COPY ./web .
 # --only=production
 RUN --mount=type=cache,target=/root/.cache/node \
     --mount=type=cache,target=/root/.cache/node-build \
-    npm install --silent --no-optional && npm cache clean --force \
+    npm install --silent && npm cache clean --force \
     && npm run build
 ENV PATH /app/node_modules/.bin:$PATH
 

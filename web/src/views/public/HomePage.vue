@@ -1,8 +1,147 @@
 <template>
-  <button @click="show = !show">Home</button>
-  <Transition>
-    <p v-if="show">hello</p>
-  </Transition>
+  <v-row>
+    <v-col cols="12" sm="6" offset-sm="3">
+      <v-card>
+        <v-list lines="two">
+          <v-list-subheader>Today</v-list-subheader>
+
+          <v-list-item prepend-avatar="https://cdn.vuetifyjs.com/images/lists/1.jpg" title="Brunch this weekend?">
+            <template v-slot:subtitle>
+              <span class="font-weight-bold">Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this
+              weekend. Do you want to hang out?
+            </template>
+          </v-list-item>
+
+          <v-divider inset></v-divider>
+
+          <v-list-item prepend-avatar="https://cdn.vuetifyjs.com/images/lists/2.jpg">
+            <template v-slot:title> Summer BBQ <span class="grey--text text--lighten-1">4</span> </template>
+            <template v-slot:subtitle>
+              <span class="font-weight-bold">to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of
+              town this weekend.
+            </template>
+          </v-list-item>
+
+          <v-divider inset></v-divider>
+
+          <v-list-item prepend-avatar="https://cdn.vuetifyjs.com/images/lists/3.jpg" title="Oui oui">
+            <template v-slot:subtitle>
+              <span class="font-weight-bold">Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you
+              ever been?
+            </template>
+          </v-list-item>
+        </v-list>
+      </v-card>
+    </v-col>
+  </v-row>
+
+  <v-row>
+    <v-col cols="12" sm="6" offset-sm="3">
+      <v-card>
+        <v-list lines="two">
+          <v-list-subheader>Today</v-list-subheader>
+
+          <v-list-item prepend-avatar="https://cdn.vuetifyjs.com/images/lists/1.jpg" title="Brunch this weekend?">
+            <template v-slot:subtitle>
+              <span class="font-weight-bold">Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this
+              weekend. Do you want to hang out?
+            </template>
+          </v-list-item>
+
+          <v-divider inset></v-divider>
+
+          <v-list-item prepend-avatar="https://cdn.vuetifyjs.com/images/lists/2.jpg">
+            <template v-slot:title> Summer BBQ <span class="grey--text text--lighten-1">4</span> </template>
+            <template v-slot:subtitle>
+              <span class="font-weight-bold">to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of
+              town this weekend.
+            </template>
+          </v-list-item>
+
+          <v-divider inset></v-divider>
+
+          <v-list-item prepend-avatar="https://cdn.vuetifyjs.com/images/lists/3.jpg" title="Oui oui">
+            <template v-slot:subtitle>
+              <span class="font-weight-bold">Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you
+              ever been?
+            </template>
+          </v-list-item>
+        </v-list>
+      </v-card>
+    </v-col>
+  </v-row>
+
+  <v-row>
+    <v-col cols="12" sm="6" offset-sm="3">
+      <v-card>
+        <v-list lines="two">
+          <v-list-subheader>Today</v-list-subheader>
+
+          <v-list-item prepend-avatar="https://cdn.vuetifyjs.com/images/lists/1.jpg" title="Brunch this weekend?">
+            <template v-slot:subtitle>
+              <span class="font-weight-bold">Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this
+              weekend. Do you want to hang out?
+            </template>
+          </v-list-item>
+
+          <v-divider inset></v-divider>
+
+          <v-list-item prepend-avatar="https://cdn.vuetifyjs.com/images/lists/2.jpg">
+            <template v-slot:title> Summer BBQ <span class="grey--text text--lighten-1">4</span> </template>
+            <template v-slot:subtitle>
+              <span class="font-weight-bold">to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of
+              town this weekend.
+            </template>
+          </v-list-item>
+
+          <v-divider inset></v-divider>
+
+          <v-list-item prepend-avatar="https://cdn.vuetifyjs.com/images/lists/3.jpg" title="Oui oui">
+            <template v-slot:subtitle>
+              <span class="font-weight-bold">Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you
+              ever been?
+            </template>
+          </v-list-item>
+        </v-list>
+      </v-card>
+    </v-col>
+  </v-row>
+
+  <v-row>
+    <v-col cols="12" sm="6" offset-sm="3">
+      <v-card>
+        <v-list lines="two">
+          <v-list-subheader>Today</v-list-subheader>
+
+          <v-list-item prepend-avatar="https://cdn.vuetifyjs.com/images/lists/1.jpg" title="Brunch this weekend?">
+            <template v-slot:subtitle>
+              <span class="font-weight-bold">Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this
+              weekend. Do you want to hang out?
+            </template>
+          </v-list-item>
+
+          <v-divider inset></v-divider>
+
+          <v-list-item prepend-avatar="https://cdn.vuetifyjs.com/images/lists/2.jpg">
+            <template v-slot:title> Summer BBQ <span class="grey--text text--lighten-1">4</span> </template>
+            <template v-slot:subtitle>
+              <span class="font-weight-bold">to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of
+              town this weekend.
+            </template>
+          </v-list-item>
+
+          <v-divider inset></v-divider>
+
+          <v-list-item prepend-avatar="https://cdn.vuetifyjs.com/images/lists/3.jpg" title="Oui oui">
+            <template v-slot:subtitle>
+              <span class="font-weight-bold">Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you
+              ever been?
+            </template>
+          </v-list-item>
+        </v-list>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script lang="ts">
@@ -16,10 +155,9 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-.no-scroll-page {
-  height: 87vh;
-  /* justify-content: center;
-  align-items: center; */
-}
+<style lang="sass" scoped>
+.no-scroll-page
+  height: 87vh
+  // justify-content: center
+  // align-items: center
 </style>

@@ -1,6 +1,6 @@
 <template>
   <v-main>
-    <v-container class="no-scroll-page" fluid>
+    <v-container class="fill-height" fluid>
       <router-view v-slot="{ Component, route }">
         <Transition name="route" mode="out-in">
           <div :key="route.name">
@@ -18,20 +18,12 @@ import { defineComponent } from 'vue'
 export default defineComponent({})
 </script>
 
-<style scoped>
-.no-scroll-page {
-  height: 87vh;
-  /* justify-content: center;
-  align-items: center; */
-}
-
+<style lang="sass" scoped>
 .route-enter-active,
-.route-leave-active {
-  transition: opacity 0.5s ease;
-}
+.route-leave-active
+  transition: opacity 0.5s ease
 
 .route-enter-from,
-.route-leave-to {
-  opacity: 0;
-}
+.route-leave-to
+  opacity: 0
 </style>

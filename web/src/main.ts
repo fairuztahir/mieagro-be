@@ -8,4 +8,6 @@ const app = createApp(App)
 // Assign Global
 // app.config.globalProperties.pageTitle = 'Home1'
 
-app.use(routes).use(vuetify).mount('#app')
+app.use(vuetify)
+app.use(routes)
+app.mount('#app')

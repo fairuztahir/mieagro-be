@@ -1,7 +1,6 @@
 <template>
-  <v-row justify="center" class="no-scroll-page">
-    <v-col cols="12" md="4"></v-col>
-    <v-col cols="12" md="4">
+  <v-row justify="center">
+    <v-col md="4" sm="6" xs="5">
       <material-card class="v-card-profile pt-3" :avatar="avatar">
         <v-card-text class="text-center">
           <h4 class="display-1 mb-1 grey--text">LOGIN PAGE</h4>
@@ -39,7 +38,6 @@
         </v-card-text>
       </material-card>
     </v-col>
-    <v-col cols="12" md="4"></v-col>
   </v-row>
 </template>
 
@@ -62,13 +60,12 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-.no-scroll-page {
-  height: 87vh;
-  /* justify-content: center;
-  align-items: center; */
-}
-.v-card-text {
-  opacity: inherit !important;
-}
+<style lang="sass" scoped>
+.no-scroll-page
+  height: 78vh
+  // justify-content: center
+  // align-items: center
+
+.v-card-text
+  opacity: inherit !important
 </style>
