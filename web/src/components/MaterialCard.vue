@@ -50,10 +50,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, computed } from 'vue'
 export default defineComponent({
   name: 'MaterialCard',
-
   props: {
     avatar: {
       type: String,
@@ -80,24 +79,30 @@ export default defineComponent({
       default: ''
     }
   },
+  setup(props, context) {
+    const classes = computed(() => {
+      return { 'v-card--material--has-heading': hasHeading }
+    })
 
-  computed: {
-    classes() {
-      return {
-        'v-card--material--has-heading': this.hasHeading
-      }
-    },
-    hasHeading() {
-      return Boolean(this.$slots.heading || this.title || this.icon)
-    },
-    hasAltHeading() {
-      return Boolean(this.$slots.heading || (this.title && this.icon))
+    const hasHeading = computed(() => {
+      return Boolean(context.slots.heading || props.title || props.icon)
+    })
+
+    const hasAltHeading = computed(() => {
+      return Boolean(context.slots.heading || (props.title && props.icon))
+    })
+
+    return {
+      classes
     }
   }
 })
 </script>
 
 <style lang="sass">
+.grow, .spacer
+  flex-grow: 1 !important
+  -webkit-box-flex: 1 !important
 .v-card--material
   overflow: visible
   &__avatar

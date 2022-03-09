@@ -1,6 +1,8 @@
 <template>
   <MaterialCard :icon="icon" :color="color" class="v-card--material-stats">
     <template v-slot:after-heading>
+      <v-spacer class="hidden-sm-and-down" />
+
       <div class="ml-auto text-right">
         <div class="body-3 grey--text font-weight-light" v-text="title" />
 
@@ -80,7 +82,9 @@ export default defineComponent({
   flex-wrap: wrap
   position: relative
 
-  > div:first-child
+  >div:first-child
+    -webkit-box-pack: justify
+    -ms-flex-pack: justify
     justify-content: space-between
 
   .v-card
@@ -97,4 +101,7 @@ export default defineComponent({
 
   .v-card__actions
     flex: 1 0 100%
+
+  .v-sheet
+    border-radius: 4px
 </style>

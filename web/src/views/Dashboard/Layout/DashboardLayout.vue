@@ -48,9 +48,10 @@ export default defineComponent({
 <style lang="sass">
 .app-container
   min-height: 100vh
-  // position: fixed
-  // top: 0
-  // right: 0
-  // bottom: 0
-  // left: 0
+  max-width: 100%
+  position: relative
+  flex-direction: column
+  -webkit-box-flex: 1
+  -webkit-box-direction: normal
+  display: flex
 </style>
