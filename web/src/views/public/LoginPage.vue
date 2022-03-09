@@ -1,5 +1,5 @@
 <template>
-  <v-row class="center-vertical">
+  <v-row class="center-vertical ma-auto">
     <v-col cols="12" md="4" sm="6" xs="5">
       <material-card class="v-card-profile pt-3" :avatar="avatar">
         <v-card-text class="text-center">

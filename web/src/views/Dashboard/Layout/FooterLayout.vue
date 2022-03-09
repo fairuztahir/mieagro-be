@@ -1,10 +1,10 @@
 <template>
-  <v-footer app bottom fixed>
+  <v-footer app bottom>
     <v-container class="d-flex flex-column core-footer">
       <v-row align="center" no-gutters>
         <v-spacer class="hidden-sm-and-down" />
 
-        <v-col cols="12" md="auto">
+        <v-col cols="12" md="auto" class="stick-bottom">
           <div class="body-1 font-weight-light pt-6 pt-md-0 text-center">&copy; 2022, <a href="#">MIE AGRO</a>.</div>
         </v-col>
       </v-row>
@@ -37,3 +37,8 @@ export default defineComponent({
   }
 })
 </script>
+
+<style lang="sass" scoped>
+.stick-bottom
+  padding-bottom: 0 !important
+</style>

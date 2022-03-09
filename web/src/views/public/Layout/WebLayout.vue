@@ -32,8 +32,6 @@ export default defineComponent({
 .v-application
   // background: linear-gradient(87deg, rgb(205, 250, 168), rgb(255, 255, 255))
   background: linear-gradient(87deg, #2dd4bf, #f0fdfa)
-  // height: 100vh
-  // background-color: rgb(215, 252, 207, 0.87)
 </style>
 
 <style>
