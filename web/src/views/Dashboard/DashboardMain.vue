@@ -1,21 +1,18 @@
 <template>
-  <v-row>
-    <v-col cols="12" sm="6" lg="3">
-      <MaterialStatsCard
-        color="info"
-        icon="mdi-twitter"
-        title="Followers"
-        value="+245"
-        sub-icon="mdi-clock"
-        sub-text="Just Updated"
-      />
-    </v-col>
+  <div class="pa-4">
+    <v-row>
+      <v-col cols="12" sm="6" lg="3">
+        <MaterialStatsCard
+          color="info"
+          icon="mdi-twitter"
+          title="Followers"
+          value="+245"
+          sub-icon="mdi-clock"
+          sub-text="Just Updated"
+        />
+      </v-col>
 
-    <v-col
-        cols="12"
-        sm="6"
-        lg="3"
-      >
+      <v-col cols="12" sm="6" lg="3">
         <MaterialStatsCard
           color="primary"
           icon="mdi-poll"
@@ -26,11 +23,7 @@
         />
       </v-col>
 
-      <v-col
-        cols="12"
-        sm="6"
-        lg="3"
-      >
+      <v-col cols="12" sm="6" lg="3">
         <MaterialStatsCard
           color="success"
           icon="mdi-store"
@@ -41,11 +34,7 @@
         />
       </v-col>
 
-      <v-col
-        cols="12"
-        sm="6"
-        lg="3"
-      >
+      <v-col cols="12" sm="6" lg="3">
         <MaterialStatsCard
           color="orange"
           icon="mdi-sofa"
@@ -56,7 +45,8 @@
           sub-text="Get More Space..."
         />
       </v-col>
-  </v-row>
+    </v-row>
+  </div>
 </template>
 
 <script lang="ts">

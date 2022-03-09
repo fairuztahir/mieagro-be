@@ -1,5 +1,5 @@
 <template>
-  <v-app id="dashboard" :theme="theme">
+  <v-app id="dashboard" :theme="theme" class="app-container">
     <DashboardCoreDrawer :rail="rail" @title="updateAppBar" />
     <DashboardCoreAppBar :title="titleName" @rail="updateDrawer" />
     <DashboardCoreView />
@@ -44,3 +44,13 @@ export default defineComponent({
   }
 })
 </script>
+
+<style lang="sass">
+.app-container
+  min-height: 100vh
+  // position: fixed
+  // top: 0
+  // right: 0
+  // bottom: 0
+  // left: 0
+</style>

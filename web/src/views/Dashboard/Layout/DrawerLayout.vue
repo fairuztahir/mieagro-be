@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer v-model="drawer" :rail="rail" permanent app>
+  <v-navigation-drawer v-model="drawer" :rail="rail" permanent app width="250" mobile-break-point="960">
     <v-list-item prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg" title="John Leider"> </v-list-item>
 
     <v-divider></v-divider>

@@ -1,5 +1,5 @@
 <template>
-  <v-footer app>
+  <v-footer app bottom fixed>
     <v-container class="d-flex flex-column core-footer">
       <v-row align="center" no-gutters>
         <v-col v-for="(link, i) in links" :key="i" class="text-center mb-sm-0 mb-5 hidden-sm-and-down" cols="auto">

@@ -1,5 +1,5 @@
 <template>
-  <v-app id="home" :theme="theme">
+  <v-app id="home" :theme="theme" class="app-container">
     <DashboardCoreAppBar />
     <DashboardCoreView />
     <DashboardCoreFooter />
