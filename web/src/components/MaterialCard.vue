@@ -28,7 +28,7 @@
         <div v-if="text" class="headline font-weight-thin" v-text="text" />
       </v-sheet>
 
-      <div v-if="$slots['after-heading']" class="ml-6">
+      <div v-if="$slots['after-heading']" class="ml-auto">
         <slot name="after-heading" />
       </div>
 

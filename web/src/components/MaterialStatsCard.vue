@@ -3,12 +3,15 @@
     <template v-slot:after-heading>
       <v-spacer class="hidden-sm-and-down" />
 
-      <div class="ml-auto text-right">
-        <div class="body-3 grey--text font-weight-light" v-text="title" />
-
-        <h3 class="display-2 font-weight-light text--primary">
-          {{ value }} <small>{{ smallValue }}</small>
-        </h3>
+      <div class="text-right">
+        <v-list-item two-line>
+          <v-list-item-header>
+            <v-list-item-title class="grey--text font-weight-light">{{ title }}</v-list-item-title>
+            <v-list-item-subtitle class="display-2 font-weight-light text--primary"
+              >{{ value }} <small>{{ smallValue }}</small></v-list-item-subtitle
+            >
+          </v-list-item-header>
+        </v-list-item>
       </div>
     </template>
 
