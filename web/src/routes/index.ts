@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import { useAuth } from '@/services/auth'
 
 // Dashboard pages
 import DashboardLayout from '@/views/Dashboard/Layout/DashboardLayout.vue'
@@ -19,12 +20,14 @@ const dashboard = {
     {
       path: 'dashboard',
       name: 'Dashboard',
-      components: { default: Dashboard }
+      components: { default: Dashboard },
+      meta: { requiresAuth: true }
     },
     {
       path: 'settings',
       name: 'Settings',
-      component: Dashboard
+      component: Dashboard,
+      meta: { requiresAuth: true }
     }
   ]
 }
@@ -38,12 +41,14 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'home',
         name: 'Home',
-        components: { default: Home }
+        components: { default: Home },
+        meta: { requiresAuth: false }
       },
       {
         path: 'login',
         name: 'Login',
-        component: LoginPage
+        component: LoginPage,
+        meta: { requiresAuth: false }
       }
     ]
   },
@@ -53,6 +58,15 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHashHistory(),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  const { authenticating, user } = useAuth()
+
+  // Not logged into a guarded route?
+  if (authenticating.value === false && to.meta.requiresAuth === true && !user?.value) {
+    next({ name: 'Login' })
+  } else next()
 })
 
 export default router

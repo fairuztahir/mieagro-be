@@ -1,7 +1,8 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import vuetify from '@/plugins/vuetify'
-import routes from '@/routes'
+import route from '@/routes'
+import store from '@/stores'
 
 const app = createApp(App)
 
@@ -9,5 +10,6 @@ const app = createApp(App)
 // app.config.globalProperties.pageTitle = 'Home1'
 
 app.use(vuetify)
-app.use(routes)
+app.use(store)
+app.use(route)
 app.mount('#app')

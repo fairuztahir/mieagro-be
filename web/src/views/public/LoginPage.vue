@@ -7,7 +7,7 @@
 
           <h4 class="display-2 font-weight-light mb-3 black--text">Welcome to MIE Agro System</h4>
 
-          <v-form>
+          <v-form @submit.prevent="submit">
             <v-row>
               <v-col cols="12" md="12">
                 <v-text-field
@@ -16,6 +16,7 @@
                   prepend-icon="mdi-email"
                   variant="underlined"
                   class="mt-2 font-weight-light grey--text"
+                  v-model="email"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -30,11 +31,21 @@
                   variant="underlined"
                   class="font-weight-light grey--text"
                   @click:append="showpass = !showpass"
+                  v-model="challenge"
                 ></v-text-field>
               </v-col>
             </v-row>
           </v-form>
-          <v-btn color="primary" rounded class="mr-0 mt-3 font-weight-light"> Log In </v-btn>
+          <v-btn
+            color="primary"
+            rounded
+            class="mr-0 mt-3 font-weight-light"
+            type="submit"
+            :disabled="loading"
+            @click="submit"
+          >
+            Log In
+          </v-btn>
         </v-card-text>
       </material-card>
     </v-col>
@@ -42,8 +53,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, reactive, toRefs } from 'vue'
 import MaterialCard from '@/components/MaterialCard.vue'
+import { useApi } from '@/services/api'
+import { useAuth } from '@/services/auth'
+import { useRouter } from 'vue-router'
+
+interface LoginPayload {
+  email: string
+  challenge: string
+  rememberMe: boolean
+}
+
 export default defineComponent({
   components: {
     MaterialCard
@@ -51,10 +72,42 @@ export default defineComponent({
   setup() {
     const showpass = ref(false)
     const avatar = ref('/test_logo.png')
+    const { loading, data, post, errorMessage } = useApi('v1/login')
+
+    const { setUser } = useAuth()
+    const router = useRouter()
+
+    const payload = reactive<LoginPayload>({
+      email: '',
+      challenge: '',
+      rememberMe: true
+    })
+
+    // console.log('test', payload)
+    // https://dev.to/adamcowley/how-to-build-an-authentication-into-a-vue3-application-200b
+    // https://github.com/adam-cowley/twitch-project/blob/master/ui/src/views/Login.vue
+
+    // https://www.bezkoder.com/vue-3-authentication-jwt/
+    // https://github.com/bezkoder/vue-3-authentication-jwt/tree/master/src/services
+
+    const submit = () => {
+      post(payload).then(() => {
+        if (data.value && data.value.status == 200) {
+          setUser(data.value.data, payload.rememberMe)
+          router.push({ name: 'Dashboard' })
+        } else {
+          console.log('ape2 ajee', data.value.status, data.value.message)
+        }
+      })
+    }
 
     return {
       showpass,
-      avatar
+      avatar,
+      loading,
+      submit,
+      errorMessage,
+      ...toRefs(payload)
     }
   }
 })
