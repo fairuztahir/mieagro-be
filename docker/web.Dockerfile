@@ -9,8 +9,8 @@ RUN apk update && apk upgrade
 WORKDIR /app
 COPY ./proxy/nginx.conf /etc/nginx/conf.d/default.conf
 COPY ./web/package.json .
-RUN --mount=type=cache,target=/root/.cache/node \
-    npm install -g @vue/cli
+# RUN --mount=type=cache,target=/root/.cache/node \
+#     npm install -g @vue/cli
 
 
 FROM base as dev-preinstall
