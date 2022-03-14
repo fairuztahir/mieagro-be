@@ -52,12 +52,20 @@ const routes: Array<RouteRecordRaw> = [
       }
     ]
   },
-  dashboard
+  dashboard,
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/home'
+  }
 ]
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    // always scroll to top
+    return { top: 0 }
+  }
 })
 
 router.beforeEach((to, from, next) => {

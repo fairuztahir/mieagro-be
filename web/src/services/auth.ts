@@ -1,7 +1,7 @@
 import { computed, inject, reactive, toRefs, watch } from 'vue'
 import { useApi, useApiWithAuth } from './api'
 
-const AUTH_KEY = '_token'
+const AUTH_KEY = 'f_token'
 export const AUTH_TOKEN = 'token'
 
 interface Plan {
@@ -20,7 +20,7 @@ interface User {
   name: string
   email: string
   [AUTH_TOKEN]: string
-  subscription?: Subscription
+  // subscription?: Subscription
 }
 
 interface AuthState {
@@ -58,7 +58,6 @@ if (token) {
 export const useAuth = () => {
   const setUser = (payload: User, remember: boolean): void => {
     if (remember) {
-      console.log('blabla', AUTH_KEY, payload[AUTH_TOKEN])
       window.localStorage.setItem(AUTH_KEY, payload[AUTH_TOKEN])
     }
 

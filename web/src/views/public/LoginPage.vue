@@ -83,7 +83,6 @@ export default defineComponent({
       rememberMe: true
     })
 
-    // console.log('test', payload)
     // https://dev.to/adamcowley/how-to-build-an-authentication-into-a-vue3-application-200b
     // https://github.com/adam-cowley/twitch-project/blob/master/ui/src/views/Login.vue
 
@@ -96,6 +95,7 @@ export default defineComponent({
           setUser(data.value.data, payload.rememberMe)
           router.push({ name: 'Dashboard' })
         } else {
+          // MARK: prompt error message
           console.log('ape2 ajee', data.value.status, data.value.message)
         }
       })
