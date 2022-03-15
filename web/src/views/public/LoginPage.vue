@@ -36,15 +36,8 @@
               </v-col>
             </v-row>
           </v-form>
-          <v-btn
-            color="primary"
-            rounded
-            class="mr-0 mt-3 font-weight-light"
-            type="submit"
-            :disabled="loading"
-            @click="submit"
-          >
-            Log In
+          <v-btn color="primary" class="mr-0 mt-3 font-weight-light" type="submit" :disabled="loading" @click="submit">
+            LogIn
           </v-btn>
         </v-card-text>
       </material-card>

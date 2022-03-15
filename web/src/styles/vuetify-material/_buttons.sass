@@ -1,5 +1,5 @@
 .v-btn.v-size--default
-  font-size: .85rem
+  font-size: .85rem !important
 
 .v-icon.v-icon
   font-size: 20px
@@ -21,6 +21,9 @@
   .v-btn__content
     color: #999
 
+.v-btn--rounded
+  border-radius: 28px !important
+
 .v-sheet .v-btn.v-size--large:not(.v-btn--icon):not(.v-btn--fab)
   padding: 18px 36px !important
 
@@ -32,7 +35,7 @@
   opacity: 0
 
 .v-btn:not(.v-btn--text):not(.v-btn--outlined):focus:before
-    opacity: 0
+  opacity: 0
 
 .v-btn.v-size--default:not(.v-btn--icon):not(.v-btn--fab),
 .v-btn.v-size--large:not(.v-btn--icon):not(.v-btn--fab)
@@ -49,7 +52,7 @@
     opacity: 1
 
 .v-btn-toggle > .v-btn.v-size--default
-   height: inherit
+  height: inherit
 
 .theme--light.v-btn-toggle .v-btn.v-btn
   border-color: #999 !important
