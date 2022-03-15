@@ -52,11 +52,11 @@ const routes: Array<RouteRecordRaw> = [
       }
     ]
   },
-  dashboard,
-  {
-    path: '/:pathMatch(.*)*',
-    redirect: '/home'
-  }
+  dashboard
+  // {
+  //   path: '/:pathMatch(.*)*',
+  //   redirect: '/home'
+  // }
 ]
 
 const router = createRouter({
