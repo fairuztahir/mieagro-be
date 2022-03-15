@@ -5,7 +5,7 @@
         <v-spacer class="hidden-sm-and-down" />
 
         <v-col cols="12" md="auto" class="stick-bottom">
-          <div class="body-1 font-weight-light pt-6 pt-md-0 text-center">&copy; 2022, <a href="#">MIE AGRO</a>.</div>
+          <div class="body-1 font-weight-light pt-6 pt-md-0 text-center">&copy; 2022, <a href="#">MIE AGRO</a></div>
         </v-col>
       </v-row>
     </v-container>

@@ -1,9 +1,8 @@
 .v-footer
-  // padding: 20px 0 20px 4px
-  border-top: 1px solid #e7e7e7 !important
-  background-color: #f5f5f5 !important
   width: 100%
-  // position: relative
+  position: relative
+  // border-top: 1px solid #e7e7e7 !important
+  // background-color: #f5f5f5 !important
   a
     padding: 15px 18px 15px 16px
     font-size: 12px !important
@@ -12,7 +11,7 @@
     padding-right: 18px
     letter-spacing: 0px !important
     a
-      color: #9c27b0 !important
+      color: #9c27b0
       padding: 0
       text-transform: inherit !important
       font-size: 16px !important
@@ -23,9 +22,18 @@
   &.v-footer--absolute
     position: absolute !important
 
-.theme--light.v-footer
+.v-theme--light.v-footer
   background-color: transparent
   .body-1
     color: #3c4858
   .v-icon
     color: #3c4858
+
+.v-theme--dark.v-footer
+  background-color: transparent
+  .body-1
+    color: #fff
+    a
+      color: #69b027
+  .v-icon
+    color: #c6dcf8

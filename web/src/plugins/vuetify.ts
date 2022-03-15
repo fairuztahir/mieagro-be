@@ -17,8 +17,8 @@ const lightColors = {
 }
 
 const darkColors = {
-  background: '#EEE',
-  surface: '#EEE',
+  background: '#525151',
+  surface: '#363636',
   primary: '#6200EE',
   'primary-darken-1': '#3700B3',
   secondary: '#03DAC6',

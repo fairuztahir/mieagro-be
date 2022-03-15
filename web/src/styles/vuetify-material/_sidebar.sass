@@ -49,7 +49,7 @@
 .v-list-item__icon
   margin: 12px 0
 
-.theme--dark.v-list-item--active:hover::before, .theme--dark.v-list-item--active::before
+.v-theme--dark.v-list-item--active:hover::before, .v-theme--dark.v-list-item--active::before
   opacity: 0
 
 .v-navigation-drawer
@@ -60,8 +60,13 @@
   padding-left: 0px
   padding-right: 0px
 
-// .theme--dark.v-navigation-drawer .v-divider
-.v-navigation-drawer .v-divider
+.v-theme--dark.v-navigation-drawer .v-divider
+  background-color: #363636
+  border-color: #525151
+  width: calc(100% - 30px)
+  margin-left: 15px
+
+.v-theme--light.v-navigation-drawer .v-divider
   background-color: rgba(181, 181, 181, 0.2)
   border-color: rgba(181, 181, 181, 0.1)
   width: calc(100% - 30px)

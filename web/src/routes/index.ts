@@ -72,6 +72,7 @@ router.beforeEach((to, from, next) => {
   const { authenticating, user } = useAuth()
 
   // Not logged into a guarded route?
+  console.log('check user', user?.value)
   if (authenticating.value === false && to.meta.requiresAuth === true && !user?.value) {
     next({ name: 'Login' })
   } else next()
