@@ -28,6 +28,12 @@ const dashboard = {
       name: 'Settings',
       component: Dashboard,
       meta: { requiresAuth: true }
+    },
+    {
+      path: 'logout',
+      name: 'Logout',
+      component: () => import(/* webpackChunkName: "logout" */ '@/views/Dashboard/LogoutPage.vue'),
+      meta: { requiresAuth: true }
     }
   ]
 }
