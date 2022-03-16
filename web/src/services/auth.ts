@@ -39,7 +39,7 @@ const state = reactive<AuthState>({
 const token = window.localStorage.getItem(AUTH_KEY)
 
 if (token) {
-  const { loading, error, data, get } = useApi('/v1/login')
+  const { loading, error, data, get } = useApi('v1/auth/user')
   state.authenticating = true
 
   get({}, { headers: { Authorization: `Bearer ${token}` } })
@@ -47,8 +47,9 @@ if (token) {
   watch([loading], () => {
     if (error.value) {
       window.localStorage.removeItem(AUTH_KEY)
+      state.user = undefined
     } else if (data.value) {
-      state.user = data.value
+      state.user = data.value.data
     }
 
     state.authenticating = false

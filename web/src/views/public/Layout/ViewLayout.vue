@@ -2,11 +2,11 @@
   <v-main>
     <v-container fill-height fluid>
       <router-view v-slot="{ Component, route }">
-        <Transition name="route" mode="out-in">
+        <transition :name="route.meta.transition || 'route'" mode="out-in">
           <div :key="route.name">
-            <component :is="Component"></component>
+            <component :is="Component" :key="route.meta.usePathKey ? route.path : undefined"></component>
           </div>
-        </Transition>
+        </transition>
       </router-view>
     </v-container>
     <v-spacer />

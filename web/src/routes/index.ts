@@ -5,8 +5,9 @@ import { useAuth } from '@/services/auth'
 import DashboardLayout from '@/views/Dashboard/Layout/DashboardLayout.vue'
 import Dashboard from '@/views/Dashboard/DashboardMain.vue'
 
-// Login
+// Auth
 import LoginPage from '@/views/public/LoginPage.vue'
+import LogoutPage from '@/views/Dashboard/LogoutPage.vue'
 
 // Web
 import Index from '@/views/public/Layout/WebLayout.vue'
@@ -32,7 +33,7 @@ const dashboard = {
     {
       path: 'logout',
       name: 'Logout',
-      component: () => import(/* webpackChunkName: "logout" */ '@/views/Dashboard/LogoutPage.vue'),
+      component: LogoutPage,
       meta: { requiresAuth: true }
     }
   ]
@@ -78,7 +79,6 @@ router.beforeEach((to, from, next) => {
   const { authenticating, user } = useAuth()
 
   // Not logged into a guarded route?
-  console.log('check user', user?.value)
   if (authenticating.value === false && to.meta.requiresAuth === true && !user?.value) {
     next({ name: 'Login' })
   } else next()
