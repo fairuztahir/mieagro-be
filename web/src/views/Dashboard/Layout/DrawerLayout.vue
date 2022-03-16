@@ -1,6 +1,6 @@
 <template>
-  <v-navigation-drawer v-model="drawer" :rail="rail" permanent app width="250" mobile-break-point="960">
-    <v-list-item prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg" title="John Leider"> </v-list-item>
+  <v-navigation-drawer v-model="drawer" :rail="rail" permanent app mobile-break-point="960">
+    <v-list-item prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg" :title="user?.name"> </v-list-item>
 
     <v-divider></v-divider>
 
@@ -20,12 +20,15 @@
 
 <script lang="ts">
 import { defineComponent, reactive, toRefs } from 'vue'
+import { useAuth } from '@/services/auth'
+
 export default defineComponent({
   props: {
     rail: Boolean,
     title: Function
   },
   setup(props, context) {
+    const { user } = useAuth()
     const data = reactive({
       drawer: true,
       items: [
@@ -36,6 +39,7 @@ export default defineComponent({
     })
 
     return {
+      user,
       ...toRefs(data),
       titleUpdate: (value: string) => context.emit('title', value)
     }
