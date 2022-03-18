@@ -53,7 +53,7 @@
 import { defineComponent } from 'vue'
 import MaterialStatsCard from '@/components/MaterialStatsCard.vue'
 export default defineComponent({
-  name: 'DashboardMain',
+  name: 'DashboardPage',
   components: {
     MaterialStatsCard
   }

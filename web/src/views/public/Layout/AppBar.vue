@@ -39,7 +39,6 @@
 <script lang="ts">
 import { defineComponent, reactive } from 'vue'
 export default defineComponent({
-  name: 'DashboardCoreAppBar',
   setup(props, context) {
     const btnImg = reactive({ icon: 'mdi-dots-vertical', status: false })
 

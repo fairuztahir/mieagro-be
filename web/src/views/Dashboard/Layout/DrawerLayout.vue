@@ -23,7 +23,6 @@ import { defineComponent, reactive, toRefs } from 'vue'
 import { useAuth } from '@/services/auth'
 
 export default defineComponent({
-  name: 'DashboardCoreDrawer',
   props: {
     rail: Boolean,
     title: Function
