@@ -18,6 +18,7 @@ import DashboardCoreAppBar from './AppBar.vue'
 import DashboardCoreView from './ViewLayout.vue'
 import DashboardCoreFooter from './FooterLayout.vue'
 export default defineComponent({
+  name: 'WebLayout',
   components: {
     DashboardCoreAppBar,
     DashboardCoreView,

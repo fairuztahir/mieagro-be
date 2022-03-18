@@ -59,6 +59,7 @@ interface LoginPayload {
 }
 
 export default defineComponent({
+  name: 'LoginLayout',
   components: {
     MaterialCard
   },

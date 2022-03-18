@@ -29,6 +29,7 @@
 <script lang="ts">
 import { defineComponent, reactive, ref } from 'vue'
 export default defineComponent({
+  name: 'DashboardCoreAppBar',
   props: {
     title: String,
     rail: Function
