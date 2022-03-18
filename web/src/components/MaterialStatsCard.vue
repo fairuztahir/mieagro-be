@@ -32,7 +32,6 @@ import { defineComponent } from 'vue'
 import MaterialCard from './MaterialCard.vue'
 export default defineComponent({
   name: 'MaterialStatsCard',
-
   inheritAttrs: false,
   components: {
     MaterialCard

@@ -33,7 +33,7 @@ export default defineComponent({
       drawer: true,
       items: [
         { title: 'Dashboard', icon: 'mdi-view-dashboard', page: '/admin/dashboard' },
-        { title: 'My Account', icon: 'mdi-account', page: '/login' },
+        { title: 'Tables', icon: 'mdi-account', page: '/admin/table' },
         { title: 'Settings', icon: 'mdi-cog-outline', page: '/admin/settings' }
       ]
     })

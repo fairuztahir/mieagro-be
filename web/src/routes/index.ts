@@ -4,6 +4,7 @@ import { useAuth } from '@/services/auth'
 // Dashboard pages
 import DashboardLayout from '@/views/Dashboard/Layout/DashboardLayout.vue'
 import Dashboard from '@/views/Dashboard/DashboardMain.vue'
+import Table from '@/views/Dashboard/TablePage.vue'
 
 // Auth
 import LoginPage from '@/views/public/LoginPage.vue'
@@ -22,6 +23,12 @@ const dashboard = {
       path: 'dashboard',
       name: 'Dashboard',
       components: { default: Dashboard },
+      meta: { requiresAuth: true }
+    },
+    {
+      path: 'table',
+      name: 'Table',
+      component: Table,
       meta: { requiresAuth: true }
     },
     {
@@ -59,11 +66,11 @@ const routes: Array<RouteRecordRaw> = [
       }
     ]
   },
-  dashboard
-  // {
-  //   path: '/:pathMatch(.*)*',
-  //   redirect: '/home'
-  // }
+  dashboard,
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/home'
+  }
 ]
 
 const router = createRouter({
