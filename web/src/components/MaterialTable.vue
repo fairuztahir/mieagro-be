@@ -4,6 +4,7 @@
       <template v-slot:default>
         <thead>
           <tr>
+            <th class="text-left" width="15px">No.</th>
             <template v-for="h in header" :key="h.name">
               <th class="text-left">{{ capitalize(h.name) }}</th>
             </template>
@@ -11,8 +12,9 @@
         </thead>
         <tbody>
           <tr v-for="(d, index) in data" :key="index">
+            <td class="font-weight-light">{{ num++ }}</td>
             <template v-for="h in header" :key="h">
-              <td>{{ d[String(h.name).toLowerCase()] }}</td>
+              <td class="font-weight-light">{{ d[String(h.name).toLowerCase()] }}</td>
             </template>
           </tr>
         </tbody>
@@ -22,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue'
+import { defineComponent } from 'vue'
 import MaterialCard from '@/components/MaterialCard.vue'
 export default defineComponent({
   name: 'MaterialTable',
@@ -46,11 +48,13 @@ export default defineComponent({
       default: 'Table Title'
     }
   },
-  setup(props) {
+  setup() {
     const capitalize = (s: String) => (s && s[0].toUpperCase() + s.slice(1)) || ''
+    const num = 1
 
     return {
-      capitalize
+      capitalize,
+      num
     }
   }
 })

@@ -14,21 +14,18 @@ export default defineComponent({
   setup() {
     const data = [
       {
-        no: 1,
         name: 'Dakota Rice',
         country: 'Niger',
         city: 'Oud-Turnhout',
         salary: '$36,738'
       },
       {
-        no: 2,
         name: 'Minverva Hooper',
         country: 'Curaçao',
         city: 'Sinaas-Waas',
         salary: '$23,789'
       },
       {
-        no: 3,
         name: 'Sage Rodriguez',
         country: 'Netherlands',
         city: 'Baileux',
@@ -39,9 +36,6 @@ export default defineComponent({
     const table1 = reactive({
       title: 'Test Table',
       header: [
-        {
-          name: 'no'
-        },
         {
           name: 'Name'
         },
