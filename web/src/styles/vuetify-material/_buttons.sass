@@ -68,3 +68,28 @@
     border-color: #ff5252 !important
   &.info
     border-color: #00cae3 !important
+
+// Pagination btn
+.v-pagination .v-btn
+  border-radius: 50% !important
+  .v-pagination__item
+    background: #fff
+    box-shadow: none
+  .v-pagination__navigation
+    margin: .3rem 10px
+    display: inline-flex
+    justify-content: center
+    align-items: center
+    text-decoration: none
+    .v-pagination__item--active
+      // background: #5298d4
+      // color: #4CAF50 !important
+
+.v-pagination__item.v-pagination__item--active
+  color: #4CAF50 !important
+
+.v-pagination__item:not(.v-pagination__item--active), .v-pagination__navigation
+  box-shadow: none
+  // border: 1px solid #dee2e6
+  // border-radius: 50% !important
+  color: #6c757d

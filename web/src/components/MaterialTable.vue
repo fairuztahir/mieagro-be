@@ -7,16 +7,16 @@
             <thead>
               <tr>
                 <th class="primary--text" width="15px" @click="sort('no')">No.</th>
-                <template v-for="h in header" :key="h.name">
-                  <th class="primary--text">{{ capitalize(h.name) }}</th>
+                <template v-for="(h, i) in header" :key="i">
+                  <th :class="headerRowStyle(i)">{{ capitalize(h.name) }}</th>
                 </template>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(d, index) in data" :key="index">
                 <td class="font-weight-light">{{ incrementNum(index) }}</td>
-                <template v-for="h in header" :key="h">
-                  <td class="font-weight-light">{{ d[String(h.name).toLowerCase()] }}</td>
+                <template v-for="(h, i) in header" :key="i">
+                  <td :class="bodyRowStyle(i)">{{ d[String(h.name).toLowerCase()] }}</td>
                 </template>
               </tr>
             </tbody>
@@ -25,8 +25,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" class="ml-auto d-flex justify-end">
-        <!-- <div class="text-center"> -->
+      <v-col cols="12" class="ml-auto d-flex justify-end mt-2">
           <v-pagination
             v-model="page"
             :length="totalPage"
@@ -35,7 +34,6 @@
             border
             :size="size"
           ></v-pagination>
-        <!-- </div> -->
       </v-col>
     </v-row>
   </MaterialCard>
@@ -99,30 +97,19 @@ export default defineComponent({
   methods: {
     incrementNum(i: string) {
       return this.page * this.num + Number(i)
+    },
+    headerRowStyle(i: string) {
+      if (Number(i) === (this.header.length - 1)) {
+        return 'primary--text text-right'
+      }
+      return 'primary--text'
+    },
+    bodyRowStyle(i: string) {
+      if (Number(i) === (this.header.length - 1)) {
+        return 'font-weight-light text-right'
+      }
+      return 'font-weight-light'
     }
   }
 })
 </script>
-
-<style lang="sass">
-.v-pagination .v-btn
-  border-radius: 50% !important
-  .v-pagination__item
-    // background: #fff
-    box-shadow: none
-  .v-pagination__navigation
-    margin: .3rem 10px
-    display: inline-flex
-    justify-content: center
-    align-items: center
-    text-decoration: none
-    .v-pagination__item--active
-      color: #4CAF50
-
-
-.v-pagination__item:not(.v-pagination__item--active), .v-pagination__navigation
-  box-shadow: none
-  // border: 1px solid #dee2e6
-  color: #6c757d
-
-</style>
