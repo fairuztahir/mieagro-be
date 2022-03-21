@@ -1,6 +1,18 @@
 <template>
   <v-navigation-drawer v-model="drawer" :rail="rail" permanent app mobile-break-point="960">
-    <v-list-item prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg" :title="user?.name"> </v-list-item>
+    <v-list>
+      <v-list-item
+        prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
+        :title="user?.name"
+        subtitle="test@gmail.com"
+      >
+        <!-- <template v-slot:append>
+          <v-list-item-avatar right>
+            <v-btn size="small" variant="text" icon="mdi-menu-down"></v-btn>
+          </v-list-item-avatar>
+        </template> -->
+      </v-list-item>
+    </v-list>
 
     <v-divider></v-divider>
 

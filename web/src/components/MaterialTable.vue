@@ -26,14 +26,7 @@
     </v-row>
     <v-row>
       <v-col cols="12" class="ml-auto d-flex justify-end mt-2">
-          <v-pagination
-            v-model="page"
-            :length="totalPage"
-            :total-visible="5"
-            rounded
-            border
-            :size="size"
-          ></v-pagination>
+        <v-pagination v-model="page" :length="totalPage" :total-visible="1" rounded border :size="size"></v-pagination>
       </v-col>
     </v-row>
   </MaterialCard>
@@ -62,7 +55,7 @@ export default defineComponent({
       type: String,
       required: false,
       default: 'Table Title'
-    },
+    }
     // page: {
     //   type: Number,
     //   required: false,
@@ -99,13 +92,13 @@ export default defineComponent({
       return this.page * this.num + Number(i)
     },
     headerRowStyle(i: string) {
-      if (Number(i) === (this.header.length - 1)) {
+      if (Number(i) === this.header.length - 1) {
         return 'primary--text text-right'
       }
       return 'primary--text'
     },
     bodyRowStyle(i: string) {
-      if (Number(i) === (this.header.length - 1)) {
+      if (Number(i) === this.header.length - 1) {
         return 'font-weight-light text-right'
       }
       return 'font-weight-light'
