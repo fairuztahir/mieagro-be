@@ -37,16 +37,20 @@ export default defineComponent({
       title: 'Test Table',
       header: [
         {
-          name: 'Name'
+          name: 'Name',
+          sorting: false
         },
         {
-          name: 'Country'
+          name: 'Country',
+          sorting: false
         },
         {
-          name: 'City'
+          name: 'City',
+          sorting: false
         },
         {
-          name: 'Salary'
+          name: 'Salary',
+          sorting: false
         }
       ],
       groupData: data

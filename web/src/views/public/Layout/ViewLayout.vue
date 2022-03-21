@@ -3,9 +3,9 @@
     <v-container fill-height fluid>
       <router-view v-slot="{ Component, route }">
         <transition :name="route.meta.transition || 'route'" mode="out-in">
-          <div :key="route.name">
+          <v-spacer :key="route.name">
             <component :is="Component" :key="route.meta.usePathKey ? route.path : undefined"></component>
-          </div>
+          </v-spacer>
         </transition>
       </router-view>
     </v-container>
