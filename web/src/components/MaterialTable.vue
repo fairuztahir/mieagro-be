@@ -26,14 +26,14 @@
     </v-row>
     <v-row>
       <v-col cols="12" class="ml-auto d-flex justify-end mt-2">
-        <v-pagination v-model="page" :length="totalPage" :total-visible="1" rounded border :size="size"></v-pagination>
+        <v-pagination v-model="page" :length="totalPage" :total-visible="totalVisible" rounded border :size="size"></v-pagination>
       </v-col>
     </v-row>
   </MaterialCard>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, ref } from 'vue'
+import { defineComponent, reactive, toRefs, computed } from 'vue'
 import MaterialCard from '@/components/MaterialCard.vue'
 export default defineComponent({
   name: 'MaterialTable',
@@ -74,6 +74,12 @@ export default defineComponent({
       num: 1,
       page: 1,
       totalPage: 4,
+      totalVisible: computed(() => {
+        if (screen.width <= 540) {
+          return 1
+        }
+        return 5
+      }),
       size: 'x-small'
     })
 
@@ -81,27 +87,31 @@ export default defineComponent({
       console.log('test')
     }
 
-    return {
-      capitalize,
-      ...toRefs(pagination),
-      sort
+    function incrementNum(i: string) {
+      return pagination.page * pagination.num + Number(i)
     }
-  },
-  methods: {
-    incrementNum(i: string) {
-      return this.page * this.num + Number(i)
-    },
-    headerRowStyle(i: string) {
-      if (Number(i) === this.header.length - 1) {
+
+    function headerRowStyle(i: string) {
+      if (Number(i) === props.header.length - 1) {
         return 'primary--text text-right'
       }
       return 'primary--text'
-    },
-    bodyRowStyle(i: string) {
-      if (Number(i) === this.header.length - 1) {
+    }
+
+    function bodyRowStyle(i: string) {
+      if (Number(i) === props.header.length - 1) {
         return 'font-weight-light text-right'
       }
       return 'font-weight-light'
+    }
+
+    return {
+      capitalize,
+      ...toRefs(pagination),
+      sort,
+      incrementNum,
+      headerRowStyle,
+      bodyRowStyle
     }
   }
 })
