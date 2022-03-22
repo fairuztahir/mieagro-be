@@ -119,7 +119,8 @@ export const useApi = (endpoint: string, access_token?: string) => {
   watch([error], () => {
     // If 401 Unauthorised, force user to buy a new subscription
     if (error.value.response.status === 401 && router) {
-      router.push('/subscribe')
+      const { logout } = useAuth()
+      logout().then(() => router.push({ name: 'Login' }))
     }
   })
 

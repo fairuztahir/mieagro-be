@@ -84,15 +84,18 @@ export default defineComponent({
     // https://github.com/bezkoder/vue-3-authentication-jwt/tree/master/src/services
 
     const submit = () => {
-      post(payload).then(() => {
-        if (data.value && data.value.status == 200) {
-          setUser(data.value.data, payload.rememberMe)
-          router.push({ name: 'Dashboard' })
-        } else {
-          // MARK: prompt error message
-          console.log('ape2 ajee', data.value.status, data.value.message)
-        }
-      })
+      post(payload)
+        .then(() => {
+          if (data.value && data.value.status == 200) {
+            setUser(data.value.data, payload.rememberMe)
+            router.push({ name: 'Dashboard' })
+          } else {
+            // MARK: prompt error message
+          }
+        })
+        .catch((error) => {
+          console.log('ERR:', error.message)
+        })
     }
 
     return {
