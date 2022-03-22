@@ -22,7 +22,7 @@
     color: #999
 
 .v-btn--rounded
-  border-radius: 28px !important
+  border-radius: 28px
 
 .v-sheet .v-btn.v-size--large:not(.v-btn--icon):not(.v-btn--fab)
   padding: 18px 36px !important
@@ -30,6 +30,12 @@
 .v-btn--fab.v-size--small
   height: 41px
   width: 41px
+
+.v-btn--size-x-small
+  font-size: 0.825rem !important
+  font-weight: 400 !important
+  min-width: 36px
+  padding: 0 8px
 
 .v-btn:not(.v-btn--text):not(.v-btn--outlined):hover:before
   opacity: 0
@@ -42,7 +48,6 @@
   padding: 10px 15px !important
 
 // Button group
-
 .v-item-group
   .v-btn:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined)
     margin-right: 0
@@ -83,13 +88,7 @@
     text-decoration: none
     .v-pagination__item--active
       // background: #5298d4
-      // color: #4CAF50 !important
-
-.v-pagination__item.v-pagination__item--active
-  color: #4CAF50 !important
 
 .v-pagination__item:not(.v-pagination__item--active), .v-pagination__navigation
   box-shadow: none
-  // border: 1px solid #dee2e6
-  // border-radius: 50% !important
-  color: #6c757d
+  // color: #6c757d

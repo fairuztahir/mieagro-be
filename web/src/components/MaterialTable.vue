@@ -8,7 +8,7 @@
               <tr>
                 <th class="primary--text" width="15px" @click="sort('no')">No.</th>
                 <template v-for="(h, i) in header" :key="i">
-                  <th :class="headerRowStyle(i)">{{ capitalize(h.name) }}</th>
+                  <th :class="tblRowStyle(i).header">{{ capitalize(h.name) }}</th>
                 </template>
               </tr>
             </thead>
@@ -16,7 +16,7 @@
               <tr v-for="(d, index) in data" :key="index">
                 <td class="font-weight-light">{{ incrementNum(index) }}</td>
                 <template v-for="(h, i) in header" :key="i">
-                  <td :class="bodyRowStyle(i)">{{ d[String(h.name).toLowerCase()] }}</td>
+                  <td :class="tblRowStyle(i).body">{{ d[String(h.name).toLowerCase()] }}</td>
                 </template>
               </tr>
             </tbody>
@@ -26,7 +26,7 @@
     </v-row>
     <v-row>
       <v-col cols="12" class="ml-auto d-flex justify-end mt-2">
-        <v-pagination v-model="page" :length="totalPage" :total-visible="totalVisible" rounded border :size="size"></v-pagination>
+        <v-pagination v-model="page" :length="totalPage" :total-visible="totalVisible" rounded border :size="size" :color="color"></v-pagination>
       </v-col>
     </v-row>
   </MaterialCard>
@@ -80,7 +80,8 @@ export default defineComponent({
         }
         return 5
       }),
-      size: 'x-small'
+      size: 'x-small',
+      color: 'primary'
     })
 
     const sort = (header: String) => {
@@ -91,18 +92,11 @@ export default defineComponent({
       return pagination.page * pagination.num + Number(i)
     }
 
-    function headerRowStyle(i: string) {
+    function tblRowStyle(i: string) {
       if (Number(i) === props.header.length - 1) {
-        return 'primary--text text-right'
+        return {header: 'primary--text text-right', body: 'font-weight-light text-right'}
       }
-      return 'primary--text'
-    }
-
-    function bodyRowStyle(i: string) {
-      if (Number(i) === props.header.length - 1) {
-        return 'font-weight-light text-right'
-      }
-      return 'font-weight-light'
+      return {header: 'primary--text', body: 'font-weight-light'}
     }
 
     return {
@@ -110,8 +104,7 @@ export default defineComponent({
       ...toRefs(pagination),
       sort,
       incrementNum,
-      headerRowStyle,
-      bodyRowStyle
+      tblRowStyle
     }
   }
 })
