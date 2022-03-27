@@ -16,7 +16,7 @@
 
     <v-divider></v-divider>
 
-    <v-list density="compact" nav>
+    <v-list density="compact" nav v-model:opened="open">
       <div v-for="(item, i) in items" :key="i" :value="item" active-color="primary">
         <v-list-item
           :prepend-icon="item.icon"
@@ -26,6 +26,21 @@
           :to="item.page"
         ></v-list-item>
       </div>
+
+      <v-list-group>
+        <template v-slot:activator="{ props }">
+          <v-list-item v-bind="props" prepend-icon="mdi-account-circle" title="Users" value="Users"></v-list-item>
+        </template>
+        <!-- <v-list-item title="Admin" value="Admin"></v-list-item> -->
+
+        <v-list-item
+            v-for="([title, icon], i) in admins"
+            :key="i"
+            :value="title"
+            :title="title"
+            :prepend-icon="icon"
+          ></v-list-item>
+      </v-list-group>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -47,7 +62,13 @@ export default defineComponent({
         { title: 'Dashboard', icon: 'mdi-view-dashboard', page: '/admin/dashboard' },
         { title: 'Tables', icon: 'mdi-account', page: '/admin/table' },
         { title: 'Settings', icon: 'mdi-cog-outline', page: '/admin/settings' }
-      ]
+      ],
+      // open: ['Users'],
+      open: [],
+      admins: [
+        ['Management', 'mdi-account-multiple-outline'],
+        ['Settings', 'mdi-cog-outline'],
+      ],
     })
 
     return {
@@ -58,3 +79,19 @@ export default defineComponent({
   }
 })
 </script>
+
+<style lang="sass" scoped>
+.v-list-group
+  overflow-x: hidden
+  overflow-y: hidden
+
+.v-list-group--prepend
+  --parent-padding: 0px
+
+.v-list-group__items
+  --indent-padding: 0px
+
+.v-navigation-drawer .v-icon.v-icon
+  font-size: 18px
+  opacity: .8
+</style>
