@@ -1,6 +1,6 @@
 <template>
   <div class="pa-4">
-    <MaterialTable :title="title" :header="header" :data="groupData" :numbering="numbering" :total-page="totalPage" />
+    <MaterialTable :title="title" :header="header" :data="groupData" :numbering="numbering" :total-page="totalPage" @page-size="getDisplayRows" />
   </div>
 </template>
 
@@ -42,6 +42,14 @@ export default defineComponent({
     //   }
     // ]
 
+    
+    const payload: DataPayload = {
+      pageSize: 10,
+      page: 1,
+      sortParam: 'created_at',
+      sortBy: 'desc'
+    }
+
     const table1 = reactive({
       title: 'Test Table',
       header: [
@@ -63,7 +71,8 @@ export default defineComponent({
       ],
       groupData: [],
       numbering: false,
-      totalPage: 1
+      totalPage: 1,
+      payload
     })
 
     // MARK: Get data when mounted page
@@ -72,12 +81,6 @@ export default defineComponent({
     })
 
     const { loading, data, get, errorMessage } = useApiWithAuth('v1/users')
-    const payload = reactive<DataPayload>({
-      pageSize: 10,
-      page: 1,
-      sortParam: 'created_at',
-      sortBy: 'desc'
-    })
 
     function fetchRecords() {
       get(payload)
@@ -104,6 +107,12 @@ export default defineComponent({
         })
     }
 
+    function getDisplayRows(event: string) {
+      console.log("test", event)
+      payload.pageSize = Number(event)
+      fetchRecords()
+    }
+
     // MARK: Destroy data
     onUnmounted(() => {
       table1.groupData = []
@@ -112,7 +121,8 @@ export default defineComponent({
     })
 
     return {
-      ...toRefs(table1)
+      ...toRefs(table1),
+      getDisplayRows
     }
   }
 })

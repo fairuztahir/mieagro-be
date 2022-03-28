@@ -47,6 +47,7 @@
           variant="outlined"
           class="primary-text"
           v-model="selectRows"
+          @update:modelValue="RowUpdate"
         ></v-select>
       </v-col>
       <v-col cols="12" md="6" sm="12" class="ml-auto d-flex justify-end mt-2">
@@ -97,9 +98,10 @@ export default defineComponent({
     totalPage: {
       type: Number,
       required: true
-    }
+    },
+    pageSize: Function
   },
-  setup(props) {
+  setup(props, context) {
     const capitalize = (s: String) => (s && s[0].toUpperCase() + s.slice(1)) || ''
 
     const pagination = reactive({
@@ -115,7 +117,7 @@ export default defineComponent({
       size: 'x-small',
       color: 'primary',
       displayNo: ['5', '10', '20', '40'],
-      selectRows: '10'
+      selectRows: String(10),
     })
 
     const sort = (header: String) => {
@@ -138,7 +140,11 @@ export default defineComponent({
       ...toRefs(pagination),
       sort,
       incrementNum,
-      tblRowStyle
+      tblRowStyle,
+      RowUpdate: (value: string) => {
+        console.log(pagination.selectRows)
+        context.emit('pageSize', value)
+      }
     }
   }
 })
