@@ -34,12 +34,12 @@
         <!-- <v-list-item title="Admin" value="Admin"></v-list-item> -->
 
         <v-list-item
-            v-for="([title, icon], i) in admins"
-            :key="i"
-            :value="title"
-            :title="title"
-            :prepend-icon="icon"
-          ></v-list-item>
+          v-for="([title, icon], i) in admins"
+          :key="i"
+          :value="title"
+          :title="title"
+          :prepend-icon="icon"
+        ></v-list-item>
       </v-list-group>
     </v-list>
   </v-navigation-drawer>
@@ -67,8 +67,8 @@ export default defineComponent({
       open: [],
       admins: [
         ['Management', 'mdi-account-multiple-outline'],
-        ['Settings', 'mdi-cog-outline'],
-      ],
+        ['Settings', 'mdi-cog-outline']
+      ]
     })
 
     return {
@@ -90,8 +90,4 @@ export default defineComponent({
 
 .v-list-group__items
   --indent-padding: 0px
-
-.v-navigation-drawer .v-icon.v-icon
-  font-size: 18px
-  opacity: .8
 </style>

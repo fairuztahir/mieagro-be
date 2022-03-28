@@ -38,8 +38,16 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col class="d-flex" cols="12" md="1" sm="12">
-        <v-select :items="displayNo" single-line class="primary-text" v-model="selectRows"></v-select>
+      <v-col class="d-flex mt-2" cols="12" md="1" sm="12">
+        <v-select
+          :items="displayNo"
+          color="primary"
+          density="compact"
+          label="No of rows"
+          variant="outlined"
+          class="primary-text"
+          v-model="selectRows"
+        ></v-select>
       </v-col>
       <v-col cols="12" md="6" sm="12" class="ml-auto d-flex justify-end mt-2">
         <v-pagination
@@ -139,21 +147,4 @@ export default defineComponent({
 <style lang="sass" scoped>
 .no-record-style
   color: #999
-
-.v-select__selections
-  align-items: center
-  display: flex
-  line-height: 18px
-  flex: 1 1
-  flex-wrap: wrap
-  min-width: 0
-
-.v-select__slot
-  align-items: center
-  position: relative
-  min-width: 0
-  display: flex
-  width: 100%
-.v-field__field
-  min-height: 10px
 </style>
