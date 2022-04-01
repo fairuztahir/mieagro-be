@@ -34,14 +34,18 @@ export default defineComponent({
     rail: Function
   },
   setup(props, context) {
-    const btnImg = reactive({ icon: 'mdi-view-quilt', status: false })
+    const btnImg = reactive({ icon: 'mdi-view-quilt', status: true })
 
     const drawerUpdate = () => {
-      if (!btnImg.status) btnImg.icon = 'mdi-dots-vertical'
-      else btnImg.icon = 'mdi-view-quilt'
+      if (btnImg.status) {
+        btnImg.icon = 'mdi-dots-vertical'
+        btnImg.status = false
+      } else {
+        btnImg.icon = 'mdi-view-quilt'
+        btnImg.status = true
+      }
 
-      btnImg.status = !btnImg.status
-      context.emit('rail', !btnImg.status)
+      context.emit('rail', btnImg.status)
     }
 
     const items = ref([

@@ -117,7 +117,7 @@ export default defineComponent({
       size: 'x-small',
       color: 'primary',
       displayNo: ['5', '10', '20', '40'],
-      selectRows: String(10),
+      selectRows: String(10)
     })
 
     const sort = (header: String) => {

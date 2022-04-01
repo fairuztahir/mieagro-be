@@ -4,7 +4,10 @@
       <router-view v-slot="{ Component, route }">
         <transition :name="route.meta.transition || 'route'" mode="out-in">
           <div :key="route.name">
-            <component :is="Component" :key="route.meta.usePathKey ? route.path : undefined"></component>
+            <component
+              :is="validateComponent(Component)"
+              :key="route.meta.usePathKey ? route.path : undefined"
+            ></component>
           </div>
         </transition>
       </router-view>
@@ -15,7 +18,18 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-export default defineComponent({})
+export default defineComponent({
+  setup() {
+    function validateComponent(value: any) {
+      if (value != undefined) {
+        return value
+      }
+    }
+    return {
+      validateComponent
+    }
+  }
+})
 </script>
 
 <style lang="sass">

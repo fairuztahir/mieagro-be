@@ -1,6 +1,13 @@
 <template>
   <div class="pa-4">
-    <MaterialTable :title="title" :header="header" :data="groupData" :numbering="numbering" :total-page="totalPage" @page-size="getDisplayRows" />
+    <MaterialTable
+      :title="title"
+      :header="header"
+      :data="groupData"
+      :numbering="numbering"
+      :total-page="totalPage"
+      @page-size="getDisplayRows"
+    />
   </div>
 </template>
 
@@ -42,7 +49,6 @@ export default defineComponent({
     //   }
     // ]
 
-    
     const payload: DataPayload = {
       pageSize: 10,
       page: 1,
@@ -108,7 +114,7 @@ export default defineComponent({
     }
 
     function getDisplayRows(event: string) {
-      console.log("test", event)
+      console.log('test', event)
       payload.pageSize = Number(event)
       fetchRecords()
     }

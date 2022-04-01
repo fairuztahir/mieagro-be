@@ -6,11 +6,6 @@
         :title="user?.name"
         subtitle="test@gmail.com"
       >
-        <!-- <template v-slot:append>
-          <v-list-item-avatar right>
-            <v-btn size="small" variant="text" icon="mdi-menu-down"></v-btn>
-          </v-list-item-avatar>
-        </template> -->
       </v-list-item>
     </v-list>
 
@@ -31,7 +26,6 @@
         <template v-slot:activator="{ props }">
           <v-list-item v-bind="props" prepend-icon="mdi-account-circle" title="Users" value="Users"></v-list-item>
         </template>
-        <!-- <v-list-item title="Admin" value="Admin"></v-list-item> -->
 
         <v-list-item
           v-for="([title, icon], i) in admins"
