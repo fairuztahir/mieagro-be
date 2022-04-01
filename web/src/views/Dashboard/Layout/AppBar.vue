@@ -1,6 +1,6 @@
 <template>
   <v-app-bar absolute app color="transparent" flat height="75">
-    <v-btn class="ml-3" elevation="1" :icon="btnImg.icon" small @click="drawerUpdate" />
+    <v-btn class="hidden-sm-and-down ml-3" elevation="1" :icon="btnImg.icon" small @click="drawerUpdate" />
 
     <v-toolbar-title class="hidden-sm-and-down font-weight-light" :text="title" />
 

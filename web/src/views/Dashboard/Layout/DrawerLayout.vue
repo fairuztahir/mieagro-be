@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer v-model="drawer" :rail="rail" permanent app mobile-break-point="960">
+  <v-navigation-drawer v-model="drawer" :rail="rail" permanent expand-on-hover app mobile-break-point="960">
     <v-list>
       <v-list-item
         prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
