@@ -1,11 +1,15 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import vuetify from '@/plugins/vuetify'
-import routes from '@/routes'
+import route from '@/routes'
+import store from '@/stores'
 
 const app = createApp(App)
 
 // Assign Global
 // app.config.globalProperties.pageTitle = 'Home1'
 
-app.use(routes).use(vuetify).mount('#app')
+app.use(vuetify)
+app.use(store)
+app.use(route)
+app.mount('#app')

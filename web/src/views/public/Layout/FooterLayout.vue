@@ -2,6 +2,16 @@
   <v-footer app bottom>
     <v-container class="d-flex flex-column core-footer">
       <v-row align="center" no-gutters>
+        <v-col v-for="(link, i) in links" :key="i" class="text-center mb-sm-0 mb-5 hidden-sm-and-down" cols="auto">
+          <a
+            :href="link.href"
+            class="mr-0 grey--text text--darken-3"
+            rel="noopener"
+            target="_blank"
+            v-text="link.text"
+          />
+        </v-col>
+
         <v-spacer class="hidden-sm-and-down" />
 
         <v-col cols="12" md="auto">
@@ -45,4 +55,8 @@ export default defineComponent({
     font-weight: 500
     text-decoration: none
     text-transform: uppercase
+
+.v-footer
+  border-top: 1px solid #e7e7e7 !important
+  background-color: #f5f5f5 !important
 </style>

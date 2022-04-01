@@ -13,6 +13,7 @@ from helpers.func import (
 )
 from helpers.validator import registerUserValidator
 from helpers.query import insertQuery, updateById, findUserByEmail
+from utils.auth import protected, decoded_token
 
 import os
 import jwt
@@ -94,6 +95,21 @@ class AuthController():
             return resJson(resType.OK, output)
         except:
             exceptionRaise('do_register')
+
+    @a.get("/auth/user")
+    @protected
+    async def do_validate(request):
+        try:
+            _value = decoded_token(request)
+            _validated = {
+                "name": _value['name'],
+                "email": _value['email'],
+                "role": _value['role'],
+                "token": request.token
+            }
+            return resJson(resType.OK, _validated)
+        except:
+            exceptionRaise('do_validate')
 
 
 async def updateLastLogin(session, pk_: int, dateValue):
