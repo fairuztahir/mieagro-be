@@ -26,21 +26,23 @@
         <template v-slot:activator="{ props }">
           <v-list-item v-bind="props" prepend-icon="mdi-account-circle" title="Users" value="Users"></v-list-item>
         </template>
-
-        <v-list-item
-          v-for="([title, icon], i) in admins"
-          :key="i"
-          :value="title"
-          :title="title"
-          :prepend-icon="icon"
-        ></v-list-item>
+        <div class="group-color">
+          <v-list-item
+            v-for="([title, icon], i) in admins"
+            :key="i"
+            :value="title"
+            :title="title"
+            :prepend-icon="icon"
+            class="v-list-group--items"
+          ></v-list-item>
+        </div>
       </v-list-group>
     </v-list>
   </v-navigation-drawer>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs } from 'vue'
+import { defineComponent, reactive, toRefs, watch } from 'vue'
 import { useAuth } from '@/services/auth'
 
 export default defineComponent({
@@ -65,6 +67,13 @@ export default defineComponent({
       ]
     })
 
+    watch(
+      () => props.rail,
+      (rail, prevRail) => {
+        console.log('test', rail, prevRail)
+      }
+    )
+
     return {
       user,
       ...toRefs(data),
@@ -82,6 +91,10 @@ export default defineComponent({
 .v-list-group--prepend
   --parent-padding: 0px
 
-.v-list-group__items
+.v-list-group--items
   --indent-padding: 0px
+
+.group-color
+  background: #ebfff3
+  // background: #ebfaff
 </style>
