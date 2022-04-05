@@ -13,7 +13,7 @@
               <tr>
                 <th class="primary--text" width="15px" v-if="index" @click="sort('no')">No.</th>
                 <template v-for="(h, i) in header" :key="i">
-                  <th :class="tblRowStyle(i).header">{{ capitalize(h.name) }}</th>
+                  <th :class="tblRowStyle(i).header">{{ capitalize(h.label) }}</th>
                 </template>
               </tr>
             </thead>

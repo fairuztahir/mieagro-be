@@ -8,7 +8,7 @@
               <tr>
                 <th class="primary--text" width="15px" v-if="numbering" @click="sort('no')">No.</th>
                 <template v-for="(h, i) in header" :key="i">
-                  <th :class="tblRowStyle(i).header">{{ capitalize(h.name) }}</th>
+                  <th :class="tblRowStyle(i).header">{{ capitalize(h.label) }}</th>
                 </template>
               </tr>
             </thead>
@@ -16,7 +16,7 @@
               <tr v-for="(d, index) in data" :key="index" v-if="data.length > 0">
                 <td class="font-weight-light" v-if="numbering">{{ incrementNum(index) }}</td>
                 <template v-for="(h, i) in header" :key="i">
-                  <td :class="tblRowStyle(i).body">{{ d[String(h.key).toLowerCase()] }}</td>
+                  <td :class="tblRowStyle(i).body">{{ formatDate(d[String(h.key).toLowerCase()], h.type) }}</td>
                 </template>
               </tr>
 
@@ -67,6 +67,7 @@
 <script lang="ts">
 import { defineComponent, reactive, toRefs, computed } from 'vue'
 import MaterialCard from '@/components/MaterialCard.vue'
+import moment from 'moment'
 
 export default defineComponent({
   name: 'MaterialTable',
@@ -134,6 +135,12 @@ export default defineComponent({
       return { header: 'primary--text', body: 'font-weight-light' }
     }
 
+    function formatDate(value: string, type: string = '') {
+      if (type == 'date') return moment(value).format('YYYY-MM-DD')
+      else if (type == 'datetime') return moment(value).format('YYYY-MM-DD HH:mm:ss')
+      else return value
+    }
+
     return {
       capitalize,
       ...toRefs(pagination),
@@ -142,7 +149,8 @@ export default defineComponent({
       tblRowStyle,
       RowUpdate: (value: string) => {
         context.emit('pageSize', value)
-      }
+      },
+      formatDate
     }
   }
 })

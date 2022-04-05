@@ -75,24 +75,24 @@ export default defineComponent({
 
     const regularHeader = [
       {
-        name: 'Name',
+        label: 'Name',
         key: 'name',
-        sorting: false
+        sort: false
       },
       {
-        name: 'Country',
+        label: 'Country',
         key: 'country',
-        sorting: false
+        sort: false
       },
       {
-        name: 'City',
+        label: 'City',
         key: 'city',
-        sorting: false
+        sort: false
       },
       {
-        name: 'Salary',
+        label: 'Salary',
         key: 'salary',
-        sorting: false
+        sort: false
       }
     ]
 
@@ -108,19 +108,22 @@ export default defineComponent({
       title: 'Table With Pagination',
       header: [
         {
-          name: 'Name',
+          label: 'Name',
           key: 'name',
-          sorting: false
+          sort: false,
+          type: 'string'
         },
         {
-          name: 'Email',
+          label: 'Email',
           key: 'email',
-          sorting: false
+          sort: false,
+          type: 'string'
         },
         {
-          name: 'Created At',
+          label: 'Created At',
           key: 'created_at',
-          sorting: false
+          sort: false,
+          type: 'date'
         }
       ],
       groupData: [],
