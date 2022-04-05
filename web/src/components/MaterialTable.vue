@@ -45,7 +45,6 @@
           density="compact"
           label="No of rows"
           variant="outlined"
-          class="primary-text"
           v-model="selectRows"
           @update:modelValue="RowUpdate"
         ></v-select>
@@ -78,22 +77,22 @@ export default defineComponent({
     data: {
       type: Object,
       required: true,
-      default: []
+      default: () => []
     },
     header: {
       type: Object,
       required: true,
-      default: []
+      default: () => []
     },
     title: {
       type: String,
       required: false,
-      default: 'Table Title'
+      default: () => 'Table Title'
     },
     numbering: {
       type: Boolean,
       required: false,
-      default: false
+      default: () => false
     },
     totalPage: {
       type: Number,
@@ -142,7 +141,6 @@ export default defineComponent({
       incrementNum,
       tblRowStyle,
       RowUpdate: (value: string) => {
-        console.log(pagination.selectRows)
         context.emit('pageSize', value)
       }
     }

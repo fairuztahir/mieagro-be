@@ -105,7 +105,7 @@ export default defineComponent({
     }
 
     const table1 = reactive({
-      title: 'Test Table',
+      title: 'Table With Pagination',
       header: [
         {
           name: 'Name',

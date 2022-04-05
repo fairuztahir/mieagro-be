@@ -1,5 +1,6 @@
-import { computed, inject, reactive, toRefs, watch } from 'vue'
-import { useApi, useApiWithAuth } from './api'
+import { reactive, toRefs, watch } from 'vue'
+import { useApi } from './api'
+import { useMainStore } from '@/stores'
 
 const AUTH_KEY = 'f_token'
 export const AUTH_TOKEN = 'token'
@@ -38,16 +39,23 @@ const state = reactive<AuthState>({
 // Read access token from local storage?
 const token = window.localStorage.getItem(AUTH_KEY)
 
+export const fetchKey = () => {
+  return AUTH_KEY
+}
+
 if (token) {
-  const { loading, error, data, get } = useApi('v1/auth/user')
+  const { loading, error, data, get } = useApi('v1/auth/user', token)
   state.authenticating = true
 
-  get({}, { headers: { Authorization: `Bearer ${token}` } })
+  get().catch((error) => console.log(error))
 
   watch([loading], () => {
     if (error.value) {
-      window.localStorage.removeItem(AUTH_KEY)
+      const main = useMainStore()
+      main.removeToken()
       state.user = undefined
+
+      console.log('watch token removed')
     } else if (data.value) {
       state.user = data.value.data
     }
@@ -57,17 +65,15 @@ if (token) {
 }
 
 export const useAuth = () => {
+  const main = useMainStore()
   const setUser = (payload: User, remember: boolean): void => {
-    if (remember) {
-      window.localStorage.setItem(AUTH_KEY, payload[AUTH_TOKEN])
-    }
-
+    if (remember) main.addToken(payload[AUTH_TOKEN])
     state.user = payload
     state.error = undefined
   }
 
   const logout = (): Promise<void> => {
-    window.localStorage.removeItem(AUTH_KEY)
+    main.removeToken()
     return Promise.resolve((state.user = undefined))
   }
 
