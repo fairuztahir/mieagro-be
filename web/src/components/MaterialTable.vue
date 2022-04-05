@@ -1,28 +1,44 @@
 <template>
-  <MaterialCard icon="mdi-clipboard-text" :title="title" class="px-5 py-3">
+  <MaterialCard
+    :icon="icon ? icon : 'mdi-clipboard-text'"
+    :color="color ? color : 'primary'"
+    :title="title"
+    class="px-5 py-3"
+  >
     <v-row>
       <v-col cols="12" class="ml-auto">
         <v-table>
           <template v-slot:default>
             <thead>
               <tr>
-                <th class="primary--text" width="15px" v-if="numbering" @click="sort('no')">No.</th>
+                <th class="primary--text" width="15px" v-if="index" @click="sort('no')">NO.</th>
                 <template v-for="(h, i) in header" :key="i">
-                  <th :class="tblRowStyle(i).header">{{ capitalize(h.label) }}</th>
+                  <th :class="tblRowStyle(i).header">{{ String(h.label).toUpperCase() }}</th>
                 </template>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(d, index) in data" :key="index" v-if="data.length > 0">
-                <td class="font-weight-light" v-if="numbering">{{ incrementNum(index) }}</td>
+              <tr v-for="(d, indexNo) in data" :key="indexNo" v-if="data.length > 0">
+                <td class="font-weight-light" v-if="index">{{ incrementNum(indexNo) }}</td>
                 <template v-for="(h, i) in header" :key="i">
-                  <td :class="tblRowStyle(i).body">{{ formatDate(d[String(h.key).toLowerCase()], h.type) }}</td>
+                  <td :class="tblRowStyle(i).body">
+                    {{
+                      formatType(
+                        d[String(h.key).toLowerCase()],
+                        h?.type,
+                        h?.preSymbol,
+                        h?.postSymbol,
+                        h?.decimalPlace,
+                        h?.smallCap
+                      )
+                    }}
+                  </td>
                 </template>
               </tr>
 
               <tr v-else>
                 <td
-                  v-if="numbering"
+                  v-if="index"
                   :colspan="header.length + 1"
                   class="font-weight-light text-center pa-4 no-record-style"
                 >
@@ -41,7 +57,7 @@
       <v-col class="d-flex mt-2" cols="12" md="2" sm="12">
         <v-select
           :items="displayNo"
-          color="primary"
+          :color="color ? color : 'primary'"
           density="compact"
           label="No of rows"
           variant="outlined"
@@ -55,7 +71,7 @@
           :length="totalPage"
           :total-visible="totalVisible"
           :size="size"
-          :color="color"
+          :color="color ? color : 'primary'"
           rounded
           border
         ></v-pagination>
@@ -90,19 +106,34 @@ export default defineComponent({
       required: false,
       default: () => 'Table Title'
     },
-    numbering: {
+    index: {
       type: Boolean,
-      required: false,
-      default: () => false
+      required: false
     },
     totalPage: {
       type: Number,
       required: true
     },
-    pageSize: Function
+    pageSize: Function,
+    icon: {
+      type: String,
+      required: false
+    },
+    color: {
+      type: String,
+      required: false
+    }
   },
   setup(props, context) {
-    const capitalize = (s: String) => (s && s[0].toUpperCase() + s.slice(1)) || ''
+    const capitalize = (s: String) => {
+      return (
+        s
+          .toLowerCase()
+          .split(' ')
+          .map((str) => str.charAt(0).toUpperCase() + str.slice(1))
+          .join(' ') || ''
+      )
+    }
 
     const pagination = reactive({
       num: 1,
@@ -115,7 +146,6 @@ export default defineComponent({
         return 5
       }),
       size: 'x-small',
-      color: 'primary',
       displayNo: ['5', '10', '20', '40'],
       selectRows: String(10)
     })
@@ -135,10 +165,41 @@ export default defineComponent({
       return { header: 'primary--text', body: 'font-weight-light' }
     }
 
-    function formatDate(value: string, type: string = '') {
-      if (type == 'date') return moment(value).format('YYYY-MM-DD')
-      else if (type == 'datetime') return moment(value).format('YYYY-MM-DD HH:mm:ss')
-      else return value
+    function formatType(
+      value: any,
+      type: string = '',
+      preSymbol?: string,
+      postSymbol?: string,
+      decimalPlace: number = 2,
+      smallCap: Boolean = false
+    ) {
+      switch (type) {
+        case 'date':
+          return moment(value).format('ll')
+        case 'datetime':
+          return moment(value).format('lll')
+        case 'int':
+        case 'number':
+          if (preSymbol) return preSymbol + toCommas(value)
+          else if (postSymbol) return toCommas(value) + postSymbol
+          else return toCommas(value)
+        case 'float':
+        case 'decimal':
+          if (preSymbol) return preSymbol + decimalWithPlaces(value, decimalPlace)
+          else if (postSymbol) return decimalWithPlaces(value, decimalPlace) + postSymbol
+          else return decimalWithPlaces(value, decimalPlace)
+        default:
+          if (smallCap) return String(value).toLowerCase()
+          else return capitalize(value)
+      }
+    }
+
+    function toCommas(value: Number) {
+      return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    }
+
+    function decimalWithPlaces(value: Number, digit: number) {
+      return value.toLocaleString('en-US', { maximumFractionDigits: digit })
     }
 
     return {
@@ -150,7 +211,7 @@ export default defineComponent({
       RowUpdate: (value: string) => {
         context.emit('pageSize', value)
       },
-      formatDate
+      formatType
     }
   }
 })

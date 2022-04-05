@@ -68,6 +68,8 @@ export default defineComponent({
 
 .drop-menu-user
   right: 45px
-.v-nanake
+.v-theme--light.v-nanake
   background: #fff
+.v-theme--dark.v-nanake
+  background: rgb(104 89 69)
 </style>

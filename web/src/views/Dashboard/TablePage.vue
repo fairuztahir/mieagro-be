@@ -57,19 +57,29 @@ export default defineComponent({
         name: 'Dakota Rice',
         country: 'Niger',
         city: 'Oud-Turnhout',
-        salary: '$36,738'
+        salary: 36738,
+        kpi: 0.123
       },
       {
         name: 'Minverva Hooper',
         country: 'Curaçao',
         city: 'Sinaas-Waas',
-        salary: '$23,789'
+        salary: 23789,
+        kpi: 60.003
+      },
+      {
+        name: 'faiRUZ Tahir',
+        country: 'malaysia',
+        city: 'puncak alam',
+        salary: 1623700,
+        kpi: 1290.896
       },
       {
         name: 'Sage Rodriguez',
         country: 'Netherlands',
         city: 'Baileux',
-        salary: '$56,142'
+        salary: 56142,
+        kpi: 70
       }
     ]
 
@@ -92,7 +102,17 @@ export default defineComponent({
       {
         label: 'Salary',
         key: 'salary',
-        sort: false
+        sort: false,
+        type: 'number',
+        preSymbol: '$'
+      },
+      {
+        label: 'KPI',
+        key: 'kpi',
+        sort: false,
+        type: 'decimal',
+        decimalPlace: 3,
+        postSymbol: ' %'
       }
     ]
 
@@ -110,14 +130,13 @@ export default defineComponent({
         {
           label: 'Name',
           key: 'name',
-          sort: false,
-          type: 'string'
+          sort: false
         },
         {
           label: 'Email',
           key: 'email',
           sort: false,
-          type: 'string'
+          smallCap: true
         },
         {
           label: 'Created At',

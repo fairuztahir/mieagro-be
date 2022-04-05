@@ -26,7 +26,7 @@
         <template v-slot:activator="{ props }">
           <v-list-item v-bind="props" prepend-icon="mdi-account-circle" title="Users" value="Users"></v-list-item>
         </template>
-        <div class="group-color">
+        <div class="groupcolor">
           <v-list-item
             v-for="([title, icon], i) in admins"
             :key="i"
@@ -94,7 +94,10 @@ export default defineComponent({
 .v-list-group--items
   --indent-padding: 0px
 
-.group-color
+.v-theme--light .groupcolor
   background: #ebfff3
   // background: #ebfaff
+.v-theme--dark .groupcolor
+  background: #6354406e
+  // background: #22342d
 </style>

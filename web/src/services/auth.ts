@@ -54,8 +54,6 @@ if (token) {
       const main = useMainStore()
       main.removeToken()
       state.user = undefined
-
-      console.log('watch token removed')
     } else if (data.value) {
       state.user = data.value.data
     }

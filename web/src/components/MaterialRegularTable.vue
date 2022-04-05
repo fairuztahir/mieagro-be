@@ -11,9 +11,9 @@
           <template v-slot:default>
             <thead>
               <tr>
-                <th class="primary--text" width="15px" v-if="index" @click="sort('no')">No.</th>
+                <th class="primary--text" width="15px" v-if="index" @click="sort('no')">NO.</th>
                 <template v-for="(h, i) in header" :key="i">
-                  <th :class="tblRowStyle(i).header">{{ capitalize(h.label) }}</th>
+                  <th :class="tblRowStyle(i).header">{{ String(h.label).toUpperCase() }}</th>
                 </template>
               </tr>
             </thead>
@@ -21,7 +21,18 @@
               <tr v-for="(d, indexNo) in data" :key="indexNo" v-if="data.length > 0">
                 <td class="font-weight-light" v-if="index">{{ incrementNum(indexNo) }}</td>
                 <template v-for="(h, i) in header" :key="i">
-                  <td :class="tblRowStyle(i).body">{{ d[String(h.key).toLowerCase()] }}</td>
+                  <td :class="tblRowStyle(i).body">
+                    {{
+                      formatType(
+                        d[String(h.key).toLowerCase()],
+                        h?.type,
+                        h?.preSymbol,
+                        h?.postSymbol,
+                        h?.decimalPlace,
+                        h?.smallCap
+                      )
+                    }}
+                  </td>
                 </template>
               </tr>
 
@@ -48,6 +59,7 @@
 <script lang="ts">
 import { defineComponent, reactive, toRefs, computed } from 'vue'
 import MaterialCard from '@/components/MaterialCard.vue'
+import moment from 'moment'
 
 export default defineComponent({
   name: 'MaterialRegularTable',
@@ -84,7 +96,15 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const capitalize = (s: String) => (s && s[0].toUpperCase() + s.slice(1)) || ''
+    const capitalize = (s: String) => {
+      return (
+        s
+          .toLowerCase()
+          .split(' ')
+          .map((str) => str.charAt(0).toUpperCase() + str.slice(1))
+          .join(' ') || ''
+      )
+    }
 
     const table = reactive({
       num: 1,
@@ -106,12 +126,50 @@ export default defineComponent({
       return { header: 'primary--text', body: 'font-weight-light' }
     }
 
+    function formatType(
+      value: any,
+      type: string = '',
+      preSymbol?: string,
+      postSymbol?: string,
+      decimalPlace: number = 2,
+      smallCap: Boolean = false
+    ) {
+      switch (type) {
+        case 'date':
+          return moment(value).format('ll')
+        case 'datetime':
+          return moment(value).format('lll')
+        case 'int':
+        case 'number':
+          if (preSymbol) return preSymbol + toCommas(value)
+          else if (postSymbol) return toCommas(value) + postSymbol
+          else return toCommas(value)
+        case 'float':
+        case 'decimal':
+          if (preSymbol) return preSymbol + decimalWithPlaces(value, decimalPlace)
+          else if (postSymbol) return decimalWithPlaces(value, decimalPlace) + postSymbol
+          else return decimalWithPlaces(value, decimalPlace)
+        default:
+          if (smallCap) return String(value).toLowerCase()
+          else return capitalize(value)
+      }
+    }
+
+    function toCommas(value: Number) {
+      return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    }
+
+    function decimalWithPlaces(value: Number, digit: number) {
+      return value.toLocaleString('en-US', { maximumFractionDigits: digit })
+    }
+
     return {
       capitalize,
       ...toRefs(table),
       sort,
       incrementNum,
-      tblRowStyle
+      tblRowStyle,
+      formatType
     }
   }
 })
