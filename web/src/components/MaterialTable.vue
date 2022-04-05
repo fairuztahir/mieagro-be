@@ -38,7 +38,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col class="d-flex mt-2" cols="12" md="1" sm="12">
+      <v-col class="d-flex mt-2" cols="12" md="2" sm="12">
         <v-select
           :items="displayNo"
           color="primary"
