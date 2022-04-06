@@ -42,7 +42,7 @@
     "vuetify-loader": "^2.0.0-alpha.0"
   },
   "engines": {
-    "node": "16.x.x",
+    "node": "17.x.x",
     "npm": "8.x.x"
   }
 }
