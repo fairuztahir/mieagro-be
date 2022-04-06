@@ -43,11 +43,13 @@
       </material-card>
     </v-col>
   </v-row>
-  <v-snackbar v-model="snackbar" multi-line>
-    <div class="font-weight-light">{{ text }}</div>
+  <v-snackbar v-model="snackbar" multi-line :timeout="timeout">
+    <div class="font-weight-light text-center">{{ capitalize(text) }}</div>
 
     <template v-slot:actions>
-      <v-btn color="pink" variant="text" @click="snackbar = false"> Close </v-btn>
+      <v-btn color="pink" icon="mdi-alpha-x-circle-outline" variant="text" @click="snackbar = false">
+        <!-- Close -->
+      </v-btn>
     </template>
   </v-snackbar>
 </template>
@@ -86,7 +88,8 @@ export default defineComponent({
 
     const snack = reactive({
       text: '',
-      snackbar: false
+      snackbar: false,
+      timeout: 2500
     })
 
     // https://dev.to/adamcowley/how-to-build-an-authentication-into-a-vue3-application-200b
@@ -114,6 +117,16 @@ export default defineComponent({
         })
     }
 
+    const capitalize = (s: String) => {
+      return (
+        s
+          .toLowerCase()
+          .split(' ')
+          .map((str) => str.charAt(0).toUpperCase() + str.slice(1))
+          .join(' ') || ''
+      )
+    }
+
     return {
       showpass,
       avatar,
@@ -121,7 +134,8 @@ export default defineComponent({
       submit,
       errorMessage,
       ...toRefs(payload),
-      ...toRefs(snack)
+      ...toRefs(snack),
+      capitalize
     }
   }
 })
