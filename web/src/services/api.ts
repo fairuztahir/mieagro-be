@@ -5,10 +5,15 @@ import { useAuth, AUTH_TOKEN } from './auth'
 import { useMainStore } from '@/stores'
 
 export const useApiWithAuth = (endpoint: string) => {
-  const { user } = useAuth()
   const main = useMainStore()
-  const userData = user?.value ? user.value[AUTH_TOKEN] : undefined
-  const key = main.getToken ? main.getToken : userData
+  let key: string
+  if (main.emptyToken) {
+    key = main.getToken
+  } else {
+    const { user } = useAuth()
+    key = user?.value ? user.value[AUTH_TOKEN] : ''
+  }
+
   return useApi(endpoint, key)
 }
 
