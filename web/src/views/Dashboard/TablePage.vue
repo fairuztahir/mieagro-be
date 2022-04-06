@@ -1,5 +1,26 @@
 <template>
   <div class="pa-4">
+    <MaterialRegularTable
+      icon="mdi-poll"
+      color="secondary"
+      title="Regular Table"
+      :header="regularHeader"
+      :data="regularData"
+    />
+
+    <v-spacer class="py-3"></v-spacer>
+
+    <MaterialRegularTable
+      icon="mdi-account-tie"
+      color="#f7f4b0"
+      title="Regular Table With Index"
+      :header="regularHeader"
+      :data="regularData"
+      :index="true"
+    />
+
+    <v-spacer class="py-3"></v-spacer>
+
     <MaterialTable
       :title="title"
       :header="header"
@@ -14,6 +35,7 @@
 <script lang="ts">
 import { defineComponent, reactive, toRefs, onMounted, onUnmounted } from 'vue'
 import MaterialTable from '@/components/MaterialTable.vue'
+import MaterialRegularTable from '@/components/MaterialRegularTable.vue'
 import { useApiWithAuth } from '@/services/api'
 
 interface DataPayload {
@@ -25,30 +47,76 @@ interface DataPayload {
 
 export default defineComponent({
   components: {
+    MaterialRegularTable,
     MaterialTable
   },
   setup() {
-    // const data1 = [
-    //   {
-    //     name: 'Dakota Rice',
-    //     country: 'Niger',
-    //     city: 'Oud-Turnhout',
-    //     salary: '$36,738'
-    //   },
-    //   {
-    //     name: 'Minverva Hooper',
-    //     country: 'Curaçao',
-    //     city: 'Sinaas-Waas',
-    //     salary: '$23,789'
-    //   },
-    //   {
-    //     name: 'Sage Rodriguez',
-    //     country: 'Netherlands',
-    //     city: 'Baileux',
-    //     salary: '$56,142'
-    //   }
-    // ]
+    // Regular table setup
+    const regularData = [
+      {
+        name: 'Dakota Rice',
+        country: 'Niger',
+        city: 'Oud-Turnhout',
+        salary: 36738,
+        kpi: 0.123
+      },
+      {
+        name: 'Minverva Hooper',
+        country: 'Curaçao',
+        city: 'Sinaas-Waas',
+        salary: 23789,
+        kpi: 60.003
+      },
+      {
+        name: 'faiRUZ Tahir',
+        country: 'malaysia',
+        city: 'puncak alam',
+        salary: 1623700,
+        kpi: 1290.896
+      },
+      {
+        name: 'Sage Rodriguez',
+        country: 'Netherlands',
+        city: 'Baileux',
+        salary: 56142,
+        kpi: 70
+      }
+    ]
 
+    const regularHeader = [
+      {
+        label: 'Name',
+        key: 'name',
+        sort: false
+      },
+      {
+        label: 'Country',
+        key: 'country',
+        sort: false
+      },
+      {
+        label: 'City',
+        key: 'city',
+        sort: false
+      },
+      {
+        label: 'Salary',
+        key: 'salary',
+        sort: false,
+        type: 'number',
+        preSymbol: '$'
+      },
+      {
+        label: 'KPI',
+        key: 'kpi',
+        sort: false,
+        type: 'decimal',
+        decimalPlace: 3,
+        postSymbol: ' %'
+      }
+    ]
+
+    // Pagination Table setup
     const payload: DataPayload = {
       pageSize: 10,
       page: 1,
@@ -57,22 +125,24 @@ export default defineComponent({
     }
 
     const table1 = reactive({
-      title: 'Test Table',
+      title: 'Table With Pagination',
       header: [
         {
-          name: 'Name',
+          label: 'Name',
           key: 'name',
-          sorting: false
+          sort: false
         },
         {
-          name: 'Email',
+          label: 'Email',
           key: 'email',
-          sorting: false
+          sort: false,
+          smallCap: true
         },
         {
-          name: 'Created At',
+          label: 'Created At',
           key: 'created_at',
-          sorting: false
+          sort: false,
+          type: 'date'
         }
       ],
       groupData: [],
@@ -114,7 +184,6 @@ export default defineComponent({
     }
 
     function getDisplayRows(event: string) {
-      console.log('test', event)
       payload.pageSize = Number(event)
       fetchRecords()
     }
@@ -127,6 +196,8 @@ export default defineComponent({
     })
 
     return {
+      regularHeader,
+      regularData,
       ...toRefs(table1),
       getDisplayRows
     }

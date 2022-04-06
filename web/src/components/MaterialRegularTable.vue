@@ -53,30 +53,6 @@
         </v-table>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col class="d-flex mt-2" cols="12" md="2" sm="12">
-        <v-select
-          :items="displayNo"
-          :color="color ? color : 'primary'"
-          density="compact"
-          label="No of rows"
-          variant="outlined"
-          v-model="selectRows"
-          @update:modelValue="RowUpdate"
-        ></v-select>
-      </v-col>
-      <v-col cols="12" md="6" sm="12" class="ml-auto d-flex justify-end mt-2">
-        <v-pagination
-          v-model="page"
-          :length="totalPage"
-          :total-visible="totalVisible"
-          :size="size"
-          :color="color ? color : 'primary'"
-          rounded
-          border
-        ></v-pagination>
-      </v-col>
-    </v-row>
   </MaterialCard>
 </template>
 
@@ -86,7 +62,7 @@ import MaterialCard from '@/components/MaterialCard.vue'
 import moment from 'moment'
 
 export default defineComponent({
-  name: 'MaterialTable',
+  name: 'MaterialRegularTable',
   components: {
     MaterialCard
   },
@@ -94,27 +70,22 @@ export default defineComponent({
     data: {
       type: Object,
       required: true,
-      default: () => []
+      default: []
     },
     header: {
       type: Object,
       required: true,
-      default: () => []
+      default: []
     },
     title: {
       type: String,
       required: false,
-      default: () => 'Table Title'
+      default: 'Table Title'
     },
     index: {
       type: Boolean,
       required: false
     },
-    totalPage: {
-      type: Number,
-      required: true
-    },
-    pageSize: Function,
     icon: {
       type: String,
       required: false
@@ -124,7 +95,7 @@ export default defineComponent({
       required: false
     }
   },
-  setup(props, context) {
+  setup(props) {
     const capitalize = (s: String) => {
       return (
         s
@@ -135,19 +106,9 @@ export default defineComponent({
       )
     }
 
-    const pagination = reactive({
+    const table = reactive({
       num: 1,
-      page: 1,
-      // totalPage: 4,
-      totalVisible: computed(() => {
-        if (screen.width <= 540) {
-          return 1
-        }
-        return 5
-      }),
-      size: 'x-small',
-      displayNo: ['5', '10', '20', '40'],
-      selectRows: String(10)
+      page: 1
     })
 
     const sort = (header: String) => {
@@ -155,7 +116,7 @@ export default defineComponent({
     }
 
     function incrementNum(i: string) {
-      return pagination.page * pagination.num + Number(i)
+      return table.page * table.num + Number(i)
     }
 
     function tblRowStyle(i: string) {
@@ -204,13 +165,10 @@ export default defineComponent({
 
     return {
       capitalize,
-      ...toRefs(pagination),
+      ...toRefs(table),
       sort,
       incrementNum,
       tblRowStyle,
-      RowUpdate: (value: string) => {
-        context.emit('pageSize', value)
-      },
       formatType
     }
   }

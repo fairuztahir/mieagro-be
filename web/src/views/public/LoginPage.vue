@@ -3,7 +3,7 @@
     <v-col cols="12" md="4" sm="6" xs="5">
       <material-card class="v-card-profile pt-3" :avatar="avatar">
         <v-card-text class="text-center">
-          <h4 class="display-1 mb-1 grey--text">LOGIN PAGE</h4>
+          <h4 class="display-1 mb-1 grey--text reduced-height3">LOGIN PAGE</h4>
 
           <h4 class="display-2 font-weight-light mb-3 black--text">Welcome to MIE Agro System</h4>
 
@@ -35,14 +35,28 @@
                 ></v-text-field>
               </v-col>
             </v-row>
+            <v-row>
+              <v-col cols="12" sm="4" md="4" class="reduced-height2">
+                <v-checkbox v-model="rememberMe" label="Remember me?" color="primary" hide-details></v-checkbox>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" sm="12" md="12" class="text-center reduced-height">
+                <v-btn color="primary" class="font-weight-light" type="submit" :disabled="loading"> LogIn </v-btn>
+              </v-col>
+            </v-row>
           </v-form>
-          <v-btn color="primary" class="mr-0 mt-3 font-weight-light" type="submit" :disabled="loading" @click="submit">
-            LogIn
-          </v-btn>
         </v-card-text>
       </material-card>
     </v-col>
   </v-row>
+  <v-snackbar v-model="snackbar" multi-line :timeout="timeout">
+    <div class="font-weight-light center-vertical">{{ String(text).toLowerCase() }}</div>
+
+    <template v-slot:actions>
+      <v-btn color="pink" icon="mdi-alpha-x-circle-outline" variant="text" @click="snackbar = false"> </v-btn>
+    </template>
+  </v-snackbar>
 </template>
 
 <script lang="ts">
@@ -77,6 +91,12 @@ export default defineComponent({
       rememberMe: true
     })
 
+    const snack = reactive({
+      text: '',
+      snackbar: false,
+      timeout: 2500
+    })
+
     // https://dev.to/adamcowley/how-to-build-an-authentication-into-a-vue3-application-200b
     // https://github.com/adam-cowley/twitch-project/blob/master/ui/src/views/Login.vue
 
@@ -91,10 +111,14 @@ export default defineComponent({
             router.push({ name: 'Dashboard' })
           } else {
             // MARK: prompt error message
+            snack.text = data.value.message
+            snack.snackbar = true
           }
         })
         .catch((error) => {
           console.log('ERR:', error.message)
+          snack.text = error.message
+          snack.snackbar = true
         })
     }
 
@@ -104,17 +128,28 @@ export default defineComponent({
       loading,
       submit,
       errorMessage,
-      ...toRefs(payload)
+      ...toRefs(payload),
+      ...toRefs(snack)
     }
   }
 })
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
 .center-vertical
   justify-content: center
   align-items: center
 
 .v-card-text
   opacity: inherit !important
+
+.reduced-height
+  margin-bottom: -5px
+  margin-top: -5px
+.reduced-height2
+  margin-bottom: -5px
+  margin-top: -15px
+  margin-inline-start: -8px
+.reduced-height3
+  margin-top: -30px
 </style>

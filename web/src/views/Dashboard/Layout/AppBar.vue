@@ -1,8 +1,8 @@
 <template>
   <v-app-bar absolute app color="transparent" flat height="75">
-    <v-btn class="hidden-sm-and-down ml-3" elevation="1" :icon="btnImg.icon" small @click="drawerUpdate" />
+    <v-btn class="hidden-sm-and-down v-nanake" elevation="1" :icon="btnImg.icon" small @click="drawerUpdate" />
 
-    <v-toolbar-title class="hidden-sm-and-down font-weight-light" :text="title" />
+    <v-toolbar-title class="hidden-sm-and-down font-weight-light ml-4" :text="title" />
 
     <v-spacer />
 
@@ -64,8 +64,12 @@ export default defineComponent({
 
 <style lang="sass" scoped>
 .changebg
-  background-color: transparent !important
+  background-color: transparent
 
 .drop-menu-user
   right: 45px
+.v-theme--light.v-nanake
+  background: #fff
+.v-theme--dark.v-nanake
+  background: rgb(104 89 69)
 </style>
