@@ -44,12 +44,10 @@
     </v-col>
   </v-row>
   <v-snackbar v-model="snackbar" multi-line :timeout="timeout">
-    <div class="font-weight-light text-center">{{ capitalize(text) }}</div>
+    <div class="font-weight-light center-vertical">{{ String(text).toLowerCase() }}</div>
 
     <template v-slot:actions>
-      <v-btn color="pink" icon="mdi-alpha-x-circle-outline" variant="text" @click="snackbar = false">
-        <!-- Close -->
-      </v-btn>
+      <v-btn color="pink" icon="mdi-alpha-x-circle-outline" variant="text" @click="snackbar = false"> </v-btn>
     </template>
   </v-snackbar>
 </template>
@@ -117,16 +115,6 @@ export default defineComponent({
         })
     }
 
-    const capitalize = (s: String) => {
-      return (
-        s
-          .toLowerCase()
-          .split(' ')
-          .map((str) => str.charAt(0).toUpperCase() + str.slice(1))
-          .join(' ') || ''
-      )
-    }
-
     return {
       showpass,
       avatar,
@@ -134,8 +122,7 @@ export default defineComponent({
       submit,
       errorMessage,
       ...toRefs(payload),
-      ...toRefs(snack),
-      capitalize
+      ...toRefs(snack)
     }
   }
 })
