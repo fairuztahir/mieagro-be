@@ -43,22 +43,13 @@
       </material-card>
     </v-col>
   </v-row>
-  <v-snackbar
-      v-model="snackbar"
-      multi-line
-    >
-      <div class="font-weight-light">{{ text }}</div>
+  <v-snackbar v-model="snackbar" multi-line>
+    <div class="font-weight-light">{{ text }}</div>
 
-      <template v-slot:actions>
-        <v-btn
-          color="pink"
-          variant="text"
-          @click="snackbar = false"
-        >
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar>
+    <template v-slot:actions>
+      <v-btn color="pink" variant="text" @click="snackbar = false"> Close </v-btn>
+    </template>
+  </v-snackbar>
 </template>
 
 <script lang="ts">
@@ -136,7 +127,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
 .center-vertical
   justify-content: center
   align-items: center

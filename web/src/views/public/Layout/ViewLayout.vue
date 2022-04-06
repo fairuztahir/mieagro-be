@@ -1,6 +1,6 @@
 <template>
   <v-main>
-    <v-container fill-height fluid>
+    <v-container fluid>
       <router-view v-slot="{ Component, route }">
         <transition :name="route.meta.transition || 'route'" mode="out-in">
           <div :key="route.name" v-if="validateComponent(Component)">

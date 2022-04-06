@@ -59,4 +59,10 @@ export default defineComponent({
 .v-footer
   border-top: 1px solid #e7e7e7 !important
   background-color: #f5f5f5 !important
+
+.v-container
+  padding-left: 16px
+  padding-right: 16px
+  padding-top: 10px !important
+  padding-bottom: 10px !important
 </style>
