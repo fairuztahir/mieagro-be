@@ -3,7 +3,7 @@
     <v-col cols="12" md="4" sm="6" xs="5">
       <material-card class="v-card-profile pt-3" :avatar="avatar">
         <v-card-text class="text-center">
-          <h4 class="display-1 mb-1 grey--text">LOGIN PAGE</h4>
+          <h4 class="display-1 mb-1 grey--text reduced-height3">LOGIN PAGE</h4>
 
           <h4 class="display-2 font-weight-light mb-3 black--text">Welcome to MIE Agro System</h4>
 
@@ -35,10 +35,17 @@
                 ></v-text-field>
               </v-col>
             </v-row>
+            <v-row>
+              <v-col cols="12" sm="4" md="4" class="reduced-height2">
+                <v-checkbox v-model="rememberMe" label="Remember me?" color="primary" hide-details></v-checkbox>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" sm="12" md="12" class="text-center reduced-height">
+                <v-btn color="primary" class="font-weight-light" type="submit" :disabled="loading"> LogIn </v-btn>
+              </v-col>
+            </v-row>
           </v-form>
-          <v-btn color="primary" class="mr-0 mt-3 font-weight-light" type="submit" :disabled="loading" @click="submit">
-            LogIn
-          </v-btn>
         </v-card-text>
       </material-card>
     </v-col>
@@ -135,4 +142,14 @@ export default defineComponent({
 
 .v-card-text
   opacity: inherit !important
+
+.reduced-height
+  margin-bottom: -5px
+  margin-top: -5px
+.reduced-height2
+  margin-bottom: -5px
+  margin-top: -15px
+  margin-inline-start: -8px
+.reduced-height3
+  margin-top: -30px
 </style>

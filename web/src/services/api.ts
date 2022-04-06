@@ -1,12 +1,15 @@
 import axios, { AxiosRequestConfig } from 'axios'
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuth } from './auth'
+import { useAuth, AUTH_TOKEN } from './auth'
 import { useMainStore } from '@/stores'
 
 export const useApiWithAuth = (endpoint: string) => {
+  const { user } = useAuth()
   const main = useMainStore()
-  return useApi(endpoint, main.getToken)
+  const userData = user?.value ? user.value[AUTH_TOKEN] : undefined
+  const key = main.getToken ? main.getToken : userData
+  return useApi(endpoint, key)
 }
 
 export const useApi = (endpoint: string, access_token?: string) => {
