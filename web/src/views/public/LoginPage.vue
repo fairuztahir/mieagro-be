@@ -43,6 +43,22 @@
       </material-card>
     </v-col>
   </v-row>
+  <v-snackbar
+      v-model="snackbar"
+      multi-line
+    >
+      <div class="font-weight-light">{{ text }}</div>
+
+      <template v-slot:actions>
+        <v-btn
+          color="pink"
+          variant="text"
+          @click="snackbar = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
 </template>
 
 <script lang="ts">
@@ -77,6 +93,11 @@ export default defineComponent({
       rememberMe: true
     })
 
+    const snack = reactive({
+      text: '',
+      snackbar: false
+    })
+
     // https://dev.to/adamcowley/how-to-build-an-authentication-into-a-vue3-application-200b
     // https://github.com/adam-cowley/twitch-project/blob/master/ui/src/views/Login.vue
 
@@ -91,10 +112,14 @@ export default defineComponent({
             router.push({ name: 'Dashboard' })
           } else {
             // MARK: prompt error message
+            snack.text = data.value.message
+            snack.snackbar = true
           }
         })
         .catch((error) => {
           console.log('ERR:', error.message)
+          snack.text = error.message
+          snack.snackbar = true
         })
     }
 
@@ -104,7 +129,8 @@ export default defineComponent({
       loading,
       submit,
       errorMessage,
-      ...toRefs(payload)
+      ...toRefs(payload),
+      ...toRefs(snack)
     }
   }
 })
