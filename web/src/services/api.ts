@@ -6,12 +6,12 @@ import { useMainStore } from '@/stores'
 
 export const useApiWithAuth = (endpoint: string) => {
   const main = useMainStore()
-  let key: string
-  if (main.emptyToken) {
+  let key: any
+  if (!main.emptyToken) {
     key = main.getToken
   } else {
     const { user } = useAuth()
-    key = user?.value ? user.value[AUTH_TOKEN] : ''
+    key = user?.value ? user.value[AUTH_TOKEN] : undefined
   }
 
   return useApi(endpoint, key)
