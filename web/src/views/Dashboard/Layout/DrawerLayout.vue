@@ -12,31 +12,41 @@
     <v-divider></v-divider>
 
     <v-list density="compact" nav v-model:opened="open">
-      <div v-for="(item, i) in items" :key="i" :value="item" active-color="primary">
-        <v-list-item
-          :prepend-icon="item.icon"
-          :title="item.title"
-          :value="item.title"
-          @click="titleUpdate(item.title)"
-          :to="item.page"
-        ></v-list-item>
-      </div>
-
-      <v-list-group>
-        <template v-slot:activator="{ props }">
-          <v-list-item v-bind="props" prepend-icon="mdi-account-circle" title="Users" value="Users"></v-list-item>
-        </template>
-        <div class="groupcolor">
+      <div v-for="(item, i) in items" :key="i" active-color="primary">
+        <template v-if="!(Object.keys(item.child).length > 0)">
           <v-list-item
-            v-for="([title, icon], i) in admins"
-            :key="i"
-            :value="title"
-            :title="title"
-            :prepend-icon="icon"
-            class="v-list-group--items"
+            :prepend-icon="item.icon"
+            :title="item.title"
+            :value="item.title"
+            @click="titleUpdate(item.title)"
+            :to="item.page"
           ></v-list-item>
-        </div>
-      </v-list-group>
+        </template>
+        <template v-else>
+          <v-list-group>
+            <template v-slot:activator="{ props }">
+              <v-list-item
+                v-bind="props"
+                :prepend-icon="item.icon"
+                :title="item.title"
+                :value="item.title"
+              ></v-list-item>
+            </template>
+            <div class="groupcolor">
+              <v-list-item
+                v-for="(child, i) in item.child"
+                :key="i"
+                :value="child.title"
+                :title="child.title"
+                :prepend-icon="child.icon"
+                @click="titleUpdate(item.title)"
+                :to="item.page"
+                class="v-list-group--items"
+              ></v-list-item>
+            </div>
+          </v-list-group>
+        </template>
+      </div>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -52,19 +62,19 @@ export default defineComponent({
   },
   setup(props, context) {
     const { user } = useAuth()
+    const userChild = [
+      { title: 'Management', icon: 'mdi-view-dashboard', page: '/admin/dashboard' },
+      { title: 'Test', icon: 'mdi-view-dashboard', page: '/admin/dashboard' }
+    ]
     const data = reactive({
       drawer: true,
       items: [
-        { title: 'Dashboard', icon: 'mdi-view-dashboard', page: '/admin/dashboard' },
-        { title: 'Tables', icon: 'mdi-account', page: '/admin/table' },
-        { title: 'Settings', icon: 'mdi-cog-outline', page: '/admin/settings' }
+        { title: 'Dashboard', icon: 'mdi-view-dashboard', page: '/admin/dashboard', child: [] },
+        { title: 'Tables', icon: 'mdi-clipboard-text', page: '/admin/table', child: [] },
+        { title: 'Settings', icon: 'mdi-cog-outline', page: '/admin/settings', child: [] },
+        { title: 'Users', icon: 'mdi-account-circle', page: '', child: userChild }
       ],
-      // open: ['Users'],
-      open: [],
-      admins: [
-        ['Management', 'mdi-account-multiple-outline'],
-        ['Settings', 'mdi-cog-outline']
-      ]
+      open: []
     })
 
     watch(
