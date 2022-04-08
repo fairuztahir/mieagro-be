@@ -4,8 +4,8 @@
       icon="mdi-poll"
       color="secondary"
       title="Regular Table"
-      :header="regularHeader"
-      :data="regularData"
+      :header="regularHeader1"
+      :data="regularData1"
     />
 
     <v-spacer class="py-3"></v-spacer>
@@ -87,7 +87,7 @@ export default defineComponent({
       {
         label: 'Name',
         key: 'name',
-        sort: false
+        sort: true
       },
       {
         label: 'Country',
@@ -110,11 +110,77 @@ export default defineComponent({
         label: 'KPI',
         key: 'kpi',
         sort: false,
-        type: 'decimal',
+        type: 'double',
         decimalPlace: 3,
         postSymbol: ' %'
       }
     ]
+
+    // -------------------
+    const regularData1 = [
+      {
+        name: 'Dakota Rice',
+        country: 'Niger',
+        city: 'Oud-Turnhout',
+        salary: 36738,
+        kpi: 0.123
+      },
+      {
+        name: 'Minverva Hooper',
+        country: 'Curaçao',
+        city: 'Sinaas-Waas',
+        salary: 23789,
+        kpi: 60.003
+      },
+      {
+        name: 'faiRUZ Tahir',
+        country: 'malaysia',
+        city: 'puncak alam',
+        salary: 1623700,
+        kpi: 1290.896
+      },
+      {
+        name: 'Sage Rodriguez',
+        country: 'Netherlands',
+        city: 'Baileux',
+        salary: 56142,
+        kpi: 70
+      }
+    ]
+
+    const regularHeader1 = [
+      {
+        label: 'Name',
+        key: 'name',
+        sort: true
+      },
+      {
+        label: 'Country',
+        key: 'country',
+        sort: true
+      },
+      {
+        label: 'City',
+        key: 'city',
+        sort: true
+      },
+      {
+        label: 'Salary',
+        key: 'salary',
+        sort: true,
+        type: 'number',
+        preSymbol: '$'
+      },
+      {
+        label: 'KPI',
+        key: 'kpi',
+        sort: true,
+        type: 'double',
+        decimalPlace: 3,
+        postSymbol: ' %'
+      }
+    ]
+    //-------------------
 
     // Pagination Table setup
     const payload: DataPayload = {
@@ -198,6 +264,8 @@ export default defineComponent({
     return {
       regularHeader,
       regularData,
+      regularHeader1,
+      regularData1,
       ...toRefs(table1),
       getDisplayRows
     }
