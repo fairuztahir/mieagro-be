@@ -14,13 +14,16 @@
                 <th class="primary--text" width="15px" v-if="index">NO.</th>
                 <template v-for="(h, i) in header" :key="i">
                   <th :class="tblRowStyle(i).header" @click="sort(h.key, h.type, h.sort)">
-                    {{ String(h.label).toUpperCase() }}
-                    <v-icon size="12" v-if="sortLogic === 'asc' && show === h.key && h.sort"
-                      >mdi-arrow-down-thin</v-icon
-                    >
-                    <v-icon size="12" v-else-if="sortLogic === 'desc' && show === h.key && h.sort"
-                      >mdi-arrow-up-thin</v-icon
-                    >
+                    <v-spacer v-if="h.sort">
+                      <a>
+                        {{ String(h.label).toUpperCase() }}
+                        <v-icon size="12" v-if="sortLogic === 'asc' && show === h.key">mdi-arrow-down-thin</v-icon>
+                        <v-icon size="12" v-else-if="sortLogic === 'desc' && show === h.key">mdi-arrow-up-thin</v-icon>
+                      </a>
+                    </v-spacer>
+                    <v-spacer v-else>
+                      {{ String(h.label).toUpperCase() }}
+                    </v-spacer>
                   </th>
                 </template>
               </tr>
