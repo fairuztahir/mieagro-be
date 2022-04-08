@@ -28,6 +28,7 @@
       :numbering="numbering"
       :total-page="totalPage"
       @page-size="getDisplayRows"
+      @sort-by="updateSortBy"
     />
   </div>
 </template>
@@ -116,7 +117,7 @@ export default defineComponent({
       }
     ]
 
-    // -------------------
+    // Regular table setup
     const regularData1 = [
       {
         name: 'Dakota Rice',
@@ -180,7 +181,6 @@ export default defineComponent({
         postSymbol: ' %'
       }
     ]
-    //-------------------
 
     // Pagination Table setup
     const payload: DataPayload = {
@@ -196,18 +196,18 @@ export default defineComponent({
         {
           label: 'Name',
           key: 'name',
-          sort: false
+          sort: true
         },
         {
           label: 'Email',
           key: 'email',
-          sort: false,
+          sort: true,
           smallCap: true
         },
         {
           label: 'Created At',
           key: 'created_at',
-          sort: false,
+          sort: true,
           type: 'date'
         }
       ],
@@ -254,6 +254,13 @@ export default defineComponent({
       fetchRecords()
     }
 
+    function updateSortBy(event: DataPayload) {
+      payload.sortParam = String(event.sortParam)
+      payload.sortBy = String(event.sortBy)
+      console.log('test', payload.sortParam, payload.sortBy)
+      fetchRecords()
+    }
+
     // MARK: Destroy data
     onUnmounted(() => {
       table1.groupData = []
@@ -267,7 +274,8 @@ export default defineComponent({
       regularHeader1,
       regularData1,
       ...toRefs(table1),
-      getDisplayRows
+      getDisplayRows,
+      updateSortBy
     }
   }
 })

@@ -13,13 +13,24 @@
               <tr>
                 <th class="primary--text" width="15px" v-if="index">NO.</th>
                 <template v-for="(h, i) in header" :key="i">
-                  <th :class="tblRowStyle(i).header">{{ String(h.label).toUpperCase() }}</th>
+                  <th :class="tblRowStyle(i).header" @click="sort(h.key, h.type, h.sort)">
+                    <v-spacer v-if="h.sort">
+                      <a>
+                        {{ String(h.label).toUpperCase() }}
+                        <v-icon size="12" v-if="sortLogic === 'asc' && show === h.key">mdi-arrow-down-thin</v-icon>
+                        <v-icon size="12" v-else-if="sortLogic === 'desc' && show === h.key">mdi-arrow-up-thin</v-icon>
+                      </a>
+                    </v-spacer>
+                    <v-spacer v-else>
+                      {{ String(h.label).toUpperCase() }}
+                    </v-spacer>
+                  </th>
                 </template>
               </tr>
             </thead>
             <tbody>
-              <tr v-if="data.length > 0">
-                <template v-for="(d, indexNo) in data" :key="indexNo">
+              <template v-if="data.length > 0">
+                <tr v-for="(d, indexNo) in data" :key="indexNo">
                   <td class="font-weight-light" v-if="index">{{ incrementNum(indexNo) }}</td>
                   <template v-for="(h, i) in header" :key="i">
                     <td :class="tblRowStyle(i).body">
@@ -35,8 +46,8 @@
                       }}
                     </td>
                   </template>
-                </template>
-              </tr>
+                </tr>
+              </template>
 
               <tr v-else>
                 <td
@@ -122,7 +133,8 @@ export default defineComponent({
     color: {
       type: String,
       required: false
-    }
+    },
+    sortBy: Function
   },
   setup(props, context) {
     const capitalize = (s: string) => {
@@ -147,8 +159,29 @@ export default defineComponent({
       }),
       size: 'x-small',
       displayNo: ['5', '10', '20', '40'],
-      selectRows: String(10)
+      selectRows: String(10),
+      sortLogic: 'asc',
+      show: ''
     })
+
+    const sort = (key: string, type?: string, sort?: boolean) => {
+      if (sort)
+        if (pagination.sortLogic === 'asc') {
+          pagination.show = key
+          sortByUpdate(key, pagination.sortLogic)
+          pagination.sortLogic = 'desc'
+        } else if (pagination.sortLogic === 'desc') {
+          pagination.show = key
+          sortByUpdate(key, pagination.sortLogic)
+          pagination.sortLogic = 'asc'
+        } 
+        // else {
+        //   pagination.sortLogic = 'desc'
+        //   pagination.show = key
+        //   sortParamUpdate('created_at')
+        //   sortByUpdate(pagination.sortLogic)
+        // }
+    }
 
     function incrementNum(i: string) {
       return pagination.page * pagination.num + Number(i)
@@ -180,7 +213,7 @@ export default defineComponent({
           else if (postSymbol) return toCommas(value) + postSymbol
           else return toCommas(value)
         case 'float':
-        case 'decimal':
+        case 'double':
           if (preSymbol) return preSymbol + decimalWithPlaces(value, decimalPlace)
           else if (postSymbol) return decimalWithPlaces(value, decimalPlace) + postSymbol
           else return decimalWithPlaces(value, decimalPlace)
@@ -189,6 +222,8 @@ export default defineComponent({
           else return capitalize(value)
       }
     }
+
+    const sortByUpdate = (key: string, value: string) => context.emit('sortBy', {sortParam: key, sortBy: value})
 
     function toCommas(value: number) {
       return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
@@ -203,10 +238,9 @@ export default defineComponent({
       ...toRefs(pagination),
       incrementNum,
       tblRowStyle,
-      RowUpdate: (value: string) => {
-        context.emit('pageSize', value)
-      },
-      formatType
+      RowUpdate: (value: string) => context.emit('pageSize', value),
+      formatType,
+      sort
     }
   }
 })
