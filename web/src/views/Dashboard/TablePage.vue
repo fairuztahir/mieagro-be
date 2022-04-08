@@ -222,7 +222,7 @@ export default defineComponent({
       fetchRecords()
     })
 
-    const { loading, data, get, errorMessage } = useApiWithAuth('v1/users')
+    const { data, get, errorMessage } = useApiWithAuth('v1/users')
 
     function fetchRecords() {
       get(payload)

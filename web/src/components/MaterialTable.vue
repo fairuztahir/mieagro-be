@@ -11,28 +11,30 @@
           <template v-slot:default>
             <thead>
               <tr>
-                <th class="primary--text" width="15px" v-if="index" @click="sort('no')">NO.</th>
+                <th class="primary--text" width="15px" v-if="index">NO.</th>
                 <template v-for="(h, i) in header" :key="i">
                   <th :class="tblRowStyle(i).header">{{ String(h.label).toUpperCase() }}</th>
                 </template>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(d, indexNo) in data" :key="indexNo" v-if="data.length > 0">
-                <td class="font-weight-light" v-if="index">{{ incrementNum(indexNo) }}</td>
-                <template v-for="(h, i) in header" :key="i">
-                  <td :class="tblRowStyle(i).body">
-                    {{
-                      formatType(
-                        d[String(h.key).toLowerCase()],
-                        h?.type,
-                        h?.preSymbol,
-                        h?.postSymbol,
-                        h?.decimalPlace,
-                        h?.smallCap
-                      )
-                    }}
-                  </td>
+              <tr v-if="data.length > 0">
+                <template v-for="(d, indexNo) in data" :key="indexNo">
+                  <td class="font-weight-light" v-if="index">{{ incrementNum(indexNo) }}</td>
+                  <template v-for="(h, i) in header" :key="i">
+                    <td :class="tblRowStyle(i).body">
+                      {{
+                        formatType(
+                          d[String(h.key).toLowerCase()],
+                          h?.type,
+                          h?.preSymbol,
+                          h?.postSymbol,
+                          h?.decimalPlace,
+                          h?.smallCap
+                        )
+                      }}
+                    </td>
+                  </template>
                 </template>
               </tr>
 
@@ -93,13 +95,11 @@ export default defineComponent({
   props: {
     data: {
       type: Object,
-      required: true,
-      default: () => []
+      required: true
     },
     header: {
       type: Object,
-      required: true,
-      default: () => []
+      required: true
     },
     title: {
       type: String,
@@ -125,7 +125,7 @@ export default defineComponent({
     }
   },
   setup(props, context) {
-    const capitalize = (s: String) => {
+    const capitalize = (s: string) => {
       return (
         s
           .toLowerCase()
@@ -150,10 +150,6 @@ export default defineComponent({
       selectRows: String(10)
     })
 
-    const sort = (header: String) => {
-      console.log('test')
-    }
-
     function incrementNum(i: string) {
       return pagination.page * pagination.num + Number(i)
     }
@@ -167,11 +163,11 @@ export default defineComponent({
 
     function formatType(
       value: any,
-      type: string = '',
+      type = '',
       preSymbol?: string,
       postSymbol?: string,
-      decimalPlace: number = 2,
-      smallCap: Boolean = false
+      decimalPlace = 2,
+      smallCap = false
     ) {
       switch (type) {
         case 'date':
@@ -194,18 +190,17 @@ export default defineComponent({
       }
     }
 
-    function toCommas(value: Number) {
+    function toCommas(value: number) {
       return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     }
 
-    function decimalWithPlaces(value: Number, digit: number) {
+    function decimalWithPlaces(value: number, digit: number) {
       return value.toLocaleString('en-US', { maximumFractionDigits: digit })
     }
 
     return {
       capitalize,
       ...toRefs(pagination),
-      sort,
       incrementNum,
       tblRowStyle,
       RowUpdate: (value: string) => {

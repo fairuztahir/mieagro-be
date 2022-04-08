@@ -26,23 +26,25 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(d, indexNo) in datatable" :key="indexNo" v-if="datatable.length > 0">
-                <td class="font-weight-light" v-if="index">{{ incrementNum(indexNo) }}</td>
-                <template v-for="(h, i) in header" :key="i">
-                  <td :class="tblRowStyle(i).body">
-                    {{
-                      formatType(
-                        d[String(h.key).toLowerCase()],
-                        h?.type,
-                        h?.preSymbol,
-                        h?.postSymbol,
-                        h?.decimalPlace,
-                        h?.smallCap
-                      )
-                    }}
-                  </td>
-                </template>
-              </tr>
+              <template v-if="datatable.length > 0">
+                <tr v-for="(d, indexNo) in datatable" :key="indexNo">
+                  <td class="font-weight-light" v-if="index">{{ incrementNum(indexNo) }}</td>
+                  <template v-for="(h, i) in header" :key="i">
+                    <td :class="tblRowStyle(i).body">
+                      {{
+                        formatType(
+                          d[String(h.key).toLowerCase()],
+                          h?.type,
+                          h?.preSymbol,
+                          h?.postSymbol,
+                          h?.decimalPlace,
+                          h?.smallCap
+                        )
+                      }}
+                    </td>
+                  </template>
+                </tr>
+              </template>
 
               <tr v-else>
                 <td
@@ -77,18 +79,16 @@ export default defineComponent({
   props: {
     data: {
       type: Object,
-      required: true,
-      default: []
+      required: true
     },
     header: {
       type: Object,
-      required: true,
-      default: []
+      required: true
     },
     title: {
       type: String,
       required: false,
-      default: 'Table Title'
+      default: () => 'Table Title'
     },
     index: {
       type: Boolean,
@@ -104,7 +104,7 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const capitalize = (s: String) => {
+    const capitalize = (s: string) => {
       return (
         s
           .toLowerCase()
@@ -122,7 +122,7 @@ export default defineComponent({
       show: ''
     })
 
-    const sort = (key: string, type?: String, sort?: Boolean) => {
+    const sort = (key: string, type?: string, sort?: boolean) => {
       if (sort)
         if (table.sortLogic === 'asc') {
           if (type === 'number' || type === 'double')
@@ -154,11 +154,11 @@ export default defineComponent({
 
     function formatType(
       value: any,
-      type: string = '',
+      type = '',
       preSymbol?: string,
       postSymbol?: string,
-      decimalPlace: number = 2,
-      smallCap: Boolean = false
+      decimalPlace = 2,
+      smallCap = false
     ) {
       switch (type) {
         case 'date':
@@ -181,11 +181,11 @@ export default defineComponent({
       }
     }
 
-    function toCommas(value: Number) {
+    function toCommas(value: number) {
       return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     }
 
-    function decimalWithPlaces(value: Number, digit: number) {
+    function decimalWithPlaces(value: number, digit: number) {
       return value.toLocaleString('en-US', { maximumFractionDigits: digit })
     }
 

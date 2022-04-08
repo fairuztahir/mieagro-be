@@ -69,7 +69,6 @@ export const useApi = (endpoint: string, access_token?: string) => {
       .finally(() => (loading.value = false))
   }
 
-  // @ts-ignore
   const del = () => {
     loading.value = true
     error.value = undefined
@@ -91,12 +90,14 @@ export const useApi = (endpoint: string, access_token?: string) => {
     if (error.value) {
       return error.value.message
     }
+    return null
   })
 
   const errorDetails = computed(() => {
     if (error.value && error.value.response) {
       return error.value.response.data.message
     }
+    return null
   })
 
   const errorFields = computed(() => {
@@ -116,14 +117,15 @@ export const useApi = (endpoint: string, access_token?: string) => {
         return acc
       }, {})
     }
+    return null
   })
 
-  const computedClasses = (key: string) => {
-    if (errorFields.value?.hasOwnProperty(key)) {
-      return ['border-red-600', 'bg-red-200', 'text-red-900']
-    }
-    return ['border-grey-600', 'bg-white', 'text-gray-900']
-  }
+  // const computedClasses = (key: string) => {
+  //   if (errorFields.value?.hasOwnProperty(key)) {
+  //     return ['border-red-600', 'bg-red-200', 'text-red-900']
+  //   }
+  //   return ['border-grey-600', 'bg-white', 'text-gray-900']
+  // }
 
   watch([error], () => {
     // If 401 Unauthorised, force user to buy a new subscription
@@ -142,7 +144,7 @@ export const useApi = (endpoint: string, access_token?: string) => {
     del,
     errorMessage,
     errorDetails,
-    errorFields,
-    computedClasses
+    errorFields
+    // computedClasses
   }
 }
