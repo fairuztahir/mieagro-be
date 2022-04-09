@@ -73,11 +73,7 @@ def paginateValidator(input={}):
         },
         'sortParam': {
             'required': False,
-            'type': 'list',
-            'schema': {
-                'type': 'string',
-                'allowed': ['id', 'name', 'created_at']
-            }
+            'type': 'list'
         },
         'sortBy': {
             'required': False,
@@ -88,6 +84,15 @@ def paginateValidator(input={}):
             }
         }
     }
+
+    # 'sortParam': {
+    #     'required': False,
+    #     'type': 'list',
+    #     'schema': {
+    #         'type': 'string',
+    #         'allowed': ['id', 'name', 'created_at']
+    #     }
+    # },
 
     return mainValidator(schema, input)
 
