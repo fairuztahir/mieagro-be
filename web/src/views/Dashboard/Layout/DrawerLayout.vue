@@ -71,6 +71,8 @@ export default defineComponent({
       items: [
         { title: 'Dashboard', icon: 'mdi-view-dashboard', page: '/admin/dashboard', child: [] },
         { title: 'Tables', icon: 'mdi-clipboard-text', page: '/admin/table', child: [] },
+        { title: 'Notifications', icon: 'mdi-bell', page: '/admin/notifications', child: [] },
+        { title: 'Icons', icon: 'mdi-chart-bubble', page: '/admin/icons', child: [] },
         { title: 'Settings', icon: 'mdi-cog-outline', page: '/admin/settings', child: [] },
         { title: 'Users', icon: 'mdi-account-circle', page: '', child: userChild }
       ],

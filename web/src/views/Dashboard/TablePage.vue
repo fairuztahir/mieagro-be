@@ -29,6 +29,7 @@
       :total-page="totalPage"
       @page-size="getDisplayRows"
       @sort-by="updateSortBy"
+      @pages="getDisplayPage"
     />
   </div>
 </template>
@@ -236,7 +237,8 @@ export default defineComponent({
               if (calc % 2 == 0) {
                 table1.totalPage = calc
               } else {
-                table1.totalPage = Number(calc.toFixed(0)) + 1
+                let a = calc | 0
+                table1.totalPage = a + 1
               }
             }
           } else {
@@ -254,10 +256,14 @@ export default defineComponent({
       fetchRecords()
     }
 
+    function getDisplayPage(event: string) {
+      payload.page = Number(event)
+      fetchRecords()
+    }
+
     function updateSortBy(event: DataPayload) {
       payload.sortParam = String(event.sortParam)
       payload.sortBy = String(event.sortBy)
-      console.log('test', payload.sortParam, payload.sortBy)
       fetchRecords()
     }
 
@@ -275,7 +281,8 @@ export default defineComponent({
       regularData1,
       ...toRefs(table1),
       getDisplayRows,
-      updateSortBy
+      updateSortBy,
+      getDisplayPage
     }
   }
 })

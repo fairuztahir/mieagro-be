@@ -68,15 +68,22 @@
     </v-row>
     <v-row>
       <v-col class="d-flex mt-2" cols="12" md="2" sm="12">
-        <v-select
-          :items="displayNo"
+        <!-- <v-select
+          v-model="selectRows"
+          :items="selectItems"
           :color="color ? color : 'primary'"
           density="compact"
           label="No of rows"
           variant="outlined"
+        ></v-select> -->
+        <v-autocomplete
           v-model="selectRows"
-          @update:modelValue="RowUpdate"
-        ></v-select>
+          :items="selectItems"
+          :color="color ? color : 'primary'"
+          density="compact"
+          variant="outlined"
+          label="No of rows"
+        ></v-autocomplete>
       </v-col>
       <v-col cols="12" md="6" sm="12" class="ml-auto d-flex justify-end mt-2">
         <v-pagination
@@ -94,7 +101,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, computed } from 'vue'
+import { defineComponent, reactive, toRefs, computed, watch } from 'vue'
 import MaterialCard from '@/components/MaterialCard.vue'
 import moment from 'moment'
 
@@ -134,7 +141,8 @@ export default defineComponent({
       type: String,
       required: false
     },
-    sortBy: Function
+    sortBy: Function,
+    pages: Function
   },
   setup(props, context) {
     const capitalize = (s: string) => {
@@ -146,11 +154,11 @@ export default defineComponent({
           .join(' ') || ''
       )
     }
+    const selectItems = [5, 10, 20, 40]
 
     const pagination = reactive({
       num: 1,
       page: 1,
-      // totalPage: 4,
       totalVisible: computed(() => {
         if (screen.width <= 540) {
           return 1
@@ -158,8 +166,7 @@ export default defineComponent({
         return 5
       }),
       size: 'x-small',
-      displayNo: ['5', '10', '20', '40'],
-      selectRows: String(10),
+      selectRows: 10,
       sortLogic: 'asc',
       show: ''
     })
@@ -174,13 +181,13 @@ export default defineComponent({
           pagination.show = key
           sortByUpdate(key, pagination.sortLogic)
           pagination.sortLogic = 'asc'
-        } 
-        // else {
-        //   pagination.sortLogic = 'desc'
-        //   pagination.show = key
-        //   sortParamUpdate('created_at')
-        //   sortByUpdate(pagination.sortLogic)
-        // }
+        }
+      // else {
+      //   pagination.sortLogic = 'desc'
+      //   pagination.show = key
+      //   sortParamUpdate('created_at')
+      //   sortByUpdate(pagination.sortLogic)
+      // }
     }
 
     function incrementNum(i: string) {
@@ -223,7 +230,7 @@ export default defineComponent({
       }
     }
 
-    const sortByUpdate = (key: string, value: string) => context.emit('sortBy', {sortParam: key, sortBy: value})
+    const sortByUpdate = (key: string, value: string) => context.emit('sortBy', { sortParam: key, sortBy: value })
 
     function toCommas(value: number) {
       return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
@@ -233,14 +240,39 @@ export default defineComponent({
       return value.toLocaleString('en-US', { maximumFractionDigits: digit })
     }
 
+    function setPage(value: number) {
+      context.emit('pages', value)
+    }
+
+    function rowUpdate(value: number) {
+      pagination.page = 1
+      context.emit('pageSize', value)
+    }
+
+    watch(
+      () => pagination.page,
+      (currentValue, oldValue) => {
+        // console.log(currentValue)
+        // console.log(oldValue)
+        if (currentValue !== oldValue) setPage(currentValue)
+      }
+    )
+
+    watch(
+      () => pagination.selectRows,
+      (currentValue, oldValue) => {
+        if (currentValue !== oldValue) rowUpdate(currentValue)
+      }
+    )
+
     return {
       capitalize,
       ...toRefs(pagination),
       incrementNum,
       tblRowStyle,
-      RowUpdate: (value: string) => context.emit('pageSize', value),
       formatType,
-      sort
+      sort,
+      selectItems
     }
   }
 })

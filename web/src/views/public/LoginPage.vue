@@ -17,6 +17,7 @@
                   variant="underlined"
                   class="mt-2 font-weight-light grey--text"
                   v-model="email"
+                  :rules="emailRules"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -32,6 +33,7 @@
                   class="font-weight-light grey--text"
                   @click:append="showpass = !showpass"
                   v-model="challenge"
+                  :rules="pwdRules"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -94,7 +96,15 @@ export default defineComponent({
     const snack = reactive({
       text: '',
       snackbar: false,
-      timeout: 2500
+      timeout: 2500,
+      emailRules: [
+        (v: string) => !!v || 'E-mail is required',
+        (v: string) => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(v) || 'E-mail must be valid'
+      ],
+      pwdRules: [
+        (v: string) => !!v || 'Password is required'
+        // (v: string) => v.length <= 10 || 'Password must be less than 10 characters',
+      ]
     })
 
     // https://dev.to/adamcowley/how-to-build-an-authentication-into-a-vue3-application-200b

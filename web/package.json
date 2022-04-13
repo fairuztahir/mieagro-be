@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.181",
     "@vueuse/core": "^8.2.4",
     "axios": "^0.26.1",
     "moment": "^2.29.2",

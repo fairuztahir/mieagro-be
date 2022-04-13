@@ -5,6 +5,8 @@ import { useAuth } from '@/services/auth'
 import DashboardLayout from '@/views/Dashboard/Layout/DashboardLayout.vue'
 import Dashboard from '@/views/Dashboard/DashboardMain.vue'
 import Table from '@/views/Dashboard/TablePage.vue'
+import Icon from '@/views/Dashboard/IconPage.vue'
+import Notification from '@/views/Dashboard/NotificationPage.vue'
 
 // Auth
 import LoginPage from '@/views/public/LoginPage.vue'
@@ -29,6 +31,18 @@ const dashboard = {
       path: 'table',
       name: 'Table',
       component: Table,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: 'notifications',
+      name: 'Notifications',
+      component: Notification,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: 'icons',
+      name: 'Icons',
+      component: Icon,
       meta: { requiresAuth: true }
     },
     {
