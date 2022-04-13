@@ -88,9 +88,9 @@ export default defineComponent({
       return Boolean(context.slots.heading || props.title || props.icon)
     })
 
-    const hasAltHeading = computed(() => {
-      return Boolean(context.slots.heading || (props.title && props.icon))
-    })
+    // const hasAltHeading = computed(() => {
+    //   return Boolean(context.slots.heading || (props.title && props.icon))
+    // })
 
     return {
       classes

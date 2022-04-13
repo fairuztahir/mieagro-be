@@ -39,7 +39,7 @@
 <script lang="ts">
 import { defineComponent, reactive } from 'vue'
 export default defineComponent({
-  setup(props, context) {
+  setup() {
     const btnImg = reactive({ icon: 'mdi-dots-vertical', status: false })
 
     const title = 'MIEFOODS'

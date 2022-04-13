@@ -20,7 +20,7 @@ export const useMainStore = defineStore('main', {
     async addToken(value: string) {
       this.token = value
     },
-    async removeToken(value: string = '') {
+    async removeToken(value = '') {
       this.token = value
     }
   }

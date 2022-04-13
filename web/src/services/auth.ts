@@ -5,17 +5,17 @@ import { useMainStore } from '@/stores'
 const AUTH_KEY = 'f_token'
 export const AUTH_TOKEN = 'token'
 
-interface Plan {
-  id: number
-  name: string
-}
+// interface Plan {
+//   id: number
+//   name: string
+// }
 
-interface Subscription {
-  id: string
-  expiresAt: Date
-  renewsAt: Date
-  plan: Plan
-}
+// interface Subscription {
+//   id: string
+//   expiresAt: Date
+//   renewsAt: Date
+//   plan: Plan
+// }
 
 interface User {
   name: string

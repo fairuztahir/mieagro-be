@@ -17,9 +17,10 @@ def check_token(request):
     else:
         return True
 
+
 def decoded_token(request):
     return jwt.decode(
-            request.token, request.app.config.SECRET, algorithms=["HS256"])
+        request.token, request.app.config.SECRET, algorithms=["HS256"])
 
 
 def protected(wrapped):

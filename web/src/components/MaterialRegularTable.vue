@@ -11,30 +11,43 @@
           <template v-slot:default>
             <thead>
               <tr>
-                <th class="primary--text" width="15px" v-if="index" @click="sort('no')">NO.</th>
+                <th class="primary--text" width="15px" v-if="index">NO.</th>
                 <template v-for="(h, i) in header" :key="i">
-                  <th :class="tblRowStyle(i).header">{{ String(h.label).toUpperCase() }}</th>
+                  <th :class="tblRowStyle(i).header" @click="sort(h.key, h.type, h.sort)">
+                    <v-spacer v-if="h.sort">
+                      <a>
+                        {{ String(h.label).toUpperCase() }}
+                        <v-icon size="12" v-if="sortLogic === 'asc' && show === h.key">mdi-arrow-down-thin</v-icon>
+                        <v-icon size="12" v-else-if="sortLogic === 'desc' && show === h.key">mdi-arrow-up-thin</v-icon>
+                      </a>
+                    </v-spacer>
+                    <v-spacer v-else>
+                      {{ String(h.label).toUpperCase() }}
+                    </v-spacer>
+                  </th>
                 </template>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(d, indexNo) in data" :key="indexNo" v-if="data.length > 0">
-                <td class="font-weight-light" v-if="index">{{ incrementNum(indexNo) }}</td>
-                <template v-for="(h, i) in header" :key="i">
-                  <td :class="tblRowStyle(i).body">
-                    {{
-                      formatType(
-                        d[String(h.key).toLowerCase()],
-                        h?.type,
-                        h?.preSymbol,
-                        h?.postSymbol,
-                        h?.decimalPlace,
-                        h?.smallCap
-                      )
-                    }}
-                  </td>
-                </template>
-              </tr>
+              <template v-if="datatable.length > 0">
+                <tr v-for="(d, indexNo) in datatable" :key="indexNo">
+                  <td class="font-weight-light" v-if="index">{{ incrementNum(indexNo) }}</td>
+                  <template v-for="(h, i) in header" :key="i">
+                    <td :class="tblRowStyle(i).body">
+                      {{
+                        formatType(
+                          d[String(h.key).toLowerCase()],
+                          h?.type,
+                          h?.preSymbol,
+                          h?.postSymbol,
+                          h?.decimalPlace,
+                          h?.smallCap
+                        )
+                      }}
+                    </td>
+                  </template>
+                </tr>
+              </template>
 
               <tr v-else>
                 <td
@@ -57,7 +70,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, computed } from 'vue'
+import { defineComponent, reactive, toRefs } from 'vue'
 import MaterialCard from '@/components/MaterialCard.vue'
 import moment from 'moment'
 
@@ -69,18 +82,16 @@ export default defineComponent({
   props: {
     data: {
       type: Object,
-      required: true,
-      default: []
+      required: true
     },
     header: {
       type: Object,
-      required: true,
-      default: []
+      required: true
     },
     title: {
       type: String,
       required: false,
-      default: 'Table Title'
+      default: () => 'Table Title'
     },
     index: {
       type: Boolean,
@@ -96,7 +107,7 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const capitalize = (s: String) => {
+    const capitalize = (s: string) => {
       return (
         s
           .toLowerCase()
@@ -108,11 +119,29 @@ export default defineComponent({
 
     const table = reactive({
       num: 1,
-      page: 1
+      page: 1,
+      datatable: props.data,
+      sortLogic: 'asc',
+      show: ''
     })
 
-    const sort = (header: String) => {
-      console.log('test')
+    const sort = (key: string, type?: string, sort?: boolean) => {
+      if (sort)
+        if (table.sortLogic === 'asc') {
+          if (type === 'number' || type === 'double')
+            table.datatable.sort((a: any, b: any) => a[`${key}`] - b[`${key}`])
+          else
+            table.datatable.sort((a: any, b: any) => (a[`${key}`].toLowerCase() > b[`${key}`].toLowerCase() ? 1 : -1))
+          table.sortLogic = 'desc'
+          table.show = key
+        } else if (table.sortLogic === 'desc') {
+          if (type === 'number' || type === 'double')
+            table.datatable.sort((a: any, b: any) => b[`${key}`] - a[`${key}`])
+          else
+            table.datatable.sort((a: any, b: any) => (b[`${key}`].toLowerCase() > a[`${key}`].toLowerCase() ? 1 : -1))
+          table.sortLogic = 'asc'
+          table.show = key
+        }
     }
 
     function incrementNum(i: string) {
@@ -128,11 +157,11 @@ export default defineComponent({
 
     function formatType(
       value: any,
-      type: string = '',
+      type = '',
       preSymbol?: string,
       postSymbol?: string,
-      decimalPlace: number = 2,
-      smallCap: Boolean = false
+      decimalPlace = 2,
+      smallCap = false
     ) {
       switch (type) {
         case 'date':
@@ -145,7 +174,7 @@ export default defineComponent({
           else if (postSymbol) return toCommas(value) + postSymbol
           else return toCommas(value)
         case 'float':
-        case 'decimal':
+        case 'double':
           if (preSymbol) return preSymbol + decimalWithPlaces(value, decimalPlace)
           else if (postSymbol) return decimalWithPlaces(value, decimalPlace) + postSymbol
           else return decimalWithPlaces(value, decimalPlace)
@@ -155,11 +184,11 @@ export default defineComponent({
       }
     }
 
-    function toCommas(value: Number) {
+    function toCommas(value: number) {
       return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     }
 
-    function decimalWithPlaces(value: Number, digit: number) {
+    function decimalWithPlaces(value: number, digit: number) {
       return value.toLocaleString('en-US', { maximumFractionDigits: digit })
     }
 
@@ -178,4 +207,6 @@ export default defineComponent({
 <style lang="sass" scoped>
 .no-record-style
   color: #999
+.hid-icon
+  display: none
 </style>

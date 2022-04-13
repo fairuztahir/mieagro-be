@@ -4,8 +4,8 @@
       icon="mdi-poll"
       color="secondary"
       title="Regular Table"
-      :header="regularHeader"
-      :data="regularData"
+      :header="regularHeader1"
+      :data="regularData1"
     />
 
     <v-spacer class="py-3"></v-spacer>
@@ -28,6 +28,7 @@
       :numbering="numbering"
       :total-page="totalPage"
       @page-size="getDisplayRows"
+      @sort-by="updateSortBy"
     />
   </div>
 </template>
@@ -87,7 +88,7 @@ export default defineComponent({
       {
         label: 'Name',
         key: 'name',
-        sort: false
+        sort: true
       },
       {
         label: 'Country',
@@ -110,7 +111,72 @@ export default defineComponent({
         label: 'KPI',
         key: 'kpi',
         sort: false,
-        type: 'decimal',
+        type: 'double',
+        decimalPlace: 3,
+        postSymbol: ' %'
+      }
+    ]
+
+    // Regular table setup
+    const regularData1 = [
+      {
+        name: 'Dakota Rice',
+        country: 'Niger',
+        city: 'Oud-Turnhout',
+        salary: 36738,
+        kpi: 0.123
+      },
+      {
+        name: 'Minverva Hooper',
+        country: 'Curaçao',
+        city: 'Sinaas-Waas',
+        salary: 23789,
+        kpi: 60.003
+      },
+      {
+        name: 'faiRUZ Tahir',
+        country: 'malaysia',
+        city: 'puncak alam',
+        salary: 1623700,
+        kpi: 1290.896
+      },
+      {
+        name: 'Sage Rodriguez',
+        country: 'Netherlands',
+        city: 'Baileux',
+        salary: 56142,
+        kpi: 70
+      }
+    ]
+
+    const regularHeader1 = [
+      {
+        label: 'Name',
+        key: 'name',
+        sort: true
+      },
+      {
+        label: 'Country',
+        key: 'country',
+        sort: true
+      },
+      {
+        label: 'City',
+        key: 'city',
+        sort: true
+      },
+      {
+        label: 'Salary',
+        key: 'salary',
+        sort: true,
+        type: 'number',
+        preSymbol: '$'
+      },
+      {
+        label: 'KPI',
+        key: 'kpi',
+        sort: true,
+        type: 'double',
         decimalPlace: 3,
         postSymbol: ' %'
       }
@@ -130,18 +196,18 @@ export default defineComponent({
         {
           label: 'Name',
           key: 'name',
-          sort: false
+          sort: true
         },
         {
           label: 'Email',
           key: 'email',
-          sort: false,
+          sort: true,
           smallCap: true
         },
         {
           label: 'Created At',
           key: 'created_at',
-          sort: false,
+          sort: true,
           type: 'date'
         }
       ],
@@ -156,7 +222,7 @@ export default defineComponent({
       fetchRecords()
     })
 
-    const { loading, data, get, errorMessage } = useApiWithAuth('v1/users')
+    const { data, get, errorMessage } = useApiWithAuth('v1/users')
 
     function fetchRecords() {
       get(payload)
@@ -188,6 +254,13 @@ export default defineComponent({
       fetchRecords()
     }
 
+    function updateSortBy(event: DataPayload) {
+      payload.sortParam = String(event.sortParam)
+      payload.sortBy = String(event.sortBy)
+      console.log('test', payload.sortParam, payload.sortBy)
+      fetchRecords()
+    }
+
     // MARK: Destroy data
     onUnmounted(() => {
       table1.groupData = []
@@ -198,8 +271,11 @@ export default defineComponent({
     return {
       regularHeader,
       regularData,
+      regularHeader1,
+      regularData1,
       ...toRefs(table1),
-      getDisplayRows
+      getDisplayRows,
+      updateSortBy
     }
   }
 })
