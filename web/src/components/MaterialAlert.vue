@@ -1,7 +1,7 @@
 <template>
-  <v-alert class="v-alert--material" dark>
+  <v-alert class="v-alert--material" :color="color">
     <template v-if="icon" v-slot:prepend>
-      <v-icon :aria-hidden="false" class="v-alert__icon elevation-6">
+      <v-icon :aria-hidden="false" :color="color" class="v-alert__icon elevation-6">
         {{ icon }}
       </v-icon>
     </template>
@@ -16,7 +16,7 @@ export default defineComponent({
   name: 'MaterialAlert',
   props: {
     icon: String,
-    toggle: Function
+    color: String
   },
   setup() {
     const test = (value: any) => {

@@ -4,16 +4,18 @@
       <v-col cols="12">
         <MaterialCard icon="mdi-clipboard-text" color="primary" title="Material Design Icons" class="px-5 py-3">
           <v-row class="mt-2 d-flex justify-space-around">
-            <v-col v-for="icon in icons" :key="icon" class="ma-2" v-memo="[icon]">
-              <v-tooltip anchor="bottom">
-                <template v-slot:activator="{ props }">
-                  <v-icon color="" dark v-bind="props">
-                    {{ icon }}
-                  </v-icon>
-                </template>
-                <span>{{ icon }}</span>
-              </v-tooltip>
-            </v-col>
+            <template v-for="icon in icons" :key="icon" class="ma-2" v-once>
+              <v-col>
+                <v-tooltip anchor="bottom">
+                  <template v-slot:activator="{ props }">
+                    <v-icon color="" dark v-bind="props">
+                      {{ icon }}
+                    </v-icon>
+                  </template>
+                  <span>{{ icon }}</span>
+                </v-tooltip>
+              </v-col>
+            </template>
           </v-row>
         </MaterialCard>
       </v-col>
