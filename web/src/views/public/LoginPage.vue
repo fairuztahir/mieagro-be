@@ -1,53 +1,57 @@
 <template>
   <v-row class="center-vertical ma-auto">
     <v-col cols="12" md="4" sm="6" xs="5">
-      <material-card class="v-card-profile pt-3" :avatar="avatar">
-        <v-card-text class="text-center">
-          <h4 class="display-1 mb-1 grey--text reduced-height3">LOGIN PAGE</h4>
+      <v-hover v-slot="{ isHovering, props }">
+        <MaterialAvatarCard class="v-card-profile pt-3" :avatar="avatar" :elevation="isHovering ? 4 : 1" v-bind="props">
+          <v-card-text class="text-center">
+            <h4 class="display-1 mb-1 grey--text reduced-height3">LOGIN PAGE</h4>
 
-          <h4 class="display-2 font-weight-light mb-3 black--text">Welcome to MIE Agro System</h4>
+            <h4 class="display-2 font-weight-light mb-3 black--text">Welcome to MIE Agro System</h4>
 
-          <v-form @submit.prevent="submit">
-            <v-row>
-              <v-col cols="12" md="12">
-                <v-text-field
-                  color="#000"
-                  label="Email"
-                  prepend-icon="mdi-email"
-                  variant="underlined"
-                  class="mt-2 font-weight-light grey--text"
-                  v-model="email"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" md="12">
-                <v-text-field
-                  color="#000"
-                  label="Password"
-                  prepend-icon="mdi-lock"
-                  :append-icon="showpass ? 'mdi-eye' : 'mdi-eye-off'"
-                  :type="showpass ? 'text' : 'password'"
-                  variant="underlined"
-                  class="font-weight-light grey--text"
-                  @click:append="showpass = !showpass"
-                  v-model="challenge"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" sm="4" md="4" class="reduced-height2">
-                <v-checkbox v-model="rememberMe" label="Remember me?" color="primary" hide-details></v-checkbox>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" sm="12" md="12" class="text-center reduced-height">
-                <v-btn color="primary" class="font-weight-light" type="submit" :disabled="loading"> LogIn </v-btn>
-              </v-col>
-            </v-row>
-          </v-form>
-        </v-card-text>
-      </material-card>
+            <v-form @submit.prevent="submit">
+              <v-row>
+                <v-col cols="12" md="12">
+                  <v-text-field
+                    color="#000"
+                    label="Email"
+                    prepend-icon="mdi-email"
+                    variant="underlined"
+                    class="mt-2 font-weight-light grey--text"
+                    v-model="email"
+                    :rules="emailRules"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12" md="12">
+                  <v-text-field
+                    color="#000"
+                    label="Password"
+                    prepend-icon="mdi-lock"
+                    :append-icon="showpass ? 'mdi-eye' : 'mdi-eye-off'"
+                    :type="showpass ? 'text' : 'password'"
+                    variant="underlined"
+                    class="font-weight-light grey--text"
+                    @click:append="showpass = !showpass"
+                    v-model="challenge"
+                    :rules="pwdRules"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12" sm="4" md="4" class="reduced-height2">
+                  <v-checkbox v-model="rememberMe" label="Remember me?" color="primary" hide-details></v-checkbox>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12" sm="12" md="12" class="text-center reduced-height">
+                  <v-btn color="primary" class="font-weight-light" type="submit" :disabled="loading"> LogIn </v-btn>
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-card-text>
+        </MaterialAvatarCard>
+      </v-hover>
     </v-col>
   </v-row>
   <v-snackbar v-model="snackbar" multi-line :timeout="timeout">
@@ -61,7 +65,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, reactive, toRefs } from 'vue'
-import MaterialCard from '@/components/MaterialCard.vue'
+import MaterialAvatarCard from '@/components/MaterialAvatarCard.vue'
 import { useApi } from '@/services/api'
 import { useAuth } from '@/services/auth'
 import { useRouter } from 'vue-router'
@@ -75,11 +79,10 @@ interface LoginPayload {
 export default defineComponent({
   name: 'LoginPage',
   components: {
-    MaterialCard
+    MaterialAvatarCard
   },
   setup() {
     const showpass = ref(false)
-    const avatar = ref('/test_logo.png')
     const { loading, data, post, errorMessage } = useApi('v1/login')
 
     const { setUser } = useAuth()
@@ -94,7 +97,16 @@ export default defineComponent({
     const snack = reactive({
       text: '',
       snackbar: false,
-      timeout: 2500
+      timeout: 2500,
+      avatar: '/test_logo.png',
+      emailRules: [
+        (v: string) => !!v || 'E-mail is required',
+        (v: string) => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(v) || 'E-mail must be valid'
+      ],
+      pwdRules: [
+        (v: string) => !!v || 'Password is required'
+        // (v: string) => v.length <= 10 || 'Password must be less than 10 characters',
+      ]
     })
 
     // https://dev.to/adamcowley/how-to-build-an-authentication-into-a-vue3-application-200b
@@ -124,7 +136,6 @@ export default defineComponent({
 
     return {
       showpass,
-      avatar,
       loading,
       submit,
       errorMessage,

@@ -40,7 +40,7 @@
                 :title="child.title"
                 :prepend-icon="child.icon"
                 @click="titleUpdate(item.title)"
-                :to="item.page"
+                :to="child.page"
                 class="v-list-group--items"
               ></v-list-item>
             </div>
@@ -63,7 +63,7 @@ export default defineComponent({
   setup(props, context) {
     const { user } = useAuth()
     const userChild = [
-      { title: 'Management', icon: 'mdi-view-dashboard', page: '/admin/dashboard' },
+      { title: 'User Profile', icon: 'mdi-face-man-shimmer', page: '/admin/users/profile' },
       { title: 'Test', icon: 'mdi-view-dashboard', page: '/admin/dashboard' }
     ]
     const data = reactive({
@@ -71,6 +71,9 @@ export default defineComponent({
       items: [
         { title: 'Dashboard', icon: 'mdi-view-dashboard', page: '/admin/dashboard', child: [] },
         { title: 'Tables', icon: 'mdi-clipboard-text', page: '/admin/table', child: [] },
+        { title: 'Notifications', icon: 'mdi-bell', page: '/admin/notifications', child: [] },
+        { title: 'Typography', icon: 'mdi-format-font', page: '/admin/typography', child: [] },
+        { title: 'Icons', icon: 'mdi-chart-bubble', page: '/admin/icons', child: [] },
         { title: 'Settings', icon: 'mdi-cog-outline', page: '/admin/settings', child: [] },
         { title: 'Users', icon: 'mdi-account-circle', page: '', child: userChild }
       ],

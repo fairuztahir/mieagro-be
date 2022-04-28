@@ -1,4 +1,5 @@
 <template>
+  <material-headline heading="Tables" link="components/tables" />
   <div class="pa-4">
     <MaterialRegularTable
       icon="mdi-poll"
@@ -29,6 +30,7 @@
       :total-page="totalPage"
       @page-size="getDisplayRows"
       @sort-by="updateSortBy"
+      @pages="getDisplayPage"
     />
   </div>
 </template>
@@ -37,6 +39,7 @@
 import { defineComponent, reactive, toRefs, onMounted, onUnmounted } from 'vue'
 import MaterialTable from '@/components/MaterialTable.vue'
 import MaterialRegularTable from '@/components/MaterialRegularTable.vue'
+import MaterialHeadline from '@/components/MaterialHeadline.vue'
 import { useApiWithAuth } from '@/services/api'
 
 interface DataPayload {
@@ -49,7 +52,8 @@ interface DataPayload {
 export default defineComponent({
   components: {
     MaterialRegularTable,
-    MaterialTable
+    MaterialTable,
+    MaterialHeadline
   },
   setup() {
     // Regular table setup
@@ -236,7 +240,8 @@ export default defineComponent({
               if (calc % 2 == 0) {
                 table1.totalPage = calc
               } else {
-                table1.totalPage = Number(calc.toFixed(0)) + 1
+                let a = calc | 0
+                table1.totalPage = a + 1
               }
             }
           } else {
@@ -254,10 +259,14 @@ export default defineComponent({
       fetchRecords()
     }
 
+    function getDisplayPage(event: string) {
+      payload.page = Number(event)
+      fetchRecords()
+    }
+
     function updateSortBy(event: DataPayload) {
       payload.sortParam = String(event.sortParam)
       payload.sortBy = String(event.sortBy)
-      console.log('test', payload.sortParam, payload.sortBy)
       fetchRecords()
     }
 
@@ -275,7 +284,8 @@ export default defineComponent({
       regularData1,
       ...toRefs(table1),
       getDisplayRows,
-      updateSortBy
+      updateSortBy,
+      getDisplayPage
     }
   }
 })
