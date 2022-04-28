@@ -11,22 +11,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted } from 'vue'
+import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'MaterialAlert',
   props: {
     icon: String,
     color: String
-  },
-  setup() {
-    const test = (value: any) => {
-      if (value) console.log('true')
-      else console.log('false')
-    }
-
-    return {
-      test
-    }
   }
 })
 </script>

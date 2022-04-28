@@ -1,9 +1,12 @@
 <template>
-  <v-card v-bind="$attrs" :class="classes" class="v-card--material pa-3">
+  <v-card :class="classes" class="v-card--material pa-3" :elevation="elevation">
     <div class="d-flex grow flex-wrap">
-      <v-avatar v-if="avatar" size="128" class="mx-auto v-card--material__avatar elevation-6" color="grey">
-        <v-img :src="avatar" cover />
-      </v-avatar>
+      <MaterialAvatarCircle
+        v-if="avatar"
+        size="small"
+        :image="avatar"
+        class="mx-auto v-card--material__avatar elevation-8"
+      ></MaterialAvatarCircle>
 
       <v-sheet
         v-else
@@ -51,8 +54,10 @@
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue'
+import MaterialAvatarCircle from '@/components/MaterialAvatarCircle.vue'
 export default defineComponent({
-  name: 'MaterialCard',
+  name: 'MaterialAvatarCard',
+  components: { MaterialAvatarCircle },
   props: {
     avatar: {
       type: String,
@@ -77,11 +82,11 @@ export default defineComponent({
     title: {
       type: String,
       default: ''
+    },
+    elevation: {
+      type: Number,
+      default: 1
     }
-    // elevation: {
-    //   type: Number,
-    //   default: 1
-    // }
   },
   setup(props, context) {
     const classes = computed(() => {
@@ -91,10 +96,6 @@ export default defineComponent({
     const hasHeading = computed(() => {
       return Boolean(context.slots.heading || props.title || props.icon)
     })
-
-    // const hasAltHeading = computed(() => {
-    //   return Boolean(context.slots.heading || (props.title && props.icon))
-    // })
 
     return {
       classes

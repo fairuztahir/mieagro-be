@@ -51,7 +51,7 @@
           <v-row class="mt-n12" justify="center">
             <v-col cols="10" lg="8">
               <v-row>
-                <v-col v-for="dir in directions" :key="dir" cols="4">
+                <v-col v-for="dir in directions" :key="dir" cols="12" md="4" sm="12">
                   <v-btn color="secondary" default class="v-btn--block font-weight-light" @click="randomColor(dir)">
                     {{ dir }}
                   </v-btn>
@@ -66,17 +66,17 @@
           <v-row class="mt-n12" justify="center">
             <v-col cols="10" lg="8">
               <v-row>
-                <v-col cols="4">
+                <v-col cols="12" md="4" sm="12">
                   <v-btn color="secondary" default rounded @click="dialog = true" class="font-weight-light">
                     Classic Dialog
                   </v-btn>
                 </v-col>
-                <v-col cols="4">
+                <v-col cols="12" md="4" sm="12">
                   <v-btn color="info" default rounded @click="dialog2 = true" class="font-weight-light white">
                     Notice Modal
                   </v-btn>
                 </v-col>
-                <v-col cols="4">
+                <v-col cols="12" md="4" sm="12">
                   <v-btn color="pink darken-1" default rounded @click="dialog3 = true" class="font-weight-light white">
                     Small Alert Modal
                   </v-btn>
@@ -112,7 +112,7 @@
           <v-icon aria-label="Close" @click="dialog = false"> mdi-close </v-icon>
         </v-card-title>
 
-        <v-card-text>
+        <v-card-text class="font-weight-light">
           Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind
           texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. A
           small river named Duden flows by their place and supplies it with the necessary regelialia. It is a
@@ -157,7 +157,7 @@
 
           <v-col class="hidden-sm-and-down" md="4">
             <v-sheet>
-              <v-img src="" height="100" width="200" />
+              <v-img src="unilogo2.png" cover />
             </v-sheet>
           </v-col>
 
@@ -176,7 +176,7 @@
 
           <v-col class="hidden-sm-and-down" md="4">
             <v-sheet>
-              <v-img src="" height="100" width="200" />
+              <v-img src="unilogo.jpg" cover />
             </v-sheet>
           </v-col>
 
@@ -202,9 +202,9 @@
       </v-card-title>
 
       <v-card-text class="pb-6 pt-12 text-center">
-        <v-btn class="mr-3" text @click="dialog3 = false"> Nevermind </v-btn>
+        <v-btn class="mr-3" variant="outlined" text @click="dialog3 = false"> Nevermind </v-btn>
 
-        <v-btn color="success" text @click="dialog3 = false"> Yes </v-btn>
+        <v-btn color="success" variant="outlined" text @click="dialog3 = false"> Yes </v-btn>
       </v-card-text>
     </v-card>
   </v-dialog>

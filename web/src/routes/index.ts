@@ -7,9 +7,13 @@ import Dashboard from '@/views/Dashboard/DashboardMain.vue'
 import Table from '@/views/Dashboard/TablePage.vue'
 import Icon from '@/views/Dashboard/IconPage.vue'
 import Notification from '@/views/Dashboard/NotificationPage.vue'
+import Typography from '@/views/Dashboard/TypographyPage.vue'
+import UserProfile from '@/views/Dashboard/UserProfile.vue'
+import VoidComponent from '@/views/Dashboard/VoidComponent.vue'
 
 // Auth
 import LoginPage from '@/views/public/LoginPage.vue'
+import TestPage from '@/views/public/TestPage.vue'
 import LogoutPage from '@/views/Dashboard/LogoutPage.vue'
 
 // Web
@@ -40,6 +44,12 @@ const dashboard = {
       meta: { requiresAuth: true }
     },
     {
+      path: 'typography',
+      name: 'Typography',
+      component: Typography,
+      meta: { requiresAuth: true }
+    },
+    {
       path: 'icons',
       name: 'Icons',
       component: Icon,
@@ -50,6 +60,20 @@ const dashboard = {
       name: 'Settings',
       component: Dashboard,
       meta: { requiresAuth: true }
+    },
+    {
+      path: 'users',
+      name: 'Users',
+      redirect: '/admin/users/profile',
+      component: VoidComponent,
+      children: [
+        {
+          path: 'profile',
+          name: 'Profile',
+          component: UserProfile,
+          meta: { requiresAuth: true }
+        }
+      ]
     },
     {
       path: 'logout',
@@ -76,6 +100,12 @@ const routes: Array<RouteRecordRaw> = [
         path: 'login',
         name: 'Login',
         component: LoginPage,
+        meta: { requiresAuth: false }
+      },
+      {
+        path: 'test',
+        name: 'Test',
+        component: TestPage,
         meta: { requiresAuth: false }
       }
     ]

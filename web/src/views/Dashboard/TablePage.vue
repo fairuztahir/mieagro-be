@@ -1,4 +1,5 @@
 <template>
+  <material-headline heading="Tables" link="components/tables" />
   <div class="pa-4">
     <MaterialRegularTable
       icon="mdi-poll"
@@ -38,6 +39,7 @@
 import { defineComponent, reactive, toRefs, onMounted, onUnmounted } from 'vue'
 import MaterialTable from '@/components/MaterialTable.vue'
 import MaterialRegularTable from '@/components/MaterialRegularTable.vue'
+import MaterialHeadline from '@/components/MaterialHeadline.vue'
 import { useApiWithAuth } from '@/services/api'
 
 interface DataPayload {
@@ -50,7 +52,8 @@ interface DataPayload {
 export default defineComponent({
   components: {
     MaterialRegularTable,
-    MaterialTable
+    MaterialTable,
+    MaterialHeadline
   },
   setup() {
     // Regular table setup

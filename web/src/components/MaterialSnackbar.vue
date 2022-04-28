@@ -8,13 +8,9 @@
   </v-snackbar>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, toRefs, watch } from 'vue'
-import MaterialAlert from '@/components/MaterialAlert.vue'
+import { defineComponent, reactive, toRefs } from 'vue'
 export default defineComponent({
   name: 'MaterialSnackbar',
-  components: {
-    MaterialAlert
-  },
   props: {
     dismissible: {
       type: Boolean,

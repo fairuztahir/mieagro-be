@@ -20,7 +20,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 export default defineComponent({
-  name: 'Headline',
+  name: 'MaterialHeadline',
   props: {
     heading: {
       type: String,

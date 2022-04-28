@@ -1,10 +1,11 @@
 <template>
+  <material-headline heading="Icons" link="components/icons" />
   <div class="pa-4">
     <v-row>
       <v-col cols="12">
         <MaterialCard icon="mdi-clipboard-text" color="primary" title="Material Design Icons" class="px-5 py-3">
           <v-row class="mt-2 d-flex justify-space-around">
-            <template v-for="icon in icons" :key="icon" class="ma-2" v-once>
+            <span v-for="(icon, i) in icons" :key="i" class="ma-2" v-once>
               <v-col>
                 <v-tooltip anchor="bottom">
                   <template v-slot:activator="{ props }">
@@ -15,7 +16,7 @@
                   <span>{{ icon }}</span>
                 </v-tooltip>
               </v-col>
-            </template>
+            </span>
           </v-row>
         </MaterialCard>
       </v-col>
@@ -39,10 +40,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import MaterialCard from '@/components/MaterialCard.vue'
+import MaterialHeadline from '@/components/MaterialHeadline.vue'
 export default defineComponent({
   name: 'IconPage',
   components: {
-    MaterialCard
+    MaterialCard,
+    MaterialHeadline
   },
   setup() {
     const icons = [
